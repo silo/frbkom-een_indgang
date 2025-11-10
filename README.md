@@ -4,6 +4,16 @@ Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduct
 
 ## Setup
 
+### Local Design System (temporary)
+Install the local design system until it is published:
+
+```
+pnpm add file:/Users/silo/Documents/Frederiksberg_kommune/fk_designsystem
+```
+
+Use only components and tokens from `fk_designsystem` for all UI (colors, spacing, typography).
+
+
 Make sure to install dependencies:
 
 ```bash

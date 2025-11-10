@@ -57,6 +57,12 @@ i18n:
 
 ## Performance Guidelines
 
+### Design System Integration
+- Use only fk_designsystem provided UI components and tokens for consistency.
+- Reference tokens (color, spacing, font) rather than hardcoding CSS values.
+- Import the package locally via `pnpm add file:/Users/silo/Documents/Frederiksberg_kommune/fk_designsystem` until it is published.
+- Centralize any theme overrides inside the design system package instead of scattering changes in the app.
+
 - **Database Optimization**: Write efficient Drizzle ORM queries with proper indexing
 - **Pagination**: Implement pagination and filtering for large datasets
 - **Lazy Loading**: Use lazy loading for components and routes
@@ -111,4 +117,5 @@ i18n:
 - **Don't hardcode text**: Use Vue I18n for all user-facing text (internationalization)
 - **Don't skip accessibility**: Ensure WCAG 2.1 compliance for all features
 - **Don't implement auto-save**: Save only on user action ("Save as Draft" or "Next" button)
+- **Don't bypass design system**: Never build standalone UI components or hardcode colors; extend fk_designsystem if needed
 - **Don't allow event deletion**: Only status changes (decline, not delete) in v1

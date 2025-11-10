@@ -19,4 +19,5 @@
 - Security: Never commit secrets; use env vars; follow OWASP; sanitize output
 - Accessibility: Meet WCAG 2.1 AA; ensure responsive design
 - i18n: Default da-DK; date `dd/MM-YYYY - HH:mm`; currency DKK
+- Design System: Always use components, tokens, colors from local fk_designsystem. Install via `pnpm add file:/Users/silo/Documents/Frederiksberg_kommune/fk_designsystem` until published.
 - Notes: Based on `docs/code-style.md` and `docs/best-practices.md`; no Cursor/Copilot rules detected; include if added later

@@ -17,6 +17,12 @@ i18n:
 
 ## General Guidelines
 
+### Design System Usage
+- Always use pre-built components, color tokens, spacing, typography, and other primitives from the local design system `fk_designsystem`.
+- Install locally (temporary until published): `pnpm add file:/Users/silo/Documents/Frederiksberg_kommune/fk_designsystem`.
+- Do NOT duplicate styles; prefer extending via component props or class hooks exposed by the design system.
+- If a needed component is missing, add it to `fk_designsystem` first rather than implementing ad-hoc in the app.
+
 - Follow industry best practices for clean, maintainable code
 - Write self-documenting code with clear variable and function names
 - Keep functions small and focused on a single responsibility
