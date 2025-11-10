@@ -83,3 +83,7 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## Design & Visual References
+- Use the local `fk_designsystem` for all UI components and tokens.
+- Browse screenshots and icons in `docs/08-ai-context/visual-references.md` (admin views, citizen flow steps, start page, artefacts).

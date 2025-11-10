@@ -21,3 +21,6 @@
 - i18n: Default da-DK; date `dd/MM-YYYY - HH:mm`; currency DKK
 - Design System: Always use components, tokens, colors from local fk_designsystem. Install via `pnpm add file:/Users/silo/Documents/Frederiksberg_kommune/fk_designsystem` until published.
 - Notes: Based on `docs/code-style.md` and `docs/best-practices.md`; no Cursor/Copilot rules detected; include if added later
+
+## Visual References
+See `docs/08-ai-context/visual-references.md` for an indexed list of UI screenshots and icons (admin views, citizen flow steps, start page, artefacts). Update that file whenever adding or renaming image assets under `docs/Images/`. Keep paths stable for AI retrieval.
