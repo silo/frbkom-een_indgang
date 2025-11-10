@@ -1,3 +1,18 @@
+---
+title: Bedste praksis / Best Practices
+slug: best-practices
+version: 1.0.0
+status: stable
+lastUpdated: 2025-11-10
+audience: [developers, qa, ops, ai]
+owners: [platform-team]
+tags: [testing, security, performance, accessibility, i18n]
+summary: Testing, security, error handling, performance and accessibility guidelines consolidated for the project.
+i18n:
+  defaultLocale: da-DK
+  keysNamespace: docs.standards.bestPractices
+---
+
 # Best Practices
 
 ## Testing Requirements

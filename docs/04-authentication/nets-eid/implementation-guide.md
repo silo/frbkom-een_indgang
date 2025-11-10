@@ -1,3 +1,18 @@
+---
+title: Nets eID Broker OIDC Implementering / Implementation Guide
+slug: nets-eid-implementation-guide
+version: 2.0.0
+status: stable
+lastUpdated: 2025-11-10
+audience: [developers, ops, ai]
+owners: [platform-team]
+tags: [authentication, oidc, mitid, nets]
+summary: End-to-end OIDC integration with Nets eID Broker including setup, routes, security and testing.
+i18n:
+  defaultLocale: da-DK
+  keysNamespace: docs.auth.netsEidGuide
+---
+
 # Nets eID Broker OIDC Implementation Guide for Nuxt 4
 
 ## Table of Contents

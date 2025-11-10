@@ -1,3 +1,18 @@
+---
+title: Arkitektur / Architecture Patterns
+slug: architecture-patterns
+version: 1.0.0
+status: stable
+lastUpdated: 2025-11-10
+audience: [developers, ai]
+owners: [platform-team]
+tags: [architecture, nuxt, stack]
+summary: Overview of application architecture, directory structure, and preferred technology stack.
+i18n:
+  defaultLocale: da-DK
+  keysNamespace: docs.architecture.patterns
+---
+
 # Architecture Patterns
 
 ## Application Architecture

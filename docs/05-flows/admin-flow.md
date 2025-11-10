@@ -1,3 +1,18 @@
+---
+title: Adminflow / Admin Event Processing Flow
+slug: admin-event-flow
+version: 1.0.0
+status: draft
+lastUpdated: 2025-11-10
+audience: [developers, admins, ai]
+owners: [platform-team]
+tags: [flow, admin, processing, moderation]
+summary: Administrative caseworker workflow for reviewing, assigning departments, updating status and handling documents.
+i18n:
+  defaultLocale: da-DK
+  keysNamespace: docs.flows.adminEvent
+---
+
 # FLOW for admin users managing event applications
 
 1. Admin login via AD (OIDC authentication) on /admin route

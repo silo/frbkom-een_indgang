@@ -1,3 +1,18 @@
+---
+title: MCP-servere / Model Context Protocol Setup
+slug: mcp-servers
+version: 1.0.0
+status: stable
+lastUpdated: 2025-11-10
+audience: [developers, ai]
+owners: [platform-team]
+tags: [mcp, tooling, docs]
+summary: Overview of configured MCP servers and how to use them within the workspace.
+i18n:
+  defaultLocale: da-DK
+  keysNamespace: docs.platform.mcpServers
+---
+
 # MCP Server Configuration for Frederiksberg Events
 
 This project uses Model Context Protocol (MCP) servers to provide enhanced documentation and context for various technologies.

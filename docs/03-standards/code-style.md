@@ -1,3 +1,18 @@
+---
+title: Kodestandard / Code Style and Conventions
+slug: code-style
+version: 1.0.0
+status: stable
+lastUpdated: 2025-11-10
+audience: [developers, ai]
+owners: [platform-team]
+tags: [style, lint, typescript, vue]
+summary: Coding conventions and review checklist for Nuxt 4 + Vue 3 with TypeScript.
+i18n:
+  defaultLocale: da-DK
+  keysNamespace: docs.standards.codeStyle
+---
+
 # Code Style and Conventions
 
 ## General Guidelines

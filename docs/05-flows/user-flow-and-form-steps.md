@@ -1,9 +1,24 @@
+---
+title: Brugerflow / User Application Flow
+slug: user-application-flow
+version: 1.0.0
+status: draft
+lastUpdated: 2025-11-10
+audience: [developers, designers, ai]
+owners: [platform-team]
+tags: [flow, user, application, events]
+summary: Detailed multi-step event application process for end users including validation points.
+i18n:
+  defaultLocale: da-DK
+  keysNamespace: docs.flows.userApplication
+---
+
 # FLOW for users creating a new event application
 
 1. User login via MitID (OIDC authentication)
 2. After login user is redirected to a welcome page with "Create New Event" button and list of "My Events"
 3. User clicks "Create New Event" button and is taken to the multi-step form
-4. There is 5 steps in the form, user can navigate back and forth between steps freely and data is auto saved on each action
+4. There are 5 steps in the form; user can navigate back and forth freely. Data persists only when user explicitly clicks "Next" or "Save as Draft" (no silent background auto-save)
 5. On the last step user can review all data and confirm submission, if there is missing some fields it shows on the summary page so the user can go back and fill the rest out, until all is complete then user on summary page can confirm and review the data.
 6. Then user is taken to a confirmation page showing that the event has been submitted and what the next steps are. User also get an email confirmation.
 

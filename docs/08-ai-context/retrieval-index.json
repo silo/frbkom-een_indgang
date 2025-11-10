@@ -1,0 +1,110 @@
+[
+  {
+    "slug": "project-overview#meta",
+    "source": "docs/01-intro/overview.md",
+    "title": "Projektoversigt / Project Overview",
+    "section": "Frontmatter",
+    "tags": ["overview","meta"],
+    "summary": "Metadata for project high-level description.",
+    "lang": "da-DK"
+  },
+  {
+    "slug": "architecture-patterns#dependencies",
+    "source": "docs/02-architecture/app-architecture.md",
+    "title": "Arkitektur / Architecture Patterns",
+    "section": "Key Dependencies",
+    "tags": ["architecture","dependencies"],
+    "summary": "List of primary framework and library dependencies.",
+    "lang": "da-DK"
+  },
+  {
+    "slug": "data-model#entities",
+    "source": "docs/02-architecture/data-model.md",
+    "title": "Datamodel / Data Model Overview",
+    "section": "Entities",
+    "tags": ["data","entities"],
+    "summary": "Primary domain entities and brief field notes.",
+    "lang": "da-DK"
+  },
+  {
+    "slug": "code-style#checklist",
+    "source": "docs/03-standards/code-style.md",
+    "title": "Kodestandard / Code Style and Conventions",
+    "section": "Code Review Checklist",
+    "tags": ["style","checklist"],
+    "summary": "Checklist items for reviewing code contributions.",
+    "lang": "da-DK"
+  },
+  {
+    "slug": "best-practices#security",
+    "source": "docs/03-standards/best-practices.md",
+    "title": "Bedste praksis / Best Practices",
+    "section": "Security Considerations",
+    "tags": ["security","guidelines"],
+    "summary": "Core security rules including validation and OWASP alignment.",
+    "lang": "da-DK"
+  },
+  {
+    "slug": "nets-eid-implementation-guide#overview",
+    "source": "docs/04-authentication/nets-eid/implementation-guide.md",
+    "title": "Nets eID Broker OIDC Implementering / Implementation Guide",
+    "section": "Overview",
+    "tags": ["authentication","oidc"],
+    "summary": "High-level explanation of Nets eID OIDC integration.",
+    "lang": "da-DK"
+  },
+  {
+    "slug": "user-application-flow#steps",
+    "source": "docs/05-flows/user-flow.md",
+    "title": "Brugerflow / User Application Flow",
+    "section": "Steps",
+    "tags": ["flow","user"],
+    "summary": "Five-step user application sequence with validation points.",
+    "lang": "da-DK"
+  },
+  {
+    "slug": "admin-event-flow#workflow",
+    "source": "docs/05-flows/admin-flow.md",
+    "title": "Adminflow / Admin Event Processing Flow",
+    "section": "Workflow",
+    "tags": ["flow","admin"],
+    "summary": "Admin review, department assignment and status update process.",
+    "lang": "da-DK"
+  },
+  {
+    "slug": "form-steps#order",
+    "source": "docs/05-flows/form-steps.md",
+    "title": "Formulartrin / Form Steps Specification",
+    "section": "Order",
+    "tags": ["forms","steps"],
+    "summary": "Canonical order of form steps and primary fields.",
+    "lang": "da-DK"
+  },
+  {
+    "slug": "mcp-servers#configured",
+    "source": "docs/06-platform/mcp-servers.md",
+    "title": "MCP-servere / Model Context Protocol Setup",
+    "section": "Configured MCP Servers",
+    "tags": ["mcp","tooling"],
+    "summary": "List of MCP servers and usage guidance for tooling.",
+    "lang": "da-DK"
+  },
+  {
+    "slug": "glossary#terms",
+    "source": "docs/08-ai-context/glossary.md",
+    "title": "Ordliste / Glossary",
+    "section": "Terms",
+    "tags": ["glossary","terminology"],
+    "summary": "Canonical domain terms with English hints.",
+    "lang": "da-DK"
+  },
+  {
+    "slug": "chunking-guidelines#principles",
+    "source": "docs/08-ai-context/chunking-guidelines.md",
+    "title": "Chunkingretningslinjer / Chunking Guidelines",
+    "section": "Principles",
+    "tags": ["chunking","rag"],
+    "summary": "Core principles for splitting documentation into retrieval chunks.",
+    "lang": "da-DK"
+  }
+]
