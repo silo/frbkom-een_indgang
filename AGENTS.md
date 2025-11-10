@@ -1,5 +1,33 @@
 # AGENTS.md – Repo Guide for Coding Agents
 
+## Intro
+This repository is a Nuxt 4 (Vue 3 + TypeScript) app implementing Frederiksberg Kommune’s “Én indgang” event application flow. Development guidance, tasks, and references live under `docs/` with a single consolidated entry point at `docs/development/ALL_DEVELOPMENT.md`.
+
+## Architecture
+- App architecture: `docs/02-architecture/app-architecture.md`
+- Data model: `docs/02-architecture/data-model.md`
+- User flow (citizen): `docs/05-flows/user-flow-and-form-steps.md`
+- Admin flow: `docs/05-flows/admin-flow.md`
+- Auth (Nets eID/MitID) guide: `docs/04-authentication/nets-eid/implementation-guide.md`
+- Map grid planner spec: `MAP_GRID_PLANNER.md`
+
+## Development Plan
+- All-in-one development hub: `docs/development/ALL_DEVELOPMENT.md`
+- Phases and milestone checklist: `docs/development/CHECKLIST.md`
+- Phase task checklists: `docs/development/tasks/`
+  - Phase 0 → `docs/development/tasks/PHASE_0.md`
+  - Phase 1 → `docs/development/tasks/PHASE_1.md`
+  - Phase 2 → `docs/development/tasks/PHASE_2.md`
+  - Phase 3 → `docs/development/tasks/PHASE_3.md` (includes visual refs for each step)
+  - Phase 4 → `docs/development/tasks/PHASE_4.md` (planner refs)
+  - Phase 5 → `docs/development/tasks/PHASE_5.md` (admin refs)
+  - Phase 6 → `docs/development/tasks/PHASE_6.md`
+  - Phase 7 → `docs/development/tasks/PHASE_7.md`
+  - Phase 8 → `docs/development/tasks/PHASE_8.md`
+- Cross-cutting: `docs/development/tasks/CROSS_CUTTING.md`
+- Open items (blocking): `docs/development/tasks/OPEN_ITEMS.md`
+- Risks: `docs/development/tasks/RISKS.md`
+
 ## Commands
 - Install: `pnpm install`; Dev: `pnpm dev`; Build: `pnpm build`
 - Lint: `pnpm exec eslint .` | Fix: `pnpm exec eslint . --fix`
@@ -20,7 +48,32 @@
 - Accessibility: Meet WCAG 2.1 AA; ensure responsive design
 - i18n: Default da-DK; date `dd/MM-YYYY - HH:mm`; currency DKK
 - Design System: Always use components, tokens, colors from local fk_designsystem. Install via `pnpm add file:/Users/silo/Documents/Frederiksberg_kommune/fk_designsystem` until published.
-- Notes: Based on `docs/code-style.md` and `docs/best-practices.md`; no Cursor/Copilot rules detected; include if added later
+- Notes: Based on `docs/03-standards/code-style.md` and `docs/03-standards/best-practices.md`
+
+## Environments & Config
+- Environments: `dev` and `prod`
+- Env vars: `./.env.example`
+- Nuxt config: `nuxt.config.ts`
+- TypeScript config: `tsconfig.json`
+- ESLint config: `eslint.config.mjs`
+
+## Design System & Tokens
+- Install design system locally: `pnpm add file:/Users/silo/Documents/Frederiksberg_kommune/fk_designsystem`
+- Tokens: `docs/color.Mode 1.tokens.json`, `docs/primitive.Value.tokens.json`
 
 ## Visual References
-See `docs/08-ai-context/visual-references.md` for an indexed list of UI screenshots and icons (admin views, citizen flow steps, start page, artefacts). Update that file whenever adding or renaming image assets under `docs/Images/`. Keep paths stable for AI retrieval.
+- Indexed UI imagery: `docs/08-ai-context/visual-references.md`
+- Image assets: `docs/Images/`
+- Phase-specific references embedded in:
+  - Citizen flow: `docs/development/tasks/PHASE_3.md`
+  - Planner: `docs/development/tasks/PHASE_4.md`
+  - Admin: `docs/development/tasks/PHASE_5.md`
+
+## Security & Accessibility
+- Security baseline only (no cert pinning/CPR encryption for v1); never commit secrets; sanitize output
+- Accessibility target: WCAG 2.1 AA compliance
+
+## Where to Start
+1. Read `docs/development/ALL_DEVELOPMENT.md`
+2. Follow Phase 0 tasks in `docs/development/tasks/PHASE_0.md`
+3. Keep `OPEN_ITEMS.md` and `RISKS.md` up to date during implementation
