@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0",
+  "generated": "2025-11-10",
+  "description": "MCP server registry for Frederiksberg Én indgang app (opencode).",
+  "servers": [
+    { "id": "nuxt4", "name": "Nuxt 4", "category": "framework", "docs": "https://nuxt.com/docs" },
+    { "id": "vue3", "name": "Vue 3", "category": "framework", "docs": "https://vuejs.org/guide/introduction.html" },
+    { "id": "typescript", "name": "TypeScript", "category": "language", "docs": "https://www.typescriptlang.org/docs/" },
+    { "id": "drizzle", "name": "Drizzle ORM", "category": "database", "docs": "https://orm.drizzle.team/docs" },
+    { "id": "postgresql", "name": "PostgreSQL", "category": "database", "docs": "https://www.postgresql.org/docs/" },
+    { "id": "zod", "name": "Zod", "category": "validation", "docs": "https://zod.dev/?id=basic-usage" },
+    { "id": "pinia", "name": "Pinia", "category": "state", "docs": "https://pinia.vuejs.org/core-concepts/" },
+    { "id": "better-auth", "name": "Better Auth", "category": "auth", "docs": "https://better-auth.com/docs" },
+    { "id": "trpc", "name": "tRPC", "category": "api", "docs": "https://trpc.io/docs" },
+    { "id": "vueuse", "name": "VueUse", "category": "utilities", "docs": "https://vueuse.org/guide/" },
+    { "id": "sendgrid", "name": "SendGrid", "category": "email", "docs": "https://docs.sendgrid.com/" },
+    { "id": "pg", "name": "pg", "category": "database", "docs": "https://node-postgres.com/" }
+  ],
+  "categories": {
+    "framework": ["nuxt4", "vue3"],
+    "language": ["typescript"],
+    "database": ["drizzle", "postgresql", "pg"],
+    "validation": ["zod"],
+    "state": ["pinia"],
+    "auth": ["better-auth"],
+    "api": ["trpc"],
+    "utilities": ["vueuse"],
+    "email": ["sendgrid"]
+  }
+}

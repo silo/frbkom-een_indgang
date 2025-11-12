@@ -66,7 +66,7 @@ erDiagram
     text expectedAttendanceRange "0_50|51_200|201_500|501_1000|1001_5000|5001_plus"
     boolean commercial
     boolean recurring
-    text recurringInterval "daily|weekly|monthly|yearly|null"
+    text recurringInterval "daily|weekly|monthly|null"
     timestamp startAt
     timestamp endAt
     timestamp setupStartAt "nullable"
@@ -74,7 +74,8 @@ erDiagram
     text locationType "predefined|custom"
     text locationAddress "nullable"
     uuid locationPresetId "nullable FK"
-    text status "draft|submitted|accepted|declined"
+    text status "draft|submitted"
+    text reviewStatus "unprocessed|in_review|partially_approved|approved|rejected"
     int summaryCompletionPct
     timestamp createdAt
     timestamp updatedAt
@@ -235,7 +236,8 @@ Seed examples: `byliv-drift`, `klima-miljo`, `byggeri-arkitektur`.
 | locationType | enum('predefined','custom') | Custom address or preset |
 | locationAddress | text nullable | If custom |
 | locationPresetId | uuid nullable | FK -> LocationPreset.id |
-| status | enum('draft','submitted','accepted','declined') | Global status |
+| status | enum('draft','submitted') | Submission lifecycle |
+| reviewStatus | enum('unprocessed','in_review','partially_approved','approved','rejected') | Global review status |
 | summaryCompletionPct | int | 0-100 computed |
 | createdAt | timestamp | |
 | updatedAt | timestamp | |

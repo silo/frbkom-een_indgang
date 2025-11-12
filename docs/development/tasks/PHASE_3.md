@@ -16,6 +16,8 @@ Visual refs: `docs/Images/flow/kontaktoplysninger.png`, `docs/Images/flow/kontak
 - [ ] Kontaktperson (Name, Phone) (l86)
 
 ## Step 2 Eventoplysninger
+- [ ] Enforce custom address rule ("egen adresse" hides planner; require single plan PDF) (rule)
+- [ ] Recurring interval limited to dagligt|ugentligt|månedligt (v1) (rule)
 Visual refs: `docs/Images/flow/eventoplysninger/tom.png`, `docs/Images/flow/eventoplysninger/udfyldt.png`
 - [ ] Start/End datetime pickers (l88)
 - [ ] Location selector (preset vs "egen adresse" w/ autocomplete) (l89)
@@ -31,7 +33,7 @@ Visual refs: `docs/Images/flow/praktiske-forhold-og-sikkerhed/tom.png`, `docs/Im
 - [ ] Temporary constructions yes/no + description + certificate upload (l98)
 - [ ] BR18 bilag 11 acknowledgment (radio) (l99)
 - [ ] Other considerations textarea (l100)
-- [ ] Arrangementsplan choice (upload vs embedded planner) (l101)
+- [ ] Arrangementsplan choice (upload vs embedded planner) except when "egen adresse" (upload only; planner hidden) (l101)
 - [ ] Sound section (has sound, description, responsible name/phone) (l103)
 
 ## Step 4 Tilladelser og drift
@@ -45,7 +47,7 @@ Visual refs: `docs/Images/flow/tilladelser-og-drift/tom.png`, `docs/Images/flow/
 Visual refs: `docs/Images/flow/opsummering-og-bekræftelse.png`, `docs/Images/flow/opsummering-og-bekræftelse/fejl.png`, `docs/Images/flow/bekræftelse.png`
 - [ ] Read-only grouped summaries (Steps 1–4) (l111)
 - [ ] Missing/invalid step indicators (l112)
-- [ ] Percentage complete indicator (overall + step) (l113)
+- [ ] Percentage complete indicator (overall + step) + disable submit until 100% valid (l113)
 - [ ] Submit final (status -> submitted) + email trigger (l115)
 
 ## Acceptance Criteria

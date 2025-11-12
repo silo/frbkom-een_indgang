@@ -1,0 +1,19 @@
+{
+  "github.copilot.chat.serverProvider":"context7",
+  "context7.mcp.enabled": true,
+  "context7.mcp.sources": [
+    { "name": "Nuxt 4", "url": "https://nuxt.com/docs" },
+    { "name": "Drizzle ORM", "url": "https://orm.drizzle.team/docs" },
+    { "name": "Better-auth", "url": "https://better-auth.com/docs" },
+    { "name": "tRPC", "url": "https://trpc.io/docs" },
+    { "name": "Zod", "url": "https://zod.dev" },
+    { "name": "Pinia", "url": "https://pinia.vuejs.org/" },
+    { "name": "VueUse", "url": "https://vueuse.org/" },
+    { "name": "SendGrid", "url": "https://docs.sendgrid.com/" },
+    { "name": "Node-postgres (pg)", "url": "https://node-postgres.com/" }
+  ],
+  "context7.options": {
+    "cacheTtlSeconds": 86400,
+    "maxResults": 8
+  }
+}
