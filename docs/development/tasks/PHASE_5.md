@@ -10,10 +10,10 @@ Visual refs: Dashboard `docs/Images/admin/overblik.png`, Detail `docs/Images/adm
 - [ ] Filter/search (basic) (l137)
 - [ ] Event detail view (read + edit) (l139)
 - [ ] Department assignment UI (Byliv og drift fixed + add others) (l140)
-- [ ] Per-department status update (pending/in_review/accepted/declined) (l141)
-- [ ] Global status transitions (with rules: decline requires note) (l142)
-- [ ] Accept flow: upload approval PDFs (one or more) (l143)
-- [ ] Decline flow: mandatory note + email trigger (l144)
+- [ ] Per-department status update (pending/in_review/approved) (l141)
+- [ ] Global review status transitions (Ubehandlet → Under behandling → Delvist godkendt → Godkendt | Afvist) [Afvist terminal; requires note]
+- [ ] Approve flow: upload approval PDFs (one or more) (l143)
+- [ ] Reject flow: mandatory note + email trigger (l144)
 - [ ] Audit log display (paginated) (l145)
 - [ ] Email triggers wired to status changes (l147)
 

@@ -84,7 +84,7 @@ modules/              # Custom Nuxt modules
 
 ### UI & Interaction
 
-- **Map Visualization**: Custom Vue 3 grid planner with static image backgrounds
+- **Map Visualization**: Custom Vue 3 grid planner with static image backgrounds (hidden for custom address; requires uploaded plan PDF)
 - **Drag & Drop**: Native HTML5 Drag and Drop API or VueUse composables
 - **Styling**: Custom CSS/SCSS (no CSS frameworks specified)
 - **Form Utilities**: VueUse

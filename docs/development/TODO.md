@@ -67,15 +67,15 @@ Scope: Implement full v1 features as defined in /docs (no future extensions like
 - Admin dashboard listing all events (submitted first)
 - Event detail + edit capabilities
 - Multi-department assignment & status (Byliv og drift default, Klima og miljø, Byggeri og arkitektur)
-- Global event status transitions (draft→submitted→accepted/declined)
-- Decline requires note (email sent)
-- Accept allows PDF approval uploads
+- Global review status transitions (Ubehandlet→Under behandling→Delvist godkendt→Godkendt | Afvist)
+- Reject requires note (email sent)
+- Approve allows PDF approval uploads
 - Audit log entries for actions
 
 ### Phase 6 – Submission, Emails, Documents
 - PDF upload UI (size/type validation, <=5MB, bytea storage)
 - SendGrid integration (submission confirmation, decision notifications)
-- User “My Events” page (draft/submitted/accepted/declined)
+- User “My Events” page (draft/submitted + review badges: Ubehandlet/Under behandling/Delvist godkendt/Godkendt/Afvist)
 
 ### Phase 7 – QA + Accessibility + Content Freeze
 - Manual QA against all flows
@@ -129,6 +129,6 @@ Scope: Implement full v1 features as defined in /docs (no future extensions like
 - AD OIDC issuer/client details
 - Location preset image paths finalization
 - SendGrid sender + template IDs
-- Final email copy for accept/decline
+- Final email copy for approved/rejected (user-facing wording)
 
 -- End of v1 TODO --

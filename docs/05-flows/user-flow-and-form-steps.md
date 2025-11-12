@@ -88,7 +88,6 @@ There is 5 steps:
       - Dagligt
       - Ugentligt
       - Månedligt
-      - Årligt
   - If Nej: No additional fields
 
 
@@ -105,7 +104,7 @@ There is 5 steps:
 - Skal der opstilles midlertidige konstruktioner eller andet på pladsen? - required ( radiogroup )
   - Ja
     - Beskriv venligst hvilke konstruktioner og deres formål - required ( textarea )
-    - Upload certifikat til din(e) konstruktion(er) her ( PDF upload, max 5MB ) - required ( file upload )
+    - Upload certifikat til din(e) konstruktion(er) her ( PDF upload, max 5MB ) - optional ( file upload )
   - Nej
     - No additional fields
 
@@ -116,7 +115,10 @@ There is 5 steps:
 - Andre særlig hensyn - optional ( textarea )
 
 #### 3.3 Arrangementsplan
+Regel: Hvis "Egen adresse" er valgt i Step 2, vises ikke planner – kun upload af plan (PDF) er påkrævet.
 - Vil du uploade din egen plan? - required ( radiogroup )
+  - Hvis lokation er foruddefineret: vælg mellem upload ELLER indbygget planner
+  - Hvis "Egen adresse": kun upload, planner vises ikke
   - Ja
     - Upload din arrangementsplan her ( PDF upload, max 5MB ) - required ( file upload )
   - Nej

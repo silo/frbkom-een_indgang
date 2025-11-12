@@ -32,7 +32,7 @@ These statuses are visible to users in Danish and stored with internal English k
 
 Notes
 - “Delvist godkendt” indicates mixed departmental decisions; global status transitions to “Godkendt” only once all departments are approved.
-- “Afvist” is global-only. Departments do not set “afvist” individually in v1; they contact the applicant before declining their part. Once global status is “Afvist”, it cannot transition back.
+- “Afvist” is global-only. Departments do not set “afvist” individually in v1; they may contact the applicant to resolve issues. Once global status is “Afvist”, it cannot transition back.
 
 ## Department Status (Reference)
 
@@ -40,14 +40,14 @@ Department statuses are tracked per department to drive the global state:
 - pending
 - in_review
 - approved
-- declined (not used in v1; kept for completeness and history)
+- rejected (future use; not used in v1)
 
 Global status derivation (guidance)
 - unprocessed → event has status=submitted and all department statuses=pending
 - in_review → at least one department is in_review, none rejected
 - partially_approved → some approved, at least one pending or in_review
 - approved → all departments approved
-- rejected → explicitly set at global level (department “declined” is not used in v1)
+- rejected → explicitly set at global level (department “rejected” is not used in v1)
 
 ## Validation Overview
 
@@ -85,7 +85,7 @@ New rule – Custom address
 ### Step 3 – Praktiske forhold og sikkerhed
 - Simultaneous persons (range): required; same enum set as attendance range.
 - Temporary constructions: required yes/no.
-  - If yes: require construction type multi-select and description; accept optional certificate upload (PDF) if applicable.
+   - If yes: require construction type multi-select and description; allow optional certificate upload (PDF) if applicable.
   - Construction type multi-select values (UI): Tribune, Scene, Storskærme, Andet. Internal values: tribune, scene, storskaerme, andet. “Andet” does not trigger extra fields.
 - BR18 bilag 11 acknowledgment: required (radio yes/no); must be “yes” to proceed.
 - Other considerations: required text (can be short; min 3 chars).
@@ -126,7 +126,7 @@ New rule – Custom address
 
 ## Implementation Checklist
 - Data model: add `reviewStatus` enum to `EventApplication` with values: unprocessed, in_review, partially_approved, approved, rejected. Keep `status` for draft/submission lifecycle.
-- Department status: use pending/in_review/approved; do not present “declined” in UI in v1.
+- Department status: use pending/in_review/approved; do not present “rejected” in UI in v1.
 - Step 2 custom address rule: enforce planner hidden + required single plan upload.
 - Recurrence: limit interval to daily/weekly/monthly and only show when recurring=true.
 - Date inputs: standardize on @vuepic/vue-datepicker.

@@ -15,7 +15,7 @@ Visual refs: use Step 3 visuals for context — `docs/Images/flow/praktiske-forh
 - [ ] Info handle (top-left) opening modal (l127)
 - [ ] Modal: type, size, rotation, coordinates, remove (l128)
 - [ ] Persist create/update/delete via artifacts API (l129)
-- [ ] Integration into Step 3.3 (when user chooses not to upload plan) (l130)
+- [ ] Integration into Step 3.3 (when user chooses not to upload plan). Note: hidden when Step 2 uses "egen adresse" (custom); require single plan PDF instead. (l130)
 
 ## Acceptance Criteria
 - Fully interactive planner with persistence (l132)

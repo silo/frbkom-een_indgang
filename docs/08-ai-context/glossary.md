@@ -25,8 +25,8 @@ i18n:
 | Lokation | Location | Sted hvor arrangement afholdes (foruddefineret eller adresse) |
 | Artefakt | Artifact | Visuelt element på arrangementsplan (scene, bod, facilitet) |
 | Dokument | Document | PDF eller vedhæftning relateret til ansøgningen |
-| Status | Status | Overordnet livscyklus: draft, submitted, accepted, declined |
-| Delstatus | Substatus | Department-specifik status for en ansøgning |
+| Status | Status | Indsendelseslivscyklus: draft, submitted |
+| Reviewstatus | Review Status | Global: Ubehandlet, Under behandling, Delvist godkendt, Godkendt, Afvist |
 | CPR | CPR | Dansk personnummer (lagres hashed/krypteret) |
 | CVR | CVR | Virksomheds identifikation |
 | Kommercielt | Commercial | Angiver om arrangement har markedsleje |

@@ -6,4 +6,4 @@ Scope lines: CHECKLIST.md:221-224
 - [ ] AD OIDC issuer + client credentials (l221)
 - [ ] Location preset image final paths (l222)
 - [ ] SendGrid sender + template IDs (l223)
-- [ ] Final accept/decline email copy (l224)
+- [ ] Final approved/rejected email copy (l224)

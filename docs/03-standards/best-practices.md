@@ -118,4 +118,4 @@ i18n:
 - **Don't skip accessibility**: Ensure WCAG 2.1 compliance for all features
 - **Don't implement auto-save**: Save only on user action ("Save as Draft" or "Next" button)
 - **Don't bypass design system**: Never build standalone UI components or hardcode colors; extend fk_designsystem if needed
-- **Don't allow event deletion**: Only status changes (decline, not delete) in v1
+- **Don't allow event deletion**: Only status changes (reject, not delete) in v1

@@ -36,6 +36,12 @@ May parallelize with Phase 1 (auth stubs)
 - [ ] `documents` (upload, list, delete) (l65)
 - [ ] `admin` (listAll, byId, updateStatus, setDepartmentStatus, audit log) (l66)
 
+## Implementation Notes
+- Add `reviewStatus` enum on `EventApplication`: unprocessed | in_review | partially_approved | approved | rejected.
+- Department status enum on `DepartmentEventStatus`: pending | in_review | approved. Keep `rejected` only for historical/reference, not in v1 UI.
+- Zod: conditional rules for Step 2 (recurring interval required only when recurring = true) and custom address rule (hide planner; require exactly one plan PDF).
+- i18n: add keys for validation messages (missing interval, required plan upload for custom address, BR18 acknowledge required).
+
 ## Other
 - [ ] Computed summary completion % endpoint (l69)
 - [ ] Audit log writer utility (l70)

@@ -178,7 +178,7 @@ erDiagram
     uuid id PK
     uuid eventId FK
     uuid departmentId FK
-    text status "pending|in_review|accepted|declined"
+    text status "pending|in_review|approved"
     text note "nullable"
     timestamp updatedAt
   }
@@ -228,7 +228,7 @@ Seed examples: `byliv-drift`, `klima-miljo`, `byggeri-arkitektur`.
 | expectedAttendanceRange | enum('0_50','51_200','201_500','501_1000','1001_5000','5001_plus') | Selected range |
 | commercial | boolean | Commercial? |
 | recurring | boolean | Recurring? |
-| recurringInterval | enum('daily','weekly','monthly','yearly') nullable | If recurring |
+| recurringInterval | enum('daily','weekly','monthly') nullable | If recurring (v1 limited) |
 | startAt | timestamp | Start date/time |
 | endAt | timestamp | End date/time |
 | setupStartAt | timestamp nullable | Setup start |
@@ -344,7 +344,7 @@ Refer to `MAP_GRID_PLANNER.md` for interaction specifics.
 | id | uuid | |
 | eventId | uuid | FK -> EventApplication.id |
 | departmentId | uuid | FK -> Department.id |
-| status | enum('pending','in_review','accepted','declined') | |
+| status | enum('pending','in_review','approved') | |
 | note | text nullable | |
 | updatedAt | timestamp | |
 
@@ -389,7 +389,7 @@ const EventApplicationSchema = z.object({
   expectedAttendanceRange: z.enum(['0_50','51_200','201_500','501_1000','1001_5000','5001_plus']),
   commercial: z.boolean(),
   recurring: z.boolean(),
-  recurringInterval: z.enum(['daily','weekly','monthly','yearly']).optional().nullable(),
+  recurringInterval: z.enum(['daily','weekly','monthly']).optional().nullable(),
   startAt: z.coerce.date(),
   endAt: z.coerce.date(),
   setupStartAt: z.coerce.date().optional().nullable(),

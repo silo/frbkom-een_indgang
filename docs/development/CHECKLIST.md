@@ -138,10 +138,10 @@ Dependencies: Phase 2 artifact schema; Phase 3 step integration.
 - [ ] Filter/search (basic)
 - [ ] Event detail view (read + edit)
 - [ ] Department assignment UI (Byliv og drift fixed + add others)
-- [ ] Per-department status update (pending/in_review/accepted/declined)
-- [ ] Global status transitions (with rules: decline requires note)
-- [ ] Accept flow: upload approval PDFs (one or more)
-- [ ] Decline flow: mandatory note + email trigger
+- [ ] Per-department status update (pending/in_review/approved)
+- [ ] Global review status transitions (Ubehandlet → Under behandling → Delvist godkendt → Godkendt | Afvist) [Afvist terminal; requires note]
+- [ ] Approve flow: upload approval PDFs (one or more)
+- [ ] Reject flow: mandatory note + email trigger
 - [ ] Audit log display (paginated)
 - [ ] Email triggers wired to status changes
 
@@ -157,12 +157,12 @@ Documents:
 
 Emails (SendGrid):
 - [ ] Submission confirmation template
-- [ ] Status accepted template (with attachments list summary)
-- [ ] Status declined template (includes admin note)
+- [ ] Status approved template (with attachments list summary)
+- [ ] Status rejected template (includes admin note)
 - [ ] Hook events to email service
 
 User Events Page:
-- [ ] “My Events” list (draft/submitted/accepted/declined) with status badges
+- [ ] “My Events” list (draft/submitted + review badges: Ubehandlet/Under behandling/Delvist godkendt/Godkendt/Afvist) with badges
 - [ ] Link to resume draft editing
 
 Milestone M6: Document handling & notifications functional.
@@ -221,7 +221,7 @@ Phases 3,5 → Phase 6 → Phase 7 → Phase 8
 - [ ] AD OIDC issuer + client credentials
 - [ ] Location preset image final paths
 - [ ] SendGrid sender + template IDs
-- [ ] Final accept/decline email copy
+- [ ] Final approved/rejected email copy
 
 ---
 ## Risk Checklist

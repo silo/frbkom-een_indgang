@@ -14,11 +14,16 @@
       "url": "https://mcp.grep.app",
       "enabled": true
     },
+    "nuxt": {
+      "type": "remote",
+      "url": "https://mcp.nuxt.com/sse",
+      "enabled": true
+    },
     "nuxt4": {
       "type": "remote",
       "url": "https://mcp.context7.com/mcp",
       "enabled": false
-    },
+    }
     "vue3": {
       "type": "remote",
       "url": "https://mcp.context7.com/mcp",
