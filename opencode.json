@@ -23,7 +23,7 @@
       "type": "remote",
       "url": "https://mcp.context7.com/mcp",
       "enabled": false
-    }
+    },
     "vue3": {
       "type": "remote",
       "url": "https://mcp.context7.com/mcp",
@@ -80,23 +80,10 @@
       "enabled": false
     }
   },
-  "instructions": [
-    "AGENTS.md",
-    "docs/development/ALL_DEVELOPMENT.md",
-    "docs/development/tasks/PHASE_0.md",
-    "docs/development/tasks/OPEN_ITEMS.md",
-    "docs/development/tasks/RISKS.md",
-    ".vscode/mcp-servers.json"
-  ],
   "tools": {
     "write": true,
     "edit": true,
     "bash": true
-  },
-  "permission": {
-    "bash": "allow",
-    "edit": "allow",
-    "write": "allow"
   },
   "share": "manual",
   "autoupdate": true,
