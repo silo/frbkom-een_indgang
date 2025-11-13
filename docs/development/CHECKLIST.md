@@ -62,14 +62,14 @@ Dependencies: Phase 0 (tooling).
 ---
 ## Phase 2 – User Application Flow (5 Steps)
 Shared:
-- [ ] Multi-step container component (state + step navigation)
-- [ ] Draft persistence only on explicit actions
-- [ ] Progress/completion % indicator per step
-- [ ] Validation integration (client + server Zod)
+- [x] Multi-step container component (state + step navigation)
+- [x] Draft persistence only on explicit actions
+- [x] Progress/completion % indicator per step
+- [~] Validation integration (client + server Zod)
 
 Step 1 Kontaktoplysninger:
-- [ ] CVR/CPR, Name, Phone, Email, Commercial (Ja/Nej)
-- [ ] Kontaktperson (Name, Phone)
+- [x] CVR/CPR, Name, Phone, Email, Commercial (Ja/Nej)
+- [x] Kontaktperson (Name, Phone)
 
 Step 2 Eventoplysninger:
 - [ ] Start/End datetime pickers

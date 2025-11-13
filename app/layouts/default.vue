@@ -17,10 +17,16 @@
               {{ $t('nav.home') }}
             </NuxtLink>
             <NuxtLink
-              to="/events"
+              to="/"
               class="text-gray-700 hover:text-gray-900"
             >
               {{ $t('nav.myEvents') }}
+            </NuxtLink>
+            <NuxtLink
+              to="/application/contact-info"
+              class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              {{ $t('nav.newEvent') }}
             </NuxtLink>
           </div>
         </div>

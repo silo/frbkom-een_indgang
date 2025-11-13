@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/test-utils',
     '@nuxtjs/i18n',
+    '@pinia/nuxt',
   ],
 
   devtools: { enabled: true },

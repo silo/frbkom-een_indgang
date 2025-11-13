@@ -42,6 +42,36 @@
     "fileInvalidType": "Ugyldig filtype (kun PDF tilladt)",
     "selectAtLeastOne": "Vælg mindst én"
   },
+  "form": {
+    "createEvent": "Opret nyt arrangement",
+    "saveDraft": "Gem kladde",
+    "step1": {
+      "title": "Kontaktoplysninger",
+      "generalInfo": "Generelle oplysninger",
+      "cvrCpr": "CVR/CPR nummer",
+      "fullName": "Fulde navn",
+      "phone": "Telefon",
+      "email": "Email",
+      "isCommercial": "Arrangementet er kommercielt?",
+      "yes": "Ja",
+      "no": "Nej",
+      "contactPerson": "Kontaktperson",
+      "contactPersonName": "Kontaktpersonens fulde navn",
+      "contactPersonPhone": "Kontaktpersonens telefon"
+    },
+    "step2": {
+      "title": "Eventoplysninger"
+    },
+    "step3": {
+      "title": "Praktiske forhold og sikkerhed"
+    },
+    "step4": {
+      "title": "Tilladelser og drift"
+    },
+    "step5": {
+      "title": "Opsummering og bekræftelse"
+    }
+  },
   "events": {
     "title": "Arrangementer",
     "createNew": "Opret nyt arrangement",

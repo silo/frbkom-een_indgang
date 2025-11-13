@@ -30,22 +30,23 @@ yarn install
 bun install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+## Quick Start
 
 ```bash
-# npm
-npm run dev
+# Install dependencies
+pnpm install
 
-# pnpm
+# Start PostgreSQL database
+docker compose up -d
+
+# Run database migrations
+pnpm db:push
+
+# (Optional) Seed database with sample data
+pnpm db:seed
+
+# Run development server
 pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
 ## Production

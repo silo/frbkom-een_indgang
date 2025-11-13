@@ -15,6 +15,29 @@ i18n:
 
 # Code Style and Conventions
 
+## Critical: Naming Language Rule
+
+**NEVER use Danish in code - ONLY in translation files (`app/locales/*.json`).**
+
+See detailed guidelines: [Naming Conventions](./naming-conventions.md)
+
+### Quick Reference
+- ✅ File names: `contact-info.vue`, `event-form.ts`
+- ❌ File names: `kontaktoplysninger.vue`, `ansog.ts`
+- ✅ Functions: `saveDraft()`, `submitApplication()`
+- ❌ Functions: `gemKladde()`, `indsendAnsøgning()`
+- ✅ Variables: `fullName`, `isCommercial`
+- ❌ Variables: `fuldeNavn`, `erKommerciel`
+- ✅ Routes: `/application/contact-info`
+- ❌ Routes: `/ansog/kontaktoplysninger`
+
+**Danish is ONLY allowed in:**
+- Translation files: `app/locales/da-DK.json`
+- User-facing text via `$t()` or `t()`
+- Comments (when explaining Danish concepts)
+
+---
+
 ## General Guidelines
 
 ### Design System Usage

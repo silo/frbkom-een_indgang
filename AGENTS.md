@@ -36,6 +36,7 @@ This repository is a Nuxt 4 (Vue 3 + TypeScript) app implementing Frederiksberg 
 
 ## Code Style
 - Language: TypeScript, Vue 3 + Nuxt 4; use `<script setup lang="ts">`
+- **CRITICAL: English-only naming** - NEVER use Danish in file names, functions, variables, routes, or class names. Danish ONLY in `app/locales/*.json`. See `docs/03-standards/naming-conventions.md`
 - Imports: Use Nuxt auto-imports for components/composables; import utilities explicitly
 - Formatting: Follow ESLint (flat) rules; keep code consistent and deterministic
 - Types: Explicit types for public APIs; avoid `any`; use utility types; prefer `const`
@@ -48,7 +49,7 @@ This repository is a Nuxt 4 (Vue 3 + TypeScript) app implementing Frederiksberg 
 - Accessibility: Meet WCAG 2.1 AA; ensure responsive design
 - i18n: Default da-DK; date `dd/MM-YYYY - HH:mm`; currency DKK
 - Design System: Always use components, tokens, colors from local fk_designsystem. Install via `pnpm add file:/Users/silo/Documents/Frederiksberg_kommune/fk_designsystem` until published.
-- Notes: Based on `docs/03-standards/code-style.md` and `docs/03-standards/best-practices.md`
+- Notes: Based on `docs/03-standards/code-style.md`, `docs/03-standards/naming-conventions.md`, and `docs/03-standards/best-practices.md`
 
 ## Environments & Config
 - Environments: `dev` and `prod`

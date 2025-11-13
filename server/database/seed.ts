@@ -1,5 +1,23 @@
-import { db } from './client'
+import { config } from 'dotenv'
+import { drizzle } from 'drizzle-orm/postgres-js'
+import postgres from 'postgres'
+import * as schema from './schema'
 import { department, eventTypeTag, locationPreset } from './schema'
+
+// Load environment variables from .env file
+config()
+
+// For seed script, read DATABASE_URL directly from environment
+const databaseUrl = process.env.DATABASE_URL
+
+if (!databaseUrl) {
+  console.error('❌ DATABASE_URL environment variable is not set')
+  process.exit(1)
+}
+
+// Create database connection for seeding
+const client = postgres(databaseUrl)
+const db = drizzle(client, { schema })
 
 export async function seed() {
   console.log('Seeding database...')
@@ -113,17 +131,20 @@ export async function seed() {
 
   console.log('✓ Location presets seeded')
   console.log('Database seeding completed successfully!')
+  
+  // Close database connection
+  await client.end()
 }
 
-// Run seed if executed directly
-if (require.main === module) {
+// Run seed if executed directly (ES module check)
+if (import.meta.url === `file://${process.argv[1]}`) {
   seed()
     .then(() => {
-      console.log('Seed completed')
+      console.log('✅ Seed completed')
       process.exit(0)
     })
     .catch((error) => {
-      console.error('Seed failed:', error)
+      console.error('❌ Seed failed:', error)
       process.exit(1)
     })
 }
