@@ -6,14 +6,14 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done
 
 ---
 ## Phase 0 – Project Setup
-- [ ] Initialize Nuxt 4 project structure (layouts, pages scaffold)
-- [ ] Configure TypeScript strict + path aliases
-- [ ] Add ESLint flat config + Prettier
-- [ ] Install `fk_designsystem` (local file dependency)
-- [ ] Integrate design tokens (colors, spacing, typography)
-- [ ] Create base layouts: `default`, `admin`
-- [ ] Setup i18n folder + da-DK locale file
-- [ ] Add initial runtime config + env example entries
+- [x] Initialize Nuxt 4 project structure (layouts, pages scaffold)
+- [x] Configure TypeScript strict + path aliases
+- [x] Add ESLint flat config + Prettier
+- [x] Install `fk_designsystem` (local file dependency)
+- [x] Integrate design tokens (colors, spacing, typography)
+- [x] Create base layouts: `default`, `admin`
+- [x] Setup i18n folder + da-DK locale file
+- [x] Add initial runtime config + env example entries
 
 Milestone M0: Development scaffold runs (`pnpm dev`) with lint passing.
 Dependencies: None (root phase).

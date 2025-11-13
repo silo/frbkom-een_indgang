@@ -1,0 +1,68 @@
+{
+  "common": {
+    "save": "Gem",
+    "cancel": "Annuller",
+    "edit": "Rediger",
+    "delete": "Slet",
+    "confirm": "Bekræft",
+    "submit": "Indsend",
+    "next": "Næste",
+    "previous": "Forrige",
+    "close": "Luk",
+    "loading": "Indlæser...",
+    "error": "Der opstod en fejl",
+    "success": "Gennemført",
+    "required": "Påkrævet felt",
+    "optional": "Valgfrit"
+  },
+  "nav": {
+    "home": "Forside",
+    "myEvents": "Mine arrangementer",
+    "newEvent": "Opret nyt arrangement",
+    "logout": "Log ud",
+    "login": "Log ind"
+  },
+  "auth": {
+    "loginWithMitID": "Log ind med MitID",
+    "loggingIn": "Logger ind...",
+    "loginRequired": "Du skal være logget ind for at se denne side",
+    "unauthorized": "Du har ikke adgang til denne side"
+  },
+  "validation": {
+    "required": "Dette felt er påkrævet",
+    "invalidEmail": "Ugyldig email-adresse",
+    "invalidPhone": "Ugyldigt telefonnummer",
+    "invalidCPR": "Ugyldigt CPR-nummer (skal være 10 cifre)",
+    "invalidCVR": "Ugyldigt CVR-nummer (skal være 8 cifre)",
+    "minLength": "Minimum {min} tegn påkrævet",
+    "maxLength": "Maksimum {max} tegn tilladt",
+    "dateInvalid": "Ugyldig dato",
+    "dateEndBeforeStart": "Slutdato skal være efter startdato",
+    "fileTooLarge": "Filen er for stor (maks {size}MB)",
+    "fileInvalidType": "Ugyldig filtype (kun PDF tilladt)",
+    "selectAtLeastOne": "Vælg mindst én"
+  },
+  "events": {
+    "title": "Arrangementer",
+    "createNew": "Opret nyt arrangement",
+    "myEvents": "Mine arrangementer",
+    "status": {
+      "draft": "Kladde",
+      "submitted": "Indsendt",
+      "unprocessed": "Ubehandlet",
+      "in_review": "Under behandling",
+      "partially_approved": "Delvist godkendt",
+      "approved": "Godkendt",
+      "rejected": "Afvist"
+    }
+  },
+  "admin": {
+    "dashboard": "Administratoroverblik",
+    "allEvents": "Alle arrangementer",
+    "eventDetails": "Arrangementdetaljer",
+    "departments": "Afdelinger",
+    "approve": "Godkend",
+    "reject": "Afvis",
+    "assignDepartment": "Tildel afdeling"
+  }
+}
