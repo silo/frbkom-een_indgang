@@ -21,42 +21,42 @@ Dependencies: None (root phase).
 ---
 ## Phase 1 – Data Model & API
 Schema (Drizzle + migrations + seeds):
-- [ ] `user`
-- [ ] `department`
-- [ ] `event_application`
-- [ ] `event_artifact`
-- [ ] `event_document`
-- [ ] `event_sound_info`
-- [ ] `event_waste_info`
-- [ ] `event_food_info`
-- [ ] `event_safety_info`
-- [ ] `event_access_info`
-- [ ] `event_status_history`
-- [ ] `department_event_status`
-- [ ] `event_audit_log`
-- [ ] `location_preset`
-- [ ] `event_type_tag` + link table
-- [ ] Seeds: departments, type tags, location presets
+- [x] `user`
+- [x] `department`
+- [x] `event_application`
+- [x] `event_artifact`
+- [x] `event_document`
+- [x] `event_sound_info`
+- [x] `event_waste_info`
+- [x] `event_food_info`
+- [x] `event_safety_info`
+- [x] `event_access_info`
+- [x] `event_status_history`
+- [x] `department_event_status`
+- [x] `event_audit_log`
+- [x] `location_preset`
+- [x] `event_type_tag` + link table
+- [x] Seeds: departments, type tags, location presets
 
 Zod Schemas:
-- [ ] Event create/update
-- [ ] Artifacts CRUD
-- [ ] Documents upload metadata
-- [ ] Per-info tables (sound/waste/food/safety/access)
-- [ ] Department status update
+- [x] Event create/update
+- [x] Artifacts CRUD
+- [x] Documents upload metadata
+- [x] Per-info tables (sound/waste/food/safety/access)
+- [x] Department status update
 
 tRPC Routers:
-- [ ] `user` (me, myEvents)
-- [ ] `events` (create, update, saveDraft, submit, get/byId, listMine)
-- [ ] `artifacts` (list, create, update, delete)
-- [ ] `documents` (upload, list, delete)
-- [ ] `admin` (listAll, byId, updateStatus, setDepartmentStatus, audit log)
+- [x] `user` (me, myEvents)
+- [x] `events` (create, update, saveDraft, submit, get/byId, listMine)
+- [x] `artifacts` (list, create, update, delete)
+- [x] `documents` (upload, list, delete)
+- [x] `admin` (listAll, byId, updateStatus, setDepartmentStatus, audit log)
 
 Other:
-- [ ] Computed summary completion % endpoint
-- [ ] Audit log writer utility
+- [x] Computed summary completion % endpoint
+- [x] Audit log writer utility
 
-Milestone M1: All entities + endpoints functional with validation.
+Milestone M1: All entities + endpoints functional with validation. ✅ COMPLETE
 Dependencies: Phase 0 (tooling).
 
 ---

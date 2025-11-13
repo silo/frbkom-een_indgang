@@ -49,13 +49,6 @@ export default defineNuxtConfig({
     typeCheck: false, // Disable type checking during dev for now
   },
 
-  // ESLint Configuration
-  eslint: {
-    config: {
-      stylistic: true,
-    },
-  },
-
   // i18n Configuration
   i18n: {
     defaultLocale: 'da-DK',
