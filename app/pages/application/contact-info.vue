@@ -1,145 +1,105 @@
 <template>
-  <div class="step-contact-info">
-    <h2>{{ $t('form.step1.title') }}</h2>
+  <div class="contact-info-step">
+    <header class="header mb-24">
+      <h1 class="heading-2xl title">
+        <span class="title-icon" aria-hidden="true">
+          <Icon name="fa7-solid:phone" size="18" />
+        </span>
+        {{ $t('form.step1.title') }}
+      </h1>
+    </header>
 
-    <form @submit.prevent="handleSubmit">
-      <!-- Generelle oplysninger -->
-      <section class="form-section">
-        <h3>{{ $t('form.step1.generalInfo') }}</h3>
+    <p class="text-m text-muted mb-24">
+      Giv os de grundlæggende kontaktoplysninger, så vi kan komme i kontakt med dig om arrangementet.
+    </p>
 
-        <div class="form-field">
-          <label for="cvrCpr">
-            {{ $t('form.step1.cvrCpr') }}
-            <span class="required">*</span>
-          </label>
-          <input
-            id="cvrCpr"
-            v-model="formData.cvrCpr"
-            type="text"
-            :placeholder="$t('form.step1.cvrCpr')"
-            required
-          >
-          <span v-if="errors.cvrCpr" class="error-message">{{ errors.cvrCpr }}</span>
-        </div>
+    <h4 class="heading-m mb-24">{{ $t('form.step1.generalInfo') }}</h4>
 
-        <div class="form-field">
-          <label for="fullName">
-            {{ $t('form.step1.fullName') }}
-            <span class="required">*</span>
-          </label>
-          <input
-            id="fullName"
-            v-model="formData.fullName"
-            type="text"
-            :placeholder="$t('form.step1.fullName')"
-            required
-          >
-          <span v-if="errors.fullName" class="error-message">{{ errors.fullName }}</span>
-        </div>
+    <div class="form-grid gap-24 mb-24">
+      <div class="form-row two-cols gap-24">
+        <Input
+          v-model="formData.cvrCpr"
+          :label="$t('form.step1.cvrCpr')"
+          :error="errors.cvrCpr"
+          required
+        />
+        <Input
+          v-model="formData.fullName"
+          :label="$t('form.step1.fullName')"
+          :error="errors.fullName"
+          required
+        />
+      </div>
+      <div class="form-row">
+        <Input
+          v-model="formData.phone"
+          :label="$t('form.step1.phone')"
+          type="tel"
+          :error="errors.phone"
+          required
+        />
+      </div>
+      <div class="form-row">
+        <Input
+          v-model="formData.email"
+          :label="$t('form.step1.email')"
+          type="email"
+          :error="errors.email"
+          required
+        />
+      </div>
+      <div class="form-row gap-12">
+        <h5 class="heading-s">{{ $t('form.step1.isCommercial') }}</h5>
+        <RadioGroup
+          v-model="formData.isCommercial"
+          :options="commercialOptions"
+          orientation="vertical"
+        />
+      </div>
+    </div>
 
-        <div class="form-row">
-          <div class="form-field">
-            <label for="phone">
-              {{ $t('form.step1.phone') }}
-              <span class="required">*</span>
-            </label>
-            <input
-              id="phone"
-              v-model="formData.phone"
-              type="tel"
-              :placeholder="$t('form.step1.phone')"
-              required
-            >
-            <span v-if="errors.phone" class="error-message">{{ errors.phone }}</span>
-          </div>
+    <div class="pt-16 pb-40">
+      <div class="hr" />
+    </div>
 
-          <div class="form-field">
-            <label for="email">
-              {{ $t('form.step1.email') }}
-              <span class="required">*</span>
-            </label>
-            <input
-              id="email"
-              v-model="formData.email"
-              type="email"
-              :placeholder="$t('form.step1.email')"
-              required
-            >
-            <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
-          </div>
-        </div>
+    <div class="section-header mb-24">
+      <h4 class="heading-m">{{ $t('form.step1.contactPerson') }}</h4>
+      <Tooltip text="Kontaktpersonen er den primære person, vi vil kontakte vedrørende arrangementet" placement="top">
+        <Icon
+          name="fa7-solid:circle-question"
+          size="18"
+          style="color: #6a6a6a"
+        />
+      </Tooltip>
+    </div>
 
-        <div class="form-field">
-          <label>{{ $t('form.step1.isCommercial') }}</label>
-          <div class="radio-group">
-            <label class="radio-label">
-              <input
-                v-model="formData.isCommercial"
-                type="radio"
-                name="isCommercial"
-                :value="true"
-              >
-              {{ $t('form.step1.yes') }}
-            </label>
-            <label class="radio-label">
-              <input
-                v-model="formData.isCommercial"
-                type="radio"
-                name="isCommercial"
-                :value="false"
-              >
-              {{ $t('form.step1.no') }}
-            </label>
-          </div>
-        </div>
-      </section>
-
-      <!-- Kontaktperson -->
-      <section class="form-section">
-        <h3>{{ $t('form.step1.contactPerson') }}</h3>
-
-        <div class="form-field">
-          <label for="contactPersonName">
-            {{ $t('form.step1.contactPersonName') }}
-            <span class="required">*</span>
-          </label>
-          <input
-            id="contactPersonName"
-            v-model="formData.contactPerson.fullName"
-            type="text"
-            :placeholder="$t('form.step1.contactPersonName')"
-            required
-          >
-          <span v-if="errors.contactPersonName" class="error-message">
-            {{ errors.contactPersonName }}
-          </span>
-        </div>
-
-        <div class="form-field">
-          <label for="contactPersonPhone">
-            {{ $t('form.step1.contactPersonPhone') }}
-            <span class="required">*</span>
-          </label>
-          <input
-            id="contactPersonPhone"
-            v-model="formData.contactPerson.phone"
-            type="tel"
-            :placeholder="$t('form.step1.contactPersonPhone')"
-            required
-          >
-          <span v-if="errors.contactPersonPhone" class="error-message">
-            {{ errors.contactPersonPhone }}
-          </span>
-        </div>
-      </section>
-    </form>
+    <div class="form-grid gap-24 mb-40">
+      <div class="form-row two-cols gap-24">
+        <Input
+          v-model="formData.contactPerson.fullName"
+          :label="$t('form.step1.contactPersonName')"
+          :error="errors.contactPersonName"
+          required
+        />
+        <Input
+          v-model="formData.contactPerson.phone"
+          :label="$t('form.step1.contactPersonPhone')"
+          type="tel"
+          :error="errors.contactPersonPhone"
+          required
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, onMounted } from 'vue'
+import { reactive, computed, onMounted } from 'vue'
 import { useEventFormStore } from '../../stores/event-form'
+import { useI18n } from 'vue-i18n'
+import { Input, RadioGroup, Tooltip } from 'fk-designsystem'
 
+const { t } = useI18n()
 const formStore = useEventFormStore()
 
 const formData = reactive({
@@ -153,6 +113,12 @@ const formData = reactive({
     phone: formStore.formData.contactInfo.contactPerson.phone,
   },
 })
+
+// Radio options for commercial question
+const commercialOptions = computed(() => [
+  { label: t('form.step1.yes'), value: 'yes' },
+  { label: t('form.step1.no'), value: 'no' },
+])
 
 const errors = reactive({
   cvrCpr: '',
@@ -213,9 +179,13 @@ const validateForm = () => {
 
 const handleSubmit = () => {
   if (validateForm()) {
+    // Convert radio value to boolean for store
+    const isCommercialValue = formData.isCommercial === 'yes' ? true : formData.isCommercial === 'no' ? false : null
+    
     // Update store
     formStore.formData.contactInfo = {
       ...formData,
+      isCommercial: isCommercialValue,
     }
     formStore.markStepCompleted(1, true)
     formStore.nextStep()
@@ -225,7 +195,12 @@ const handleSubmit = () => {
 onMounted(() => {
   // Load existing data if any
   if (formStore.formData.contactInfo.cvrCpr) {
-    Object.assign(formData, formStore.formData.contactInfo)
+    const storedData = formStore.formData.contactInfo
+    Object.assign(formData, {
+      ...storedData,
+      // Convert boolean to radio value
+      isCommercial: storedData.isCommercial === true ? 'yes' : storedData.isCommercial === false ? 'no' : '',
+    })
   }
 })
 
@@ -235,7 +210,116 @@ definePageMeta({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.contact-info-step {
+  // Typography classes are global from design system
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; // $spacing-lg
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 1rem; // $spacing-md
+}
+
+.title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; // $size-40
+  height: 40px;
+  border-radius: 9999px; // $border-radius-full
+  background: white;
+  border: 1px solid #EBEBEB; // $color-grey-300
+}
+
+.title-icon :deep(svg) {
+  color: #141414; // $color-grey-1000
+}
+
+.form-grid {
+  display: grid;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.form-row.two-cols {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.section-header {
+  display: flex;
+  gap: 1rem; // $spacing-md
+  align-items: center;
+}
+
+.hr {
+  height: 1px;
+  background: #EBEBEB; // $color-grey-300
+  border: none;
+}
+
+// Utility spacing classes from design system pattern
+.mb-24 {
+  margin-bottom: 24px;
+}
+
+.mb-40 {
+  margin-bottom: 40px;
+}
+
+.pt-16 {
+  padding-top: 16px;
+}
+
+.pb-40 {
+  padding-bottom: 40px;
+}
+
+.gap-12 {
+  gap: 12px;
+}
+
+.gap-24 {
+  gap: 24px;
+}
+
+// Typography helpers
+.text-m {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.text-muted {
+  color: #6A6A6A; // $text-tertiary
+}
+
+.heading-m {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.heading-s {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.heading-2xl {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
 .step-contact-info {
   max-width: 700px;
 }

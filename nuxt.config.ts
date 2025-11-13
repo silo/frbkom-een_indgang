@@ -44,6 +44,11 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2025-07-15',
 
+  // CSS
+  css: [
+    'fk-designsystem/style.css',
+  ],
+
   // TypeScript Configuration
   typescript: {
     strict: true,
