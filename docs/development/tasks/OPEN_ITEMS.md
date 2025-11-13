@@ -1,9 +1,9 @@
 # Open Items (Blocking)
 
-Scope lines: CHECKLIST.md:221-224
+Scope lines: CHECKLIST.md:215-218
 
 ## Items
-- [ ] AD OIDC issuer + client credentials (l221)
-- [ ] Location preset image final paths (l222)
-- [ ] SendGrid sender + template IDs (l223)
-- [ ] Final approved/rejected email copy (l224)
+- [ ] AD OIDC issuer + client credentials (for Phase 4)
+- [ ] Location preset image final paths
+- [ ] SendGrid sender + template IDs
+- [ ] Final approved/rejected email copy

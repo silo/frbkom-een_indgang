@@ -1,21 +1,16 @@
-# Phase 4 – Map Grid Planner (Milestone M4)
+# Phase 4 – Auth & Sessions (Milestone M4)
 
-Scope lines: CHECKLIST.md:121-131
-Blocked by: Phase 2 (artifact schema), Phase 3 (integration point)
-Open Item: Location preset image final paths (l222)
+Scope lines: CHECKLIST.md:118-126
+Blocked by: Phases 0-2 (scaffold, data model, user flow)
 
 ## Tasks
-Visual refs: use Step 3 visuals for context — `docs/Images/flow/praktiske-forhold-og-sikkerhed/tom.png`, `udfyldt.png`; artifact icon example: `docs/Images/flow/praktiske-forhold-og-sikkerhed/Construction Site 1.svg`
-- [ ] Static background image load based on selected location preset (l121)
-- [ ] Sidebar artifact palette (stage, booth, facility, other) (l122)
-- [ ] Drag & drop placement (free form, no snap) (l123)
-- [ ] Artifact visual (30% opacity box + centered icon) (l124)
-- [ ] Rotation handle (top-right) (l125)
-- [ ] Resize handle (bottom-right) (l126)
-- [ ] Info handle (top-left) opening modal (l127)
-- [ ] Modal: type, size, rotation, coordinates, remove (l128)
-- [ ] Persist create/update/delete via artifacts API (l129)
-- [ ] Integration into Step 3.3 (when user chooses not to upload plan). Note: hidden when Step 2 uses "egen adresse" (custom); require single plan PDF instead. (l130)
+- [ ] Nets MitID/NemID OIDC routes: `/auth/login`, `/auth/callback`, `/auth/logout`, `/auth/refresh` (l118)
+- [ ] Session handling (nuxt-auth-utils) + secure cookies (l119)
+- [ ] Admin AD OIDC integration under `/admin` (parallel flow) (issuer/client TBD) (l120)
+- [ ] Shared auth utilities (state, nonce, PKCE) (l121)
+- [ ] Route middleware `auth` enforcing login + role meta (l122)
+- [ ] Secure existing user routes (application flow, my events) (l123)
+- [ ] Admin landing page protected by role (l124)
 
 ## Acceptance Criteria
-- Fully interactive planner with persistence (l132)
+- User & admin can log in/out; all routes protected (l126)

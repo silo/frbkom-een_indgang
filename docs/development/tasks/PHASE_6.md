@@ -1,8 +1,8 @@
 # Phase 6 – Submission, Emails, Documents (Milestone M6)
 
-Scope lines: CHECKLIST.md:152-168
-Blocked by: Phases 3,5 (status changes originate there)
-Open Items: SendGrid sender + template IDs (l223); Final approved/rejected email copy (l224)
+Scope lines: CHECKLIST.md:145-161
+Blocked by: Phases 1-2, 4-5 (data model, user flow, auth, admin status changes)
+Open Items: SendGrid sender + template IDs; Final approved/rejected email copy
 
 ## Documents
 - [ ] PDF upload component (<=5MB, MIME check) (l154)

@@ -19,20 +19,7 @@ Milestone M0: Development scaffold runs (`pnpm dev`) with lint passing.
 Dependencies: None (root phase).
 
 ---
-## Phase 1 – Auth & Sessions
-- [ ] Nets MitID/NemID OIDC routes: `/auth/login`, `/auth/callback`, `/auth/logout`, `/auth/refresh`
-- [ ] Session handling (nuxt-auth-utils) + secure cookies
-- [ ] Admin AD OIDC integration under `/admin` (parallel flow) *(issuer/client TBD)*
-- [ ] Shared auth utilities (state, nonce, PKCE)
-- [ ] Route middleware `auth` enforcing login + role meta
-- [ ] Public pages: `index`, `dashboard` using session state
-- [ ] Admin landing page protected by role
-
-Milestone M1: User & admin can log in/out; protected routes enforced.
-Dependencies: Phase 0.
-
----
-## Phase 2 – Data Model & API
+## Phase 1 – Data Model & API
 Schema (Drizzle + migrations + seeds):
 - [ ] `user`
 - [ ] `department`
@@ -69,11 +56,11 @@ Other:
 - [ ] Computed summary completion % endpoint
 - [ ] Audit log writer utility
 
-Milestone M2: All entities + endpoints functional with validation.
-Dependencies: Phase 0 (tooling). Phase 1 optional (for auth gating) but can parallelize.
+Milestone M1: All entities + endpoints functional with validation.
+Dependencies: Phase 0 (tooling).
 
 ---
-## Phase 3 – User Application Flow (5 Steps)
+## Phase 2 – User Application Flow (5 Steps)
 Shared:
 - [ ] Multi-step container component (state + step navigation)
 - [ ] Draft persistence only on explicit actions
@@ -113,11 +100,11 @@ Step 5 Summary & Submission:
 - [ ] Percentage complete indicator (overall + step)
 - [ ] Submit final (status -> submitted) + email trigger
 
-Milestone M3: End-to-end draft → submit flow operational.
-Dependencies: Phase 2 (API), Phase 1 (auth), Phase 4 (planner embed placeholder acceptable early, full later).
+Milestone M2: End-to-end draft → submit flow operational (without auth protection).
+Dependencies: Phase 1 (API); Phase 3 (planner embed placeholder acceptable early, full later).
 
 ---
-## Phase 4 – Map Grid Planner
+## Phase 3 – Map Grid Planner
 - [ ] Static background image load based on selected location preset
 - [ ] Sidebar artifact palette (stage, booth, facility, other)
 - [ ] Drag & drop placement (free form, no snap)
@@ -129,8 +116,21 @@ Dependencies: Phase 2 (API), Phase 1 (auth), Phase 4 (planner embed placeholder 
 - [ ] Persist create/update/delete via artifacts API
 - [ ] Integration into Step 3.3 (when user chooses not to upload plan)
 
-Milestone M4: Fully interactive planner with persistence.
-Dependencies: Phase 2 artifact schema; Phase 3 step integration.
+Milestone M3: Fully interactive planner with persistence.
+Dependencies: Phase 1 artifact schema; Phase 2 step integration.
+
+---
+## Phase 4 – Auth & Sessions
+- [ ] Nets MitID/NemID OIDC routes: `/auth/login`, `/auth/callback`, `/auth/logout`, `/auth/refresh`
+- [ ] Session handling (nuxt-auth-utils) + secure cookies
+- [ ] Admin AD OIDC integration under `/admin` (parallel flow) *(issuer/client TBD)*
+- [ ] Shared auth utilities (state, nonce, PKCE)
+- [ ] Route middleware `auth` enforcing login + role meta
+- [ ] Secure existing user routes (application flow, my events)
+- [ ] Admin landing page protected by role
+
+Milestone M4: User & admin can log in/out; all routes protected.
+Dependencies: Phases 0-2 (scaffold, data model, user flow).
 
 ---
 ## Phase 5 – Admin Workflow
@@ -146,7 +146,7 @@ Dependencies: Phase 2 artifact schema; Phase 3 step integration.
 - [ ] Email triggers wired to status changes
 
 Milestone M5: Admin can process and finalize applications end-to-end.
-Dependencies: Phases 1–3 (auth, data, user submissions), Phase 6 (email templates).
+Dependencies: Phases 1-4 (data, user flow, planner, auth), Phase 6 (email templates).
 
 ---
 ## Phase 6 – Submission, Emails, Documents
@@ -166,7 +166,7 @@ User Events Page:
 - [ ] Link to resume draft editing
 
 Milestone M6: Document handling & notifications functional.
-Dependencies: Phases 2–3, 5 (status changes).
+Dependencies: Phases 1-2, 4-5 (data model, user flow, auth, admin status changes).
 
 ---
 ## Phase 7 – QA, Accessibility, Content Freeze
@@ -201,10 +201,10 @@ Dependencies: Phase 7 completion.
 ---
 ## Milestone Summary
 - M0: Scaffold Ready
-- M1: Auth Operational
-- M2: Data/API Complete
-- M3: User Flow Submit
-- M4: Planner Integrated
+- M1: Data/API Complete
+- M2: User Flow Submit (without auth)
+- M3: Planner Integrated
+- M4: Auth Operational
 - M5: Admin Processing
 - M6: Docs & Emails Working
 - M7: QA/A11y Sign-off
@@ -212,9 +212,9 @@ Dependencies: Phase 7 completion.
 
 ---
 ## Dependency Graph (High-Level)
-Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 4
-Phase 2 → Phase 5 (after user submissions from 3)
-Phases 3,5 → Phase 6 → Phase 7 → Phase 8
+Phase 0 → Phase 1 (Data) → Phase 2 (User Flow) → Phase 3 (Planner)
+Phase 0-2 → Phase 4 (Auth) → Phase 5 (Admin)
+Phases 1-5 → Phase 6 → Phase 7 → Phase 8
 
 ---
 ## Open Items (to unblock tasks)

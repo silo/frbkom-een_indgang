@@ -13,10 +13,10 @@ This document centralizes all development instructions, tasks, checklists, risks
 ## Phase Overview
 See the full checklist in `./CHECKLIST.md` and detailed tasks under `./tasks/`.
 - Phase 0 – Project Setup → `./tasks/PHASE_0.md`
-- Phase 1 – Auth & Sessions → `./tasks/PHASE_1.md`
-- Phase 2 – Data Model & API → `./tasks/PHASE_2.md`
-- Phase 3 – User Application Flow → `./tasks/PHASE_3.md`
-- Phase 4 – Map Grid Planner → `./tasks/PHASE_4.md`
+- Phase 1 – Data Model & API → `./tasks/PHASE_1.md`
+- Phase 2 – User Application Flow → `./tasks/PHASE_2.md`
+- Phase 3 – Map Grid Planner → `./tasks/PHASE_3.md`
+- Phase 4 – Auth & Sessions → `./tasks/PHASE_4.md`
 - Phase 5 – Admin Workflow → `./tasks/PHASE_5.md`
 - Phase 6 – Submission, Emails, Documents → `./tasks/PHASE_6.md`
 - Phase 7 – QA & Accessibility → `./tasks/PHASE_7.md`

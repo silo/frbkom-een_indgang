@@ -1,50 +1,54 @@
-# Phase 2 – Data Model & API (Milestone M2)
+# Phase 2 – User Application Flow (Milestone M2)
 
-Scope lines: CHECKLIST.md:36-71
-Blocked by: Phase 0 (tooling)
-May parallelize with Phase 1 (auth stubs)
+Scope lines: CHECKLIST.md:63-101
+Blocked by: Phase 1 (API)
+Planner embed placeholder acceptable early; full later (Phase 3)
 
-## Schema (Drizzle + migrations + seeds)
-- [ ] `user` (l37)
-- [ ] `department` (l38)
-- [ ] `event_application` (l39)
-- [ ] `event_artifact` (l40)
-- [ ] `event_document` (l41)
-- [ ] `event_sound_info` (l42)
-- [ ] `event_waste_info` (l43)
-- [ ] `event_food_info` (l44)
-- [ ] `event_safety_info` (l45)
-- [ ] `event_access_info` (l46)
-- [ ] `event_status_history` (l47)
-- [ ] `department_event_status` (l48)
-- [ ] `event_audit_log` (l49)
-- [ ] `location_preset` (l50)
-- [ ] `event_type_tag` + link table (l51)
-- [ ] Seeds: departments, type tags, location presets (l52)
+## Shared
+- [ ] Multi-step container component (state + step navigation) (l78)
+- [ ] Draft persistence only on explicit actions (l79)
+- [ ] Progress/completion % indicator per step (l80)
+- [ ] Validation integration (client + server Zod) (l81)
 
-## Zod Schemas
-- [ ] Event create/update (l55)
-- [ ] Artifacts CRUD (l56)
-- [ ] Documents upload metadata (l57)
-- [ ] Per-info tables (sound/waste/food/safety/access) (l58)
-- [ ] Department status update (l59)
+## Step 1 Kontaktoplysninger
+Visual refs: `docs/Images/flow/kontaktoplysninger.png`, `docs/Images/flow/kontaktoplysninger/fejl.png`
+- [ ] CVR/CPR, Name, Phone, Email, Commercial (Ja/Nej) (l84)
+- [ ] Kontaktperson (Name, Phone) (l86)
 
-## tRPC Routers
-- [ ] `user` (me, myEvents) (l62)
-- [ ] `events` (create, update, saveDraft, submit, get/byId, listMine) (l63)
-- [ ] `artifacts` (list, create, update, delete) (l64)
-- [ ] `documents` (upload, list, delete) (l65)
-- [ ] `admin` (listAll, byId, updateStatus, setDepartmentStatus, audit log) (l66)
+## Step 2 Eventoplysninger
+- [ ] Enforce custom address rule ("egen adresse" hides planner; require single plan PDF) (rule)
+- [ ] Recurring interval limited to dagligt|ugentligt|månedligt (v1) (rule)
+Visual refs: `docs/Images/flow/eventoplysninger/tom.png`, `docs/Images/flow/eventoplysninger/udfyldt.png`
+- [ ] Start/End datetime pickers (l88)
+- [ ] Location selector (preset vs "egen adresse" w/ autocomplete) (l89)
+- [ ] Event type tag multi-select badges (l90)
+- [ ] Title, Purpose, Attendance range dropdown (l91)
+- [ ] Optional PDF upload (relevant info) (l92)
+- [ ] Setup/Teardown dates (l93)
+- [ ] Recurring yes/no + interval dropdown (l95)
 
-## Implementation Notes
-- Add `reviewStatus` enum on `EventApplication`: unprocessed | in_review | partially_approved | approved | rejected.
-- Department status enum on `DepartmentEventStatus`: pending | in_review | approved. Keep `rejected` only for historical/reference, not in v1 UI.
-- Zod: conditional rules for Step 2 (recurring interval required only when recurring = true) and custom address rule (hide planner; require exactly one plan PDF).
-- i18n: add keys for validation messages (missing interval, required plan upload for custom address, BR18 acknowledge required).
+## Step 3 Praktiske forhold og sikkerhed
+Visual refs: `docs/Images/flow/praktiske-forhold-og-sikkerhed/tom.png`, `docs/Images/flow/praktiske-forhold-og-sikkerhed/udfyldt.png`, `docs/Images/flow/praktiske-forhold-og-sikkerhed/fejl.png`, banner: `docs/Images/flow/praktiske-forhold-og-sikkerhed/Info banner.png`, icons: `docs/Images/flow/praktiske-forhold-og-sikkerhed/Construction Site 1.svg`, `docs/Images/flow/praktiske-forhold-og-sikkerhed/Coat of Arms.png`
+- [ ] Simultaneous persons dropdown (l97)
+- [ ] Temporary constructions yes/no + description + certificate upload (l98)
+- [ ] BR18 bilag 11 acknowledgment (radio) (l99)
+- [ ] Other considerations textarea (l100)
+- [ ] Arrangementsplan choice (upload vs embedded planner) except when "egen adresse" (upload only; planner hidden) (l101)
+- [ ] Sound section (has sound, description, responsible name/phone) (l103)
 
-## Other
-- [ ] Computed summary completion % endpoint (l69)
-- [ ] Audit log writer utility (l70)
+## Step 4 Tilladelser og drift
+Visual refs: `docs/Images/flow/tilladelser-og-drift/tom.png`, `docs/Images/flow/tilladelser-og-drift/udfyldt.png`
+- [ ] Blockage required yes/no + description (l105)
+- [ ] Police permission yes/no + PDF upload (l106)
+- [ ] Waste handling yes/no + description (l107)
+- [ ] Food/drinks yes/no + description (l108)
+
+## Step 5 Summary & Submission
+Visual refs: `docs/Images/flow/opsummering-og-bekræftelse.png`, `docs/Images/flow/opsummering-og-bekræftelse/fejl.png`, `docs/Images/flow/bekræftelse.png`
+- [ ] Read-only grouped summaries (Steps 1–4) (l111)
+- [ ] Missing/invalid step indicators (l112)
+- [ ] Percentage complete indicator (overall + step) + disable submit until 100% valid (l113)
+- [ ] Submit final (status -> submitted) + email trigger (l115)
 
 ## Acceptance Criteria
-- All entities + endpoints functional with validation (l72)
+- End-to-end draft → submit flow operational (l116)

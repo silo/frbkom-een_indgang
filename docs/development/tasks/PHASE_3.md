@@ -1,54 +1,21 @@
-# Phase 3 – User Application Flow (Milestone M3)
+# Phase 3 – Map Grid Planner (Milestone M3)
 
-Scope lines: CHECKLIST.md:76-115
-Blocked by: Phase 1 (auth), Phase 2 (API)
-Planner embed placeholder acceptable early; full later (Phase 4)
+Scope lines: CHECKLIST.md:105-114
+Blocked by: Phase 1 artifact schema; Phase 2 step integration
+Open Item: Location preset image final paths (l222)
 
-## Shared
-- [ ] Multi-step container component (state + step navigation) (l78)
-- [ ] Draft persistence only on explicit actions (l79)
-- [ ] Progress/completion % indicator per step (l80)
-- [ ] Validation integration (client + server Zod) (l81)
-
-## Step 1 Kontaktoplysninger
-Visual refs: `docs/Images/flow/kontaktoplysninger.png`, `docs/Images/flow/kontaktoplysninger/fejl.png`
-- [ ] CVR/CPR, Name, Phone, Email, Commercial (Ja/Nej) (l84)
-- [ ] Kontaktperson (Name, Phone) (l86)
-
-## Step 2 Eventoplysninger
-- [ ] Enforce custom address rule ("egen adresse" hides planner; require single plan PDF) (rule)
-- [ ] Recurring interval limited to dagligt|ugentligt|månedligt (v1) (rule)
-Visual refs: `docs/Images/flow/eventoplysninger/tom.png`, `docs/Images/flow/eventoplysninger/udfyldt.png`
-- [ ] Start/End datetime pickers (l88)
-- [ ] Location selector (preset vs "egen adresse" w/ autocomplete) (l89)
-- [ ] Event type tag multi-select badges (l90)
-- [ ] Title, Purpose, Attendance range dropdown (l91)
-- [ ] Optional PDF upload (relevant info) (l92)
-- [ ] Setup/Teardown dates (l93)
-- [ ] Recurring yes/no + interval dropdown (l95)
-
-## Step 3 Praktiske forhold og sikkerhed
-Visual refs: `docs/Images/flow/praktiske-forhold-og-sikkerhed/tom.png`, `docs/Images/flow/praktiske-forhold-og-sikkerhed/udfyldt.png`, `docs/Images/flow/praktiske-forhold-og-sikkerhed/fejl.png`, banner: `docs/Images/flow/praktiske-forhold-og-sikkerhed/Info banner.png`, icons: `docs/Images/flow/praktiske-forhold-og-sikkerhed/Construction Site 1.svg`, `docs/Images/flow/praktiske-forhold-og-sikkerhed/Coat of Arms.png`
-- [ ] Simultaneous persons dropdown (l97)
-- [ ] Temporary constructions yes/no + description + certificate upload (l98)
-- [ ] BR18 bilag 11 acknowledgment (radio) (l99)
-- [ ] Other considerations textarea (l100)
-- [ ] Arrangementsplan choice (upload vs embedded planner) except when "egen adresse" (upload only; planner hidden) (l101)
-- [ ] Sound section (has sound, description, responsible name/phone) (l103)
-
-## Step 4 Tilladelser og drift
-Visual refs: `docs/Images/flow/tilladelser-og-drift/tom.png`, `docs/Images/flow/tilladelser-og-drift/udfyldt.png`
-- [ ] Blockage required yes/no + description (l105)
-- [ ] Police permission yes/no + PDF upload (l106)
-- [ ] Waste handling yes/no + description (l107)
-- [ ] Food/drinks yes/no + description (l108)
-
-## Step 5 Summary & Submission
-Visual refs: `docs/Images/flow/opsummering-og-bekræftelse.png`, `docs/Images/flow/opsummering-og-bekræftelse/fejl.png`, `docs/Images/flow/bekræftelse.png`
-- [ ] Read-only grouped summaries (Steps 1–4) (l111)
-- [ ] Missing/invalid step indicators (l112)
-- [ ] Percentage complete indicator (overall + step) + disable submit until 100% valid (l113)
-- [ ] Submit final (status -> submitted) + email trigger (l115)
+## Tasks
+Visual refs: use Step 3 visuals for context — `docs/Images/flow/praktiske-forhold-og-sikkerhed/tom.png`, `udfyldt.png`; artifact icon example: `docs/Images/flow/praktiske-forhold-og-sikkerhed/Construction Site 1.svg`
+- [ ] Static background image load based on selected location preset (l121)
+- [ ] Sidebar artifact palette (stage, booth, facility, other) (l122)
+- [ ] Drag & drop placement (free form, no snap) (l123)
+- [ ] Artifact visual (30% opacity box + centered icon) (l124)
+- [ ] Rotation handle (top-right) (l125)
+- [ ] Resize handle (bottom-right) (l126)
+- [ ] Info handle (top-left) opening modal (l127)
+- [ ] Modal: type, size, rotation, coordinates, remove (l128)
+- [ ] Persist create/update/delete via artifacts API (l129)
+- [ ] Integration into Step 3.3 (when user chooses not to upload plan). Note: hidden when Step 2 uses "egen adresse" (custom); require single plan PDF instead. (l130)
 
 ## Acceptance Criteria
-- End-to-end draft → submit flow operational (l116)
+- Fully interactive planner with persistence (l132)

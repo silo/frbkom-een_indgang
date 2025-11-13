@@ -1,8 +1,8 @@
 # Phase 5 – Admin Workflow (Milestone M5)
 
-Scope lines: CHECKLIST.md:136-147
-Blocked by: Phases 1–3 (auth, data, user submissions)
-Depends on Phase 6 (email templates) for final triggers (l149)
+Scope lines: CHECKLIST.md:130-141
+Blocked by: Phases 1-4 (data, user flow, planner, auth)
+Depends on Phase 6 (email templates) for final triggers
 
 ## Tasks
 Visual refs: Dashboard `docs/Images/admin/overblik.png`, Detail `docs/Images/admin/detaljeside.png`, Approve modal `docs/Images/admin/detaljeside/godkend-ansøgning.png`

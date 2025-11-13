@@ -15,15 +15,15 @@ This repository is a Nuxt 4 (Vue 3 + TypeScript) app implementing Frederiksberg 
 - All-in-one development hub: `docs/development/ALL_DEVELOPMENT.md`
 - Phases and milestone checklist: `docs/development/CHECKLIST.md`
 - Phase task checklists: `docs/development/tasks/`
-  - Phase 0 → `docs/development/tasks/PHASE_0.md`
-  - Phase 1 → `docs/development/tasks/PHASE_1.md`
-  - Phase 2 → `docs/development/tasks/PHASE_2.md`
-  - Phase 3 → `docs/development/tasks/PHASE_3.md` (includes visual refs for each step)
-  - Phase 4 → `docs/development/tasks/PHASE_4.md` (planner refs)
-  - Phase 5 → `docs/development/tasks/PHASE_5.md` (admin refs)
-  - Phase 6 → `docs/development/tasks/PHASE_6.md`
-  - Phase 7 → `docs/development/tasks/PHASE_7.md`
-  - Phase 8 → `docs/development/tasks/PHASE_8.md`
+  - Phase 0 → `docs/development/tasks/PHASE_0.md` (Project Setup)
+  - Phase 1 → `docs/development/tasks/PHASE_1.md` (Data Model & API)
+  - Phase 2 → `docs/development/tasks/PHASE_2.md` (User Application Flow, includes visual refs)
+  - Phase 3 → `docs/development/tasks/PHASE_3.md` (Map Grid Planner, planner refs)
+  - Phase 4 → `docs/development/tasks/PHASE_4.md` (Auth & Sessions)
+  - Phase 5 → `docs/development/tasks/PHASE_5.md` (Admin Workflow, admin refs)
+  - Phase 6 → `docs/development/tasks/PHASE_6.md` (Submission, Emails, Documents)
+  - Phase 7 → `docs/development/tasks/PHASE_7.md` (QA & Accessibility)
+  - Phase 8 → `docs/development/tasks/PHASE_8.md` (Release Prep)
 - Cross-cutting: `docs/development/tasks/CROSS_CUTTING.md`
 - Open items (blocking): `docs/development/tasks/OPEN_ITEMS.md`
 - Risks: `docs/development/tasks/RISKS.md`
