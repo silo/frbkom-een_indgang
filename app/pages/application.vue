@@ -22,11 +22,15 @@ definePageMeta({
 })
 
 if (import.meta.server) {
-  await navigateTo('/application/contact-info')
+  if (isBaseRoute.value) {
+    await navigateTo('/application/contact-info')
+  }
 } else {
   const router = useRouter()
   onMounted(() => {
-    router.replace('/application/contact-info')
+    if (isBaseRoute.value) {
+      router.replace('/application/contact-info')
+    }
   })
 }
 </script>
