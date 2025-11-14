@@ -1,8 +1,10 @@
 import { initTRPC, TRPCError } from '@trpc/server'
+import { eq } from 'drizzle-orm'
 import superjson from 'superjson'
 // @ts-expect-error - H3 types provided by Nuxt at runtime
 import type { H3Event } from 'h3'
 import { db } from '../database/client'
+import { user } from '../database/schema'
 
 export interface Context {
   event: H3Event
@@ -14,13 +16,62 @@ export interface Context {
   } | null
 }
 
+const DEV_USER_ID = '00000000-0000-0000-0000-000000000001'
+const ENABLE_DEV_AUTH = process.env.ENABLE_DEV_AUTH === 'true'
+
+const ensureDevUser = async () => {
+  try {
+    const existing = await db.select().from(user).where(eq(user.id, DEV_USER_ID)).limit(1)
+    if (existing[0]) {
+      return existing[0]
+    }
+
+    const [created] = await db
+      .insert(user)
+      .values({
+        id: DEV_USER_ID,
+        identityType: 'private',
+        cpr: '1111111111',
+        mitidUuid: 'dev-mitid-user',
+        name: 'Dev Citizen',
+        email: 'dev@example.com',
+        phone: '00000000',
+        role: 'admin',
+        companyCvr: null,
+        lastLoginAt: new Date(),
+        lastIdp: 'dev',
+      })
+      .onConflictDoNothing()
+      .returning()
+
+    if (created) {
+      return created
+    }
+
+    const retry = await db.select().from(user).where(eq(user.id, DEV_USER_ID)).limit(1)
+    return retry[0] ?? null
+  } catch (error) {
+    console.warn('Dev auth user could not be ensured. Continuing without DB user.', error)
+    return null
+  }
+}
+
 export const createContext = async (event: H3Event): Promise<Context> => {
-  // TODO: Get user from session in Phase 4
-  // For now, return null user
+  let currentUser: Context['user'] = null
+
+  if (ENABLE_DEV_AUTH) {
+    const devUser = await ensureDevUser()
+    currentUser = {
+      id: devUser?.id ?? DEV_USER_ID,
+      role: devUser?.role ?? 'admin',
+      email: devUser?.email ?? 'dev@example.com',
+    }
+  }
+
   return {
     event,
     db,
-    user: null,
+    user: currentUser,
   }
 }
 

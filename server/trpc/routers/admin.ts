@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server'
-import { eq, desc } from 'drizzle-orm'
-import { router, protectedProcedure, adminProcedure } from '../context'
+import { eq } from 'drizzle-orm'
+import { router, adminProcedure } from '../context'
 import { z } from 'zod'
 import { reviewStatusEnum } from '../../../shared/schemas/event'
 import {

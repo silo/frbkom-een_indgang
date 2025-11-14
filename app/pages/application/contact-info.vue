@@ -10,7 +10,7 @@
     </header>
 
     <p class="text-m text-muted mb-24">
-      Giv os de grundlæggende kontaktoplysninger, så vi kan komme i kontakt med dig om arrangementet.
+      {{ $t('form.step1.subtitle') }}
     </p>
 
     <h4 class="heading-m mb-24">{{ $t('form.step1.generalInfo') }}</h4>
@@ -18,13 +18,15 @@
     <div class="form-grid gap-24 mb-24">
       <div class="form-row two-cols gap-24">
         <Input
-          v-model="formData.cvrCpr"
+          id="contact-cvr-cpr"
+          v-model="contactInfo.cvrCpr"
           :label="$t('form.step1.cvrCpr')"
           :error="errors.cvrCpr"
           required
         />
         <Input
-          v-model="formData.fullName"
+          id="contact-full-name"
+          v-model="contactInfo.fullName"
           :label="$t('form.step1.fullName')"
           :error="errors.fullName"
           required
@@ -32,7 +34,8 @@
       </div>
       <div class="form-row">
         <Input
-          v-model="formData.phone"
+          id="contact-phone"
+          v-model="contactInfo.phone"
           :label="$t('form.step1.phone')"
           type="tel"
           :error="errors.phone"
@@ -41,7 +44,8 @@
       </div>
       <div class="form-row">
         <Input
-          v-model="formData.email"
+          id="contact-email"
+          v-model="contactInfo.email"
           :label="$t('form.step1.email')"
           type="email"
           :error="errors.email"
@@ -51,7 +55,9 @@
       <div class="form-row gap-12">
         <h5 class="heading-s">{{ $t('form.step1.isCommercial') }}</h5>
         <RadioGroup
-          v-model="formData.isCommercial"
+          id="contact-is-commercial"
+          name="contact-is-commercial"
+          v-model="contactInfo.isCommercial"
           :options="commercialOptions"
           orientation="vertical"
         />
@@ -59,12 +65,12 @@
     </div>
 
     <div class="pt-16 pb-40">
-      <div class="hr" />
+      <div class="hr"></div>
     </div>
 
     <div class="section-header mb-24">
       <h4 class="heading-m">{{ $t('form.step1.contactPerson') }}</h4>
-      <Tooltip text="Kontaktpersonen er den primære person, vi vil kontakte vedrørende arrangementet" placement="top">
+      <Tooltip id="contact-person-help" text="Kontaktpersonen er den primære person, vi vil kontakte vedrørende arrangementet" placement="top">
         <Icon
           name="fa7-solid:circle-question"
           size="18"
@@ -76,13 +82,15 @@
     <div class="form-grid gap-24 mb-40">
       <div class="form-row two-cols gap-24">
         <Input
-          v-model="formData.contactPerson.fullName"
+          id="contact-person-name"
+          v-model="contactInfo.contactPerson.fullName"
           :label="$t('form.step1.contactPersonName')"
           :error="errors.contactPersonName"
           required
         />
         <Input
-          v-model="formData.contactPerson.phone"
+          id="contact-person-phone"
+          v-model="contactInfo.contactPerson.phone"
           :label="$t('form.step1.contactPersonPhone')"
           type="tel"
           :error="errors.contactPersonPhone"
@@ -94,30 +102,22 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, computed, onMounted } from 'vue'
+import { reactive, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useEventFormStore } from '../../stores/event-form'
 import { useI18n } from 'vue-i18n'
 import { Input, RadioGroup, Tooltip } from 'fk-designsystem'
+import { useStepControls } from '../../composables/useStepControls'
 
 const { t } = useI18n()
+const router = useRouter()
 const formStore = useEventFormStore()
+const stepControls = useStepControls()
+const contactInfo = formStore.formData.contactInfo
 
-const formData = reactive({
-  cvrCpr: formStore.formData.contactInfo.cvrCpr,
-  fullName: formStore.formData.contactInfo.fullName,
-  phone: formStore.formData.contactInfo.phone,
-  email: formStore.formData.contactInfo.email,
-  isCommercial: formStore.formData.contactInfo.isCommercial,
-  contactPerson: {
-    fullName: formStore.formData.contactInfo.contactPerson.fullName,
-    phone: formStore.formData.contactInfo.contactPerson.phone,
-  },
-})
-
-// Radio options for commercial question
 const commercialOptions = computed(() => [
-  { label: t('form.step1.yes'), value: 'yes' },
-  { label: t('form.step1.no'), value: 'no' },
+  { label: t('form.step1.yes'), value: true },
+  { label: t('form.step1.no'), value: false },
 ])
 
 const errors = reactive({
@@ -129,83 +129,80 @@ const errors = reactive({
   contactPersonPhone: '',
 })
 
-const validateForm = () => {
-  let isValid = true
+const resetErrors = () => {
   errors.cvrCpr = ''
   errors.fullName = ''
   errors.phone = ''
   errors.email = ''
   errors.contactPersonName = ''
   errors.contactPersonPhone = ''
+}
 
-  // CVR/CPR validation (8 or 10 digits)
-  if (!formData.cvrCpr || !/^\d{8}$|^\d{10}$/.test(formData.cvrCpr)) {
-    errors.cvrCpr = 'CVR skal være 8 cifre eller CPR skal være 10 cifre'
+const validateForm = () => {
+  resetErrors()
+  let isValid = true
+
+  if (!contactInfo.cvrCpr || !/^\d{8}$|^\d{10}$/.test(contactInfo.cvrCpr)) {
+    errors.cvrCpr = t('validation.invalidCVR')
     isValid = false
   }
 
-  // Name validation
-  if (!formData.fullName || formData.fullName.length < 2) {
-    errors.fullName = 'Navn er påkrævet'
+  if (!contactInfo.fullName || contactInfo.fullName.length < 2) {
+    errors.fullName = t('validation.required')
     isValid = false
   }
 
-  // Phone validation
-  if (!formData.phone || !/^\d{8}$/.test(formData.phone.replace(/\s/g, ''))) {
-    errors.phone = 'Telefonnummer skal være 8 cifre'
+  if (!contactInfo.phone || !/^\d{8}$/.test(contactInfo.phone.replace(/\s/g, ''))) {
+    errors.phone = t('validation.invalidPhone')
     isValid = false
   }
 
-  // Email validation
-  if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-    errors.email = 'Ugyldig email-adresse'
+  if (!contactInfo.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email)) {
+    errors.email = t('validation.invalidEmail')
     isValid = false
   }
 
-  // Contact person name validation
-  if (!formData.contactPerson.fullName || formData.contactPerson.fullName.length < 2) {
-    errors.contactPersonName = 'Kontaktpersonens navn er påkrævet'
+  if (!contactInfo.contactPerson.fullName || contactInfo.contactPerson.fullName.length < 2) {
+    errors.contactPersonName = t('validation.required')
     isValid = false
   }
 
-  // Contact person phone validation
-  if (!formData.contactPerson.phone || !/^\d{8}$/.test(formData.contactPerson.phone.replace(/\s/g, ''))) {
-    errors.contactPersonPhone = 'Telefonnummer skal være 8 cifre'
+  if (
+    !contactInfo.contactPerson.phone ||
+    !/^\d{8}$/.test(contactInfo.contactPerson.phone.replace(/\s/g, ''))
+  ) {
+    errors.contactPersonPhone = t('validation.invalidPhone')
     isValid = false
   }
 
   return isValid
 }
 
-const handleSubmit = () => {
-  if (validateForm()) {
-    // Convert radio value to boolean for store
-    const isCommercialValue = formData.isCommercial === 'yes' ? true : formData.isCommercial === 'no' ? false : null
-    
-    // Update store
-    formStore.formData.contactInfo = {
-      ...formData,
-      isCommercial: isCommercialValue,
-    }
-    formStore.markStepCompleted(1, true)
-    formStore.nextStep()
+const goToNextStep = async () => {
+  const isValid = validateForm()
+  formStore.markStepCompleted(1, isValid)
+  if (!isValid) {
+    return
+  }
+
+  const nextStepPath = formStore.getStepPath(2)
+  if (nextStepPath) {
+    formStore.goToStep(2)
+    await router.push(nextStepPath)
   }
 }
 
 onMounted(() => {
-  // Load existing data if any
-  if (formStore.formData.contactInfo.cvrCpr) {
-    const storedData = formStore.formData.contactInfo
-    Object.assign(formData, {
-      ...storedData,
-      // Convert boolean to radio value
-      isCommercial: storedData.isCommercial === true ? 'yes' : storedData.isCommercial === false ? 'no' : '',
-    })
-  }
+  formStore.setCurrentStepByPath('/application/contact-info')
+  stepControls.value.onNext = goToNextStep
+})
+
+onUnmounted(() => {
+  stepControls.value.onNext = undefined
 })
 
 definePageMeta({
-  layout: 'default',
+  layout: 'application',
   name: 'ContactInfo',
 })
 </script>

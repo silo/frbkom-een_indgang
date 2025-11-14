@@ -15,5 +15,8 @@
   "context7.options": {
     "cacheTtlSeconds": 86400,
     "maxResults": 8
-  }
+  },
+  "i18n-ally.localesPaths": [
+    "app/locales"
+  ]
 }

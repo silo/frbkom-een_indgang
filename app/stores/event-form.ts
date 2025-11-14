@@ -140,9 +140,21 @@ export const useEventFormStore = defineStore('eventForm', {
     markStepCompleted(stepId: number, isValid: boolean) {
       const step = this.steps.find((s: FormStep) => s.id === stepId)
       if (step) {
-        step.completed = true
+        step.completed = isValid
         step.valid = isValid
       }
+    },
+
+    setCurrentStepByPath(path: string) {
+      const step = this.steps.find((s: FormStep) => s.path === path)
+      if (step) {
+        this.currentStep = step.id
+      }
+    },
+
+    getStepPath(stepId: number) {
+      const step = this.steps.find((s: FormStep) => s.id === stepId)
+      return step?.path
     },
 
     async saveDraft() {
