@@ -23,6 +23,31 @@
       </span>
     </div>
 
+    <!-- Step completion alerts -->
+    <div v-if="incompleteSteps.length" class="step-alerts mb-24">
+      <div
+        v-for="step in incompleteSteps"
+        :key="step.id"
+        class="step-alert-card"
+      >
+        <div class="step-alert-left">
+          <div class="step-circle" :data-state="step.isComplete ? 'complete' : 'incomplete'">
+            {{ step.id }}
+          </div>
+          <div>
+            <p class="alert-title">{{ step.id }}. {{ step.title }}</p>
+            <p class="alert-text">
+              <span class="alert-text-missing">{{ formatMissingLabel(step.missingCount) }}</span>
+              <span class="alert-text-progress">{{ step.percentage }}% udfyldt</span>
+            </p>
+          </div>
+        </div>
+        <Button variant="secondary" size="small" @click="goToStep(step.id)">
+          {{ $t('form.step5.fillStep') }}
+        </Button>
+      </div>
+    </div>
+
     <!-- Progress indicator -->
     <div class="progress-card mb-24">
       <div class="progress-header">
@@ -30,7 +55,7 @@
         <span class="progress-percent heading-l">{{ completionPercentage }}%</span>
       </div>
       <div class="progress-bar">
-        <div class="progress-fill" :style="{ width: `${completionPercentage}%` }"></div>
+        <div class="progress-fill" :style="{ width: `${completionPercentage}%` }" />
       </div>
       <p v-if="completionPercentage < 100" class="text-s text-muted mt-12">
         {{ $t('form.step5.incompleteWarning') }}
@@ -209,14 +234,17 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { useEventFormStore } from '../../stores/event-form'
 import { useRouter } from 'vue-router'
+import { Button } from 'fk-designsystem'
+import { useEventFormStore } from '../../stores/event-form'
 import { useStepControls } from '../../composables/useStepControls'
+import { useStepCompletion } from '../../composables/useStepCompletion'
 const formStore = useEventFormStore()
 const router = useRouter()
 const stepControls = useStepControls()
 const submissionStatus = ref<'idle' | 'success' | 'error'>('idle')
 const isSubmitting = ref(false)
+const { incompleteSteps, formatMissingLabel } = useStepCompletion()
 
 // Form data
 const formData = computed(() => formStore.formData)
@@ -320,6 +348,70 @@ definePageMeta({
   background: #f0f7ff;
   border: 2px solid #0057B8;
   border-radius: 12px;
+}
+
+.step-alerts {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.step-alert-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #fff;
+  border: 1px solid #f2dede;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(24, 39, 75, 0.08);
+}
+
+.step-alert-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.step-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border: 2px solid #0f5b33;
+  color: #0f5b33;
+  background: #e8f5ee;
+
+  &[data-state='incomplete'] {
+    border-color: #d93025;
+    color: #d93025;
+    background: #fdecea;
+  }
+}
+
+.alert-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.alert-text {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  color: #6a6a6a;
+}
+
+.alert-text-missing {
+  color: #d93025;
+  font-weight: 600;
+}
+
+.alert-text-progress {
+  margin-top: 2px;
+  color: #4c4c4c;
 }
 
 .progress-header {

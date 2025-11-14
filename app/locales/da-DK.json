@@ -142,7 +142,11 @@
       "submitApplication": "Indsend ansøgning",
       "incompleteWarning": "Udfyld alle påkrævede felter før indsendelse",
       "submitSuccess": "Din ansøgning er sendt afsted. Vi vender tilbage hurtigst muligt.",
-      "submitError": "Noget gik galt under indsendelsen. Prøv igen."
+      "submitError": "Noget gik galt under indsendelsen. Prøv igen.",
+      "missingFieldsOne": "1 felt mangler at blive udfyldt",
+      "missingFieldsOther": "{count} felter mangler at blive udfyldt",
+      "noMissingFields": "Alle felter er udfyldt",
+      "fillStep": "Udfyld"
     }
   },
   "events": {
