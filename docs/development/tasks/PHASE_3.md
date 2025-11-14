@@ -1,4 +1,4 @@
-# Phase 3 – Map Grid Planner (Milestone M3)
+# Phase 3 – Map Grid Planner (Deferred, executes after Phase 8 once customer feedback lands)
 
 Scope lines: CHECKLIST.md:105-114
 Blocked by: Phase 1 artifact schema; Phase 2 step integration

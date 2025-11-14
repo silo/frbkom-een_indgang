@@ -127,7 +127,7 @@ SELECT * FROM location_preset;
 
 1. **Test tRPC Endpoints** - Verify all API routes work with the database
 2. **Phase 2** - Implement user application flow UI
-3. **Phase 3** - Build map grid planner interface
+3. **Phase 3 (deferred)** - Map grid planner interface (run after Phase 8 when customer feedback arrives)
 4. **Phase 4** - Integrate MitID authentication
 
 ## Troubleshooting

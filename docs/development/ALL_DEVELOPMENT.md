@@ -15,12 +15,12 @@ See the full checklist in `./CHECKLIST.md` and detailed tasks under `./tasks/`.
 - Phase 0 – Project Setup → `./tasks/PHASE_0.md`
 - Phase 1 – Data Model & API → `./tasks/PHASE_1.md`
 - Phase 2 – User Application Flow → `./tasks/PHASE_2.md`
-- Phase 3 – Map Grid Planner → `./tasks/PHASE_3.md`
 - Phase 4 – Auth & Sessions → `./tasks/PHASE_4.md`
 - Phase 5 – Admin Workflow → `./tasks/PHASE_5.md`
 - Phase 6 – Submission, Emails, Documents → `./tasks/PHASE_6.md`
 - Phase 7 – QA & Accessibility → `./tasks/PHASE_7.md`
 - Phase 8 – Release Prep → `./tasks/PHASE_8.md`
+- Phase 3 – Map Grid Planner (deferred to the final phase; awaiting customer feedback) → `./tasks/PHASE_3.md`
 
 Cross-cutting → `./tasks/CROSS_CUTTING.md`
 Open items → `./tasks/OPEN_ITEMS.md`

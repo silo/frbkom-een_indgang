@@ -2,7 +2,7 @@
 
 Scope lines: CHECKLIST.md:63-101
 Blocked by: Phase 1 (API)
-Planner embed placeholder acceptable early; full later (Phase 3)
+Planner embed placeholder acceptable early; full planner deferred to final phase (Phase 3 – run after customer feedback)
 
 ## Shared
 - [ ] Multi-step container component (state + step navigation) (l78)

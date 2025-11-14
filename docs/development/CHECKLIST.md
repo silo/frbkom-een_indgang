@@ -101,23 +101,7 @@ Step 5 Summary & Submission:
 - [ ] Submit final (status -> submitted) + email trigger
 
 Milestone M2: End-to-end draft → submit flow operational (without auth protection).
-Dependencies: Phase 1 (API); Phase 3 (planner embed placeholder acceptable early, full later).
-
----
-## Phase 3 – Map Grid Planner
-- [ ] Static background image load based on selected location preset
-- [ ] Sidebar artifact palette (stage, booth, facility, other)
-- [ ] Drag & drop placement (free form, no snap)
-- [ ] Artifact visual (30% opacity box + centered icon)
-- [ ] Rotation handle (top-right)
-- [ ] Resize handle (bottom-right)
-- [ ] Info handle (top-left) opening modal
-- [ ] Modal: type, size, rotation, coordinates, remove
-- [ ] Persist create/update/delete via artifacts API
-- [ ] Integration into Step 3.3 (when user chooses not to upload plan)
-
-Milestone M3: Fully interactive planner with persistence.
-Dependencies: Phase 1 artifact schema; Phase 2 step integration.
+Dependencies: Phase 1 (API); Map grid planner deferred – continue with placeholder until customer feedback unlocks the final phase.
 
 ---
 ## Phase 4 – Auth & Sessions
@@ -191,6 +175,22 @@ Milestone M8: v1 Release approved.
 Dependencies: Phase 7 completion.
 
 ---
+## Phase 3 – Map Grid Planner (Deferred until customer feedback; run after Phase 8)
+- [ ] Static background image load based on selected location preset
+- [ ] Sidebar artifact palette (stage, booth, facility, other)
+- [ ] Drag & drop placement (free form, no snap)
+- [ ] Artifact visual (30% opacity box + centered icon)
+- [ ] Rotation handle (top-right)
+- [ ] Resize handle (bottom-right)
+- [ ] Info handle (top-left) opening modal
+- [ ] Modal: type, size, rotation, coordinates, remove
+- [ ] Persist create/update/delete via artifacts API
+- [ ] Integration into Step 3.3 (when user chooses not to upload plan)
+
+Milestone M9: Fully interactive planner with persistence.
+Dependencies: Phase 1 artifact schema; Phase 2 step integration; execute only after Phase 8 sign-off + customer feedback.
+
+---
 ## Cross-Cutting Items
 - [ ] Locale file coverage >= 100% of UI strings
 - [ ] Error handling standardized (user-friendly messages)
@@ -209,12 +209,14 @@ Dependencies: Phase 7 completion.
 - M6: Docs & Emails Working
 - M7: QA/A11y Sign-off
 - M8: Release Approved
+- M9: Planner Integrated (deferred pending customer feedback)
 
 ---
 ## Dependency Graph (High-Level)
-Phase 0 → Phase 1 (Data) → Phase 2 (User Flow) → Phase 3 (Planner)
+Phase 0 → Phase 1 (Data) → Phase 2 (User Flow)
 Phase 0-2 → Phase 4 (Auth) → Phase 5 (Admin)
 Phases 1-5 → Phase 6 → Phase 7 → Phase 8
+Phase 1-2 (data + user flow) + Phase 8 (release) → Phase 3 (Planner, executed last once feedback lands)
 
 ---
 ## Open Items (to unblock tasks)
