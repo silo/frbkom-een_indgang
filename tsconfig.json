@@ -10,7 +10,8 @@
       "~/*": ["./*"],
       "@/*": ["./*"],
       "~~/*": ["./*"],
-      "@@/*": ["./*"]
+        "@@/*": ["./*"],
+        "#auth-utils/server": ["./node_modules/nuxt-auth-utils/dist/runtime/server/utils/session"]
     }
   }
 }

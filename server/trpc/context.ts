@@ -1,10 +1,10 @@
 import { initTRPC, TRPCError } from '@trpc/server'
 import { eq } from 'drizzle-orm'
 import superjson from 'superjson'
-// @ts-expect-error - H3 types provided by Nuxt at runtime
 import type { H3Event } from 'h3'
 import { db } from '../database/client'
 import { user } from '../database/schema'
+import { getUserSession } from '#auth-utils/server'
 
 export interface Context {
   event: H3Event
@@ -59,7 +59,15 @@ const ensureDevUser = async () => {
 export const createContext = async (event: H3Event): Promise<Context> => {
   let currentUser: Context['user'] = null
 
-  if (ENABLE_DEV_AUTH) {
+  const session = await getUserSession(event)
+
+  if (session.user) {
+    currentUser = {
+      id: session.user.id,
+      role: session.user.role,
+      email: session.user.email,
+    }
+  } else if (ENABLE_DEV_AUTH) {
     const devUser = await ensureDevUser()
     currentUser = {
       id: devUser?.id ?? DEV_USER_ID,

@@ -1,7 +1,19 @@
+import { fileURLToPath } from 'node:url'
+
+const authServerUtilsPath = fileURLToPath(
+  new URL('./node_modules/nuxt-auth-utils/dist/runtime/server/utils/session.js', import.meta.url),
+)
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 
+  alias: {
+    // Ensure Nitro resolves server session helpers to the actual runtime file
+    '#auth-utils/server': authServerUtilsPath,
+  },
+
   modules: [
+    'nuxt-auth-utils',
     '@nuxt/eslint',
     '@nuxt/fonts',
     '@nuxt/icon',
@@ -33,6 +45,7 @@ export default defineNuxtConfig({
     public: {
       netsClientId: '',
       netsEnvironment: 'preproduction',
+      netsIssuer: '',
       baseUrl: 'http://localhost:3000',
       appName: 'Én Indgang',
       maxFileSizeMb: 5,
@@ -43,6 +56,15 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
   compatibilityDate: '2025-07-15',
+
+  auth: {
+    sessionConfig: {
+      maxAge: 60 * 60, // 1 hour
+      sameSite: 'lax',
+      secure: true,
+      httpOnly: true,
+    },
+  },
 
   // CSS
   css: [

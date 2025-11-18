@@ -303,6 +303,7 @@ onUnmounted(() => {
 definePageMeta({
   layout: 'application',
   name: 'ApplicationSummary',
+    middleware: 'auth',
 })
 </script>
 

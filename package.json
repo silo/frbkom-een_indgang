@@ -45,6 +45,7 @@
     "drizzle-orm": "^0.38.3",
     "eslint": "^9.39.1",
     "fk-designsystem": "file:/Users/silo/Documents/Frederiksberg_kommune/fk_designsystem",
+    "h3": "^1.13.0",
     "nuxt": "^4.2.1",
     "nuxt-auth-utils": "^0.5.4",
     "pinia": "^2.3.0",

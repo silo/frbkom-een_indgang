@@ -420,6 +420,7 @@ onUnmounted(() => {
 definePageMeta({
   layout: 'application',
   name: 'PracticalSafety',
+  middleware: 'auth',
 })
 </script>
 

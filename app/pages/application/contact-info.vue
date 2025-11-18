@@ -204,6 +204,7 @@ onUnmounted(() => {
 definePageMeta({
   layout: 'application',
   name: 'ContactInfo',
+  middleware: 'auth',
 })
 </script>
 

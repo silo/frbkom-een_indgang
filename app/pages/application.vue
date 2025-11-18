@@ -19,6 +19,7 @@ const isBaseRoute = computed(() => route.path === '/application' || route.path =
 definePageMeta({
   layout: 'application',
   name: 'Application',
+  middleware: 'auth',
 })
 
 if (import.meta.server) {

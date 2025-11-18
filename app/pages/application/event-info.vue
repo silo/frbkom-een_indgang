@@ -509,6 +509,7 @@ onUnmounted(() => {
 definePageMeta({
   layout: 'application',
   name: 'EventInfo',
+  middleware: 'auth',
 })
 </script>
 
