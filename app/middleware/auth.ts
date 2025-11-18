@@ -1,4 +1,5 @@
 export default defineNuxtRouteMiddleware(async (to) => {
+  const config = useRuntimeConfig()
   const session = useUserSession()
 
   if (!session.loggedIn.value) {
@@ -7,6 +8,10 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   if (!session.loggedIn.value) {
     const returnTo = encodeURIComponent(to.fullPath)
+    if (config.public.enableDevAuth) {
+      return navigateTo(`/dev-login?returnTo=${returnTo}`, { replace: true })
+    }
+
     const loginUrl = `/api/auth/login?returnTo=${returnTo}`
     return navigateTo(loginUrl, { external: true })
   }

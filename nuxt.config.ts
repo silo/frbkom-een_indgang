@@ -4,6 +4,14 @@ const authServerUtilsPath = fileURLToPath(
   new URL('./node_modules/nuxt-auth-utils/dist/runtime/server/utils/session.js', import.meta.url),
 )
 
+const netsEnvironment = process.env.NUXT_PUBLIC_NETS_ENVIRONMENT ?? 'preproduction'
+const netsIssuer = process.env.NUXT_PUBLIC_NETS_ISSUER
+  ?? (netsEnvironment === 'production'
+    ? 'https://netseidbroker.dk/op'
+    : 'https://pp.netseidbroker.dk/op')
+const baseUrl = process.env.NUXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
+const enableDevAuth = process.env.ENABLE_DEV_AUTH === 'true'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 
@@ -44,9 +52,10 @@ export default defineNuxtConfig({
     // Public keys (client + server)
     public: {
       netsClientId: '',
-      netsEnvironment: 'preproduction',
-      netsIssuer: '',
-      baseUrl: 'http://localhost:3000',
+      netsEnvironment,
+      netsIssuer,
+      baseUrl,
+      enableDevAuth,
       appName: 'Én Indgang',
       maxFileSizeMb: 5,
     },
@@ -57,6 +66,7 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2025-07-15',
 
+  // @ts-expect-error Added by nuxt-auth-utils module
   auth: {
     sessionConfig: {
       maxAge: 60 * 60, // 1 hour
