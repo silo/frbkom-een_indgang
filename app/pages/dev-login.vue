@@ -33,7 +33,18 @@
 
         <form class="panel-form" @submit.prevent="handleLogin">
           <div class="form-section">
-            <h3 class="heading-s">1. Vælg rolle</h3>
+            <h3 class="heading-s">1. Vælg testprofil</h3>
+            <DropdownButton
+              id="dev-login-preset"
+              v-model="selectedPreset"
+              :options="presetOptions"
+              button-label="Vælg testprofil..."
+            />
+            <p class="text-s text-muted">Profilen sætter automatisk rolle og navn.</p>
+          </div>
+
+          <div class="form-section">
+            <h3 class="heading-s">2. Rolle</h3>
             <RadioGroup
               id="dev-login-role"
               v-model="role"
@@ -47,9 +58,9 @@
             <Input
               id="dev-login-name"
               v-model="name"
-              label="Visningsnavn (valgfrit)"
+              label="Visningsnavn"
               placeholder="fx. Dev Borger"
-              :hint="'Bruges kun i denne testsession'"
+              :hint="'Redigér hvis du vil teste med et andet navn'"
             />
           </div>
 
@@ -83,8 +94,10 @@
 
 <script setup lang="ts">
 import { createError } from 'h3'
-import { computed, ref } from 'vue'
-import { Badge, Button, Input, RadioGroup } from 'fk-designsystem'
+import { computed, ref, watch } from 'vue'
+import { Badge, Button, DropdownButton, Input, RadioGroup } from 'fk-designsystem'
+import { DEV_TEST_USER_PRESETS } from '~~/shared/dev-test-users'
+import type { DevTestUserPresetKey } from '~~/shared/dev-test-users'
 
 const config = useRuntimeConfig()
 
@@ -123,10 +136,46 @@ const roleOptions = [
   { label: 'Sagsbehandler', value: 'admin' },
 ] as const
 
+const selectedPreset = ref<DevTestUserPresetKey | null>(DEV_TEST_USER_PRESETS[0]?.key ?? null)
+const presetOptions = DEV_TEST_USER_PRESETS.map((preset) => ({
+  label: `${preset.label} – ${preset.description}`,
+  value: preset.key,
+}))
+
 const role = ref<'user' | 'admin'>('user')
 const name = ref('')
 const loading = ref(false)
 const errorMessage = ref<string | null>(null)
+
+let isApplyingPreset = false
+
+watch(
+  selectedPreset,
+  (value) => {
+    if (!value) {
+      return
+    }
+
+    const preset = DEV_TEST_USER_PRESETS.find((entry) => entry.key === value)
+    if (!preset) {
+      return
+    }
+
+    isApplyingPreset = true
+    role.value = preset.role
+    name.value = preset.name
+    isApplyingPreset = false
+  },
+  { immediate: true },
+)
+
+watch(role, () => {
+  if (isApplyingPreset) {
+    return
+  }
+  selectedPreset.value = null
+})
+
 
 const handleCancel = async () => {
   await navigateTo('/', { replace: true })
@@ -147,6 +196,7 @@ const handleLogin = async () => {
       body: {
         role: role.value,
         name: name.value || undefined,
+        presetKey: selectedPreset.value || undefined,
       },
     })
 
