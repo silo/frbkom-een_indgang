@@ -24,6 +24,32 @@ export const reviewStatusEnum = z.enum([
   'rejected',
 ])
 
+// Validation helpers
+const cprRegex = /^(0[1-9]|[12]\d|3[01])(0[1-9]|1[0-2])\d{2}[-]?\d{4}$/
+const cvrRegex = /^(DK)?\d{8}$/
+const phoneRegex = /^\d{8}$/
+
+export const cvrCprSchema = z.string().refine((val) => cprRegex.test(val) || cvrRegex.test(val), {
+  message: 'Invalid CVR or CPR number',
+})
+
+export const phoneSchema = z.string().refine((val) => phoneRegex.test(val.replace(/\s/g, '')), {
+  message: 'Invalid phone number',
+})
+
+// Contact info schema
+export const contactInfoSchema = z.object({
+  cvrCpr: cvrCprSchema,
+  fullName: z.string().min(2, 'Name must be at least 2 characters'),
+  phone: phoneSchema,
+  email: z.string().email('Invalid email address'),
+  isCommercial: z.boolean().nullable(),
+  contactPerson: z.object({
+    fullName: z.string().min(2, 'Contact person name must be at least 2 characters'),
+    phone: phoneSchema,
+  }),
+})
+
 // Location union schema
 export const locationSchema = z.discriminatedUnion('locationType', [
   z.object({
@@ -42,6 +68,8 @@ export const eventApplicationBaseSchema = z.object({
   purpose: z.string().min(10, 'Purpose must be at least 10 characters').max(2000),
   expectedAttendanceRange: attendanceRangeEnum,
   commercial: z.boolean(),
+  contactPersonName: z.string().optional(),
+  contactPersonPhone: z.string().optional(),
   recurring: z.boolean(),
   recurringInterval: recurringIntervalEnum.nullable().optional(),
   startAt: z.coerce.date(),
@@ -152,6 +180,8 @@ export const saveDraftEventSchema = z.object({
   purpose: z.string().max(2000).optional(),
   expectedAttendanceRange: attendanceRangeEnum.optional(),
   commercial: z.boolean().optional(),
+  contactPersonName: z.string().optional(),
+  contactPersonPhone: z.string().optional(),
   recurring: z.boolean().optional(),
   recurringInterval: recurringIntervalEnum.nullable().optional(),
   startAt: z.coerce.date().optional(),

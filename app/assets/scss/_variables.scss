@@ -1,0 +1,130 @@
+// Design System Tokens - Primitive Values
+// Derived from docs/primitive.Value.tokens.json
+
+// Colors
+$color-white: #ffffff;
+$color-black: #000000;
+
+// Brand
+$color-brand-100: #f3fcf8;
+$color-brand-200: #edfaf4;
+$color-brand-300: #e2f8ee;
+$color-brand-400: #c2f0da;
+$color-brand-500: #90dfba;
+$color-brand-600: #1a8e58;
+$color-brand-700: #0a6b3e;
+$color-brand-800: #045831;
+$color-brand-900: #004223;
+$color-brand-1000: #00331b;
+
+// Grey
+$color-grey-100: #f7f7f7;
+$color-grey-200: #f2f2f2;
+$color-grey-300: #ebebeb;
+$color-grey-400: #dddddd;
+$color-grey-500: #c1c1c1;
+$color-grey-600: #8c8c8c;
+$color-grey-700: #6a6a6a;
+$color-grey-800: #515151;
+$color-grey-900: #3f3f3f;
+$color-grey-1000: #222222;
+
+// Red (Critical)
+$color-red-100: #fff5f2;
+$color-red-200: #ffefec;
+$color-red-300: #ffe6e3;
+$color-red-400: #ffd3cd;
+$color-red-500: #ffaba3;
+$color-red-600: #f94a44;
+$color-red-700: #d8251c;
+$color-red-800: #a2160f;
+$color-red-900: #77231f;
+$color-red-1000: #391919;
+
+// Orange (Warning)
+$color-orange-100: #fef6ec;
+$color-orange-200: #fdf1e1;
+$color-orange-300: #fde8d4;
+$color-orange-400: #fcd7bb;
+$color-orange-500: #f7b382;
+$color-orange-600: #eb6000;
+$color-orange-700: #be4a00;
+$color-orange-800: #8f3400;
+$color-orange-900: #722a06;
+$color-orange-1000: #361c10;
+
+// Yellow (Attention)
+$color-yellow-100: #fefbec;
+$color-yellow-200: #fdf8e1;
+$color-yellow-300: #fdf3d4;
+$color-yellow-400: #fce9bb;
+$color-yellow-500: #f7d282;
+$color-yellow-600: #eba100;
+$color-yellow-700: #d78d03;
+$color-yellow-800: #8f5b00;
+$color-yellow-900: #724706;
+$color-yellow-1000: #362610;
+
+// Green (Success)
+$color-green-100: #f1fbf1;
+$color-green-200: #e7f6ea;
+$color-green-300: #dbf1e0;
+$color-green-400: #c4e6cc;
+$color-green-500: #8ed09f;
+$color-green-600: #13a13a;
+$color-green-700: #048026;
+$color-green-800: #025f19;
+$color-green-900: #104b20;
+$color-green-1000: #122817;
+
+// Purple (Info)
+$color-purple-100: #f7f6ff;
+$color-purple-200: #f2f1ff;
+$color-purple-300: #ede9fe;
+$color-purple-400: #dfd9ff;
+$color-purple-500: #c2b9ff;
+$color-purple-600: #8b78fe;
+$color-purple-700: #6f57e5;
+$color-purple-800: #503eb2;
+$color-purple-900: #413683;
+$color-purple-1000: #221f39;
+
+// Spacing
+$spacing-0: 0px;
+$spacing-2: 2px;
+$spacing-4: 4px;
+$spacing-6: 6px;
+$spacing-8: 8px;
+$spacing-10: 10px;
+$spacing-12: 12px;
+$spacing-16: 16px;
+$spacing-20: 20px;
+$spacing-24: 24px;
+$spacing-32: 32px;
+$spacing-40: 40px;
+$spacing-48: 48px;
+$spacing-56: 56px;
+$spacing-64: 64px;
+$spacing-72: 72px;
+$spacing-80: 80px;
+$spacing-96: 96px;
+$spacing-144: 144px;
+$spacing-208: 208px;
+$spacing-304: 304px;
+$spacing-448: 448px;
+
+// Semantic Mappings (based on color.Mode 1.tokens.json)
+$color-primary: $color-brand-700;
+$color-primary-dark: $color-brand-800;
+$color-success: $color-green-700;
+$color-warning: $color-orange-700;
+$color-critical: $color-red-700;
+$color-info: $color-purple-700;
+$color-attention: $color-yellow-700;
+
+$color-text-primary: $color-grey-1000;
+$color-text-secondary: $color-grey-900;
+$color-text-muted: $color-grey-700;
+
+$color-bg-surface: $color-white;
+$color-bg-secondary: $color-grey-100;

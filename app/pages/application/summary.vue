@@ -13,23 +13,29 @@
       {{ $t('form.step5.subtitle') }}
     </p>
 
-    <div v-if="submissionStatus !== 'idle'" class="status-banner mb-24" :class="submissionStatus === 'success' ? 'status-success' : 'status-error'">
+    <div
+      v-if="submissionStatus !== 'idle'"
+      class="status-banner mb-24"
+      :class="submissionStatus === 'success' ? 'status-success' : 'status-error'"
+    >
       <Icon
-        :name="submissionStatus === 'success' ? 'fa7-solid:circle-check' : 'fa7-solid:circle-exclamation'"
+        :name="
+          submissionStatus === 'success' ? 'fa7-solid:circle-check' : 'fa7-solid:circle-exclamation'
+        "
         size="18"
       />
       <span>
-        {{ submissionStatus === 'success' ? $t('form.step5.submitSuccess') : $t('form.step5.submitError') }}
+        {{
+          submissionStatus === 'success'
+            ? $t('form.step5.submitSuccess')
+            : $t('form.step5.submitError')
+        }}
       </span>
     </div>
 
     <!-- Step completion alerts -->
     <div v-if="incompleteSteps.length" class="step-alerts mb-24">
-      <div
-        v-for="step in incompleteSteps"
-        :key="step.id"
-        class="step-alert-card"
-      >
+      <div v-for="step in incompleteSteps" :key="step.id" class="step-alert-card">
         <div class="step-alert-left">
           <div class="step-circle" :data-state="step.isComplete ? 'complete' : 'incomplete'">
             {{ step.id }}
@@ -90,7 +96,13 @@
         </div>
         <div class="field-row">
           <span class="field-label">Kommercielt arrangement:</span>
-          <span class="field-value">{{ formData.contactInfo.isCommercial === true ? 'Ja' : formData.contactInfo.isCommercial === false ? 'Nej' : '—' }}</span>
+          <span class="field-value">{{
+            formData.contactInfo.isCommercial === true
+              ? 'Ja'
+              : formData.contactInfo.isCommercial === false
+                ? 'Nej'
+                : '—'
+          }}</span>
         </div>
         <div class="field-row">
           <span class="field-label">Kontaktperson navn:</span>
@@ -123,11 +135,19 @@
         </div>
         <div class="field-row">
           <span class="field-label">Lokation:</span>
-          <span class="field-value">{{ formData.eventInfo.locationType === 'custom' ? formData.eventInfo.locationAddress : formData.eventInfo.locationPresetId || '—' }}</span>
+          <span class="field-value">{{
+            formData.eventInfo.locationType === 'custom'
+              ? formData.eventInfo.locationAddress
+              : formData.eventInfo.locationPresetId || '—'
+          }}</span>
         </div>
         <div class="field-row">
           <span class="field-label">Event typer:</span>
-          <span class="field-value">{{ formData.eventInfo.typeTagCodes.length > 0 ? formData.eventInfo.typeTagCodes.join(', ') : '—' }}</span>
+          <span class="field-value">{{
+            formData.eventInfo.typeTagCodes.length > 0
+              ? formData.eventInfo.typeTagCodes.join(', ')
+              : '—'
+          }}</span>
         </div>
         <div class="field-row">
           <span class="field-label">Titel:</span>
@@ -151,7 +171,11 @@
         </div>
         <div class="field-row">
           <span class="field-label">Tilbagevendende:</span>
-          <span class="field-value">{{ formData.eventInfo.isRecurring === true ? `Ja (${formData.eventInfo.recurringInterval || 'ikke angivet'})` : 'Nej' }}</span>
+          <span class="field-value">{{
+            formData.eventInfo.isRecurring === true
+              ? `Ja (${formData.eventInfo.recurringInterval || 'ikke angivet'})`
+              : 'Nej'
+          }}</span>
         </div>
       </div>
     </div>
@@ -172,23 +196,49 @@
         </div>
         <div class="field-row">
           <span class="field-label">Midlertidige konstruktioner:</span>
-          <span class="field-value">{{ formData.practicalInfo.hasTemporaryConstructions === true ? 'Ja' : formData.practicalInfo.hasTemporaryConstructions === false ? 'Nej' : '—' }}</span>
+          <span class="field-value">{{
+            formData.practicalInfo.hasTemporaryConstructions === true
+              ? 'Ja'
+              : formData.practicalInfo.hasTemporaryConstructions === false
+                ? 'Nej'
+                : '—'
+          }}</span>
         </div>
         <div v-if="formData.practicalInfo.hasTemporaryConstructions" class="field-row">
           <span class="field-label">Konstruktionsbeskrivelse:</span>
-          <span class="field-value">{{ formData.practicalInfo.constructionDescription || '—' }}</span>
+          <span class="field-value">{{
+            formData.practicalInfo.constructionDescription || '—'
+          }}</span>
         </div>
         <div class="field-row">
           <span class="field-label">BR18 bekræftelse:</span>
-          <span class="field-value">{{ formData.practicalInfo.br18Acknowledgment === true ? 'Ja' : formData.practicalInfo.br18Acknowledgment === false ? 'Nej' : '—' }}</span>
+          <span class="field-value">{{
+            formData.practicalInfo.br18Acknowledgment === true
+              ? 'Ja'
+              : formData.practicalInfo.br18Acknowledgment === false
+                ? 'Nej'
+                : '—'
+          }}</span>
         </div>
         <div class="field-row">
           <span class="field-label">Arrangementsplan:</span>
-          <span class="field-value">{{ formData.practicalInfo.arrangementPlanType === 'upload' ? 'Upload' : formData.practicalInfo.arrangementPlanType === 'planner' ? 'Planner' : '—' }}</span>
+          <span class="field-value">{{
+            formData.practicalInfo.arrangementPlanType === 'upload'
+              ? 'Upload'
+              : formData.practicalInfo.arrangementPlanType === 'planner'
+                ? 'Planner'
+                : '—'
+          }}</span>
         </div>
         <div class="field-row">
           <span class="field-label">Lyd fra højtalere:</span>
-          <span class="field-value">{{ formData.practicalInfo.hasSound === true ? 'Ja' : formData.practicalInfo.hasSound === false ? 'Nej' : '—' }}</span>
+          <span class="field-value">{{
+            formData.practicalInfo.hasSound === true
+              ? 'Ja'
+              : formData.practicalInfo.hasSound === false
+                ? 'Nej'
+                : '—'
+          }}</span>
         </div>
         <div v-if="formData.practicalInfo.hasSound" class="field-row">
           <span class="field-label">Lydansvarlig:</span>
@@ -209,7 +259,13 @@
       <div class="card-content">
         <div class="field-row">
           <span class="field-label">Afspærring:</span>
-          <span class="field-value">{{ formData.permitsInfo.needsBlockage === true ? 'Ja' : formData.permitsInfo.needsBlockage === false ? 'Nej' : '—' }}</span>
+          <span class="field-value">{{
+            formData.permitsInfo.needsBlockage === true
+              ? 'Ja'
+              : formData.permitsInfo.needsBlockage === false
+                ? 'Nej'
+                : '—'
+          }}</span>
         </div>
         <div v-if="formData.permitsInfo.needsBlockage" class="field-row">
           <span class="field-label">Afspærringsbeskrivelse:</span>
@@ -217,15 +273,33 @@
         </div>
         <div class="field-row">
           <span class="field-label">Politigodkendelse:</span>
-          <span class="field-value">{{ formData.permitsInfo.hasPolicePermission === true ? 'Ja' : formData.permitsInfo.hasPolicePermission === false ? 'Nej' : '—' }}</span>
+          <span class="field-value">{{
+            formData.permitsInfo.hasPolicePermission === true
+              ? 'Ja'
+              : formData.permitsInfo.hasPolicePermission === false
+                ? 'Nej'
+                : '—'
+          }}</span>
         </div>
         <div class="field-row">
           <span class="field-label">Affaldshåndtering:</span>
-          <span class="field-value">{{ formData.permitsInfo.hasWasteHandling === true ? 'Ja' : formData.permitsInfo.hasWasteHandling === false ? 'Nej' : '—' }}</span>
+          <span class="field-value">{{
+            formData.permitsInfo.hasWasteHandling === true
+              ? 'Ja'
+              : formData.permitsInfo.hasWasteHandling === false
+                ? 'Nej'
+                : '—'
+          }}</span>
         </div>
         <div class="field-row">
           <span class="field-label">Mad og drikkevarer:</span>
-          <span class="field-value">{{ formData.permitsInfo.hasFoodDrinks === true ? 'Ja' : formData.permitsInfo.hasFoodDrinks === false ? 'Nej' : '—' }}</span>
+          <span class="field-value">{{
+            formData.permitsInfo.hasFoodDrinks === true
+              ? 'Ja'
+              : formData.permitsInfo.hasFoodDrinks === false
+                ? 'Nej'
+                : '—'
+          }}</span>
         </div>
       </div>
     </div>
@@ -257,7 +331,7 @@ const goToStep = async (stepNumber: number) => {
   const targetPath = formStore.getStepPath(stepNumber)
   if (!targetPath) return
   formStore.goToStep(stepNumber)
-  await router.push(targetPath)
+  await router.push({ path: targetPath, query: { validate: 'true' } })
 }
 
 const formatDateTime = (date: Date | null): string => {
@@ -281,12 +355,10 @@ const handleSubmit = async () => {
     const result = await formStore.submitEvent()
     submissionStatus.value = result.success ? 'success' : 'error'
     formStore.markStepCompleted(5, result.success)
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Failed to submit event form:', error)
     submissionStatus.value = 'error'
-  }
-  finally {
+  } finally {
     isSubmitting.value = false
   }
 }
@@ -297,17 +369,20 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  stepControls.value.onSubmit = undefined
+  if (stepControls.value.onSubmit === handleSubmit) {
+    stepControls.value.onSubmit = undefined
+  }
 })
 
 definePageMeta({
   layout: 'application',
   name: 'ApplicationSummary',
-    middleware: 'auth',
+  middleware: 'auth',
 })
 </script>
 
 <style scoped lang="scss">
+@use '~/assets/scss/variables' as *;
 .summary-step {
   // Typography classes are global from design system
 }
@@ -325,7 +400,7 @@ definePageMeta({
 }
 
 .title-icon {
-  color: #0057B8;
+  color: $color-primary;
 }
 
 .mb-12 {
@@ -345,9 +420,9 @@ definePageMeta({
 }
 
 .progress-card {
-  padding: 24px;
-  background: #f0f7ff;
-  border: 2px solid #0057B8;
+  padding: $spacing-24;
+  background: $color-brand-100;
+  border: 2px solid $color-primary;
   border-radius: 12px;
 }
 
@@ -361,9 +436,9 @@ definePageMeta({
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  background: #fff;
-  border: 1px solid #f2dede;
+  padding: $spacing-16 $spacing-20;
+  background: $color-white;
+  border: 1px solid $color-red-200;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(24, 39, 75, 0.08);
 }
@@ -382,14 +457,14 @@ definePageMeta({
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  border: 2px solid #0f5b33;
-  color: #0f5b33;
-  background: #e8f5ee;
+  border: 2px solid $color-green-900;
+  color: $color-green-900;
+  background: $color-green-200;
 
   &[data-state='incomplete'] {
-    border-color: #d93025;
-    color: #d93025;
-    background: #fdecea;
+    border-color: $color-red-700;
+    color: $color-red-700;
+    background: $color-red-200;
   }
 }
 
@@ -406,7 +481,7 @@ definePageMeta({
 }
 
 .alert-text-missing {
-  color: #d93025;
+  color: $color-red-700;
   font-weight: 600;
 }
 
@@ -423,28 +498,28 @@ definePageMeta({
 }
 
 .progress-percent {
-  color: #0057B8;
+  color: $color-primary;
   font-weight: 700;
 }
 
 .progress-bar {
   height: 12px;
-  background: #e5e5e5;
+  background: $color-grey-300;
   border-radius: 6px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #0057B8 0%, #0070dd 100%);
+  background: linear-gradient(90deg, $color-brand-700 0%, $color-brand-800 100%);
   transition: width 0.3s ease;
   border-radius: 6px;
 }
 
 .summary-card {
-  padding: 24px;
-  background: white;
-  border: 1px solid #e5e5e5;
+  padding: $spacing-24;
+  background: $color-white;
+  border: 1px solid $color-grey-300;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
@@ -459,44 +534,44 @@ definePageMeta({
 }
 
 .status-success {
-  background: #ebf7ed;
-  color: #137333;
+  background: $color-green-200;
+  color: $color-green-800;
 }
 
 .status-error {
-  background: #fdecea;
-  color: #b3261e;
+  background: $color-red-200;
+  color: $color-red-800;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 16px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: $spacing-16;
+  margin-bottom: $spacing-16;
+  border-bottom: 1px solid $color-grey-300;
 }
 
 .edit-button {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border: 1px solid #0057B8;
+  gap: $spacing-8;
+  padding: $spacing-8 $spacing-16;
+  border: 1px solid $color-primary;
   border-radius: 6px;
-  background: white;
-  color: #0057B8;
+  background: $color-white;
+  color: $color-primary;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    background: #f0f7ff;
+    background: $color-brand-100;
   }
 
   &:active {
-    background: #e0f0ff;
+    background: $color-brand-200;
   }
 }
 
@@ -509,9 +584,9 @@ definePageMeta({
 .field-row {
   display: grid;
   grid-template-columns: 200px 1fr;
-  gap: 16px;
-  padding: 8px 0;
-  border-bottom: 1px solid #f5f5f5;
+  gap: $spacing-16;
+  padding: $spacing-8 0;
+  border-bottom: 1px solid $color-grey-100;
 
   &:last-child {
     border-bottom: none;

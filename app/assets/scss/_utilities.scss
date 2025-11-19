@@ -1,0 +1,287 @@
+@use 'variables' as *;
+
+// Text Colors
+.text-primary {
+  color: $color-text-primary;
+}
+
+.text-secondary {
+  color: $color-text-secondary;
+}
+
+.text-muted {
+  color: $color-text-muted;
+}
+
+.text-brand {
+  color: $color-primary;
+}
+
+.text-success {
+  color: $color-success;
+}
+
+.text-warning {
+  color: $color-warning;
+}
+
+.text-critical {
+  color: $color-critical;
+}
+
+.text-info {
+  color: $color-info;
+}
+
+.text-white {
+  color: $color-white;
+}
+
+// Background Colors
+.bg-surface {
+  background-color: $color-bg-surface;
+}
+
+.bg-secondary {
+  background-color: $color-bg-secondary;
+}
+
+.bg-brand {
+  background-color: $color-primary;
+}
+
+.bg-success-subtle {
+  background-color: $color-green-100;
+}
+
+.bg-critical-subtle {
+  background-color: $color-red-100;
+}
+
+.bg-warning-subtle {
+  background-color: $color-orange-100;
+}
+
+.bg-info-subtle {
+  background-color: $color-purple-100;
+}
+
+// Spacing Utilities (Margin)
+.m-0 {
+  margin: $spacing-0;
+}
+
+.mt-0 {
+  margin-top: $spacing-0;
+}
+
+.mb-0 {
+  margin-bottom: $spacing-0;
+}
+
+.m-4 {
+  margin: $spacing-4;
+}
+
+.mt-4 {
+  margin-top: $spacing-4;
+}
+
+.mb-4 {
+  margin-bottom: $spacing-4;
+}
+
+.ml-4 {
+  margin-left: $spacing-4;
+}
+
+.mr-4 {
+  margin-right: $spacing-4;
+}
+
+.m-8 {
+  margin: $spacing-8;
+}
+
+.mt-8 {
+  margin-top: $spacing-8;
+}
+
+.mb-8 {
+  margin-bottom: $spacing-8;
+}
+
+.ml-8 {
+  margin-left: $spacing-8;
+}
+
+.mr-8 {
+  margin-right: $spacing-8;
+}
+
+.m-12 {
+  margin: $spacing-12;
+}
+
+.mt-12 {
+  margin-top: $spacing-12;
+}
+
+.mb-12 {
+  margin-bottom: $spacing-12;
+}
+
+.ml-12 {
+  margin-left: $spacing-12;
+}
+
+.mr-12 {
+  margin-right: $spacing-12;
+}
+
+.m-16 {
+  margin: $spacing-16;
+}
+
+.mt-16 {
+  margin-top: $spacing-16;
+}
+
+.mb-16 {
+  margin-bottom: $spacing-16;
+}
+
+.ml-16 {
+  margin-left: $spacing-16;
+}
+
+.mr-16 {
+  margin-right: $spacing-16;
+}
+
+.m-24 {
+  margin: $spacing-24;
+}
+
+.mt-24 {
+  margin-top: $spacing-24;
+}
+
+.mb-24 {
+  margin-bottom: $spacing-24;
+}
+
+.ml-24 {
+  margin-left: $spacing-24;
+}
+
+.mr-24 {
+  margin-right: $spacing-24;
+}
+
+.m-32 {
+  margin: $spacing-32;
+}
+
+.mt-32 {
+  margin-top: $spacing-32;
+}
+
+.mb-32 {
+  margin-bottom: $spacing-32;
+}
+
+.m-40 {
+  margin: $spacing-40;
+}
+
+.mt-40 {
+  margin-top: $spacing-40;
+}
+
+.mb-40 {
+  margin-bottom: $spacing-40;
+}
+
+// Spacing Utilities (Padding)
+.p-0 {
+  padding: $spacing-0;
+}
+
+.p-4 {
+  padding: $spacing-4;
+}
+
+.p-8 {
+  padding: $spacing-8;
+}
+
+.p-12 {
+  padding: $spacing-12;
+}
+
+.p-16 {
+  padding: $spacing-16;
+}
+
+.p-24 {
+  padding: $spacing-24;
+}
+
+.p-32 {
+  padding: $spacing-32;
+}
+
+// Flexbox Utilities
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-4 {
+  gap: $spacing-4;
+}
+
+.gap-8 {
+  gap: $spacing-8;
+}
+
+.gap-12 {
+  gap: $spacing-12;
+}
+
+.gap-16 {
+  gap: $spacing-16;
+}
+
+.gap-24 {
+  gap: $spacing-24;
+}
+
+// Typography
+.font-bold {
+  font-weight: 700;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.text-center {
+  text-align: center;
+}

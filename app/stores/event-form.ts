@@ -67,6 +67,7 @@ export const useEventFormStore = defineStore('eventForm', {
         path: '/application/contact-info',
         completed: false,
         valid: false,
+        visited: false,
       },
       {
         id: 2,
@@ -75,6 +76,7 @@ export const useEventFormStore = defineStore('eventForm', {
         path: '/application/event-info',
         completed: false,
         valid: false,
+        visited: false,
       },
       {
         id: 3,
@@ -83,6 +85,7 @@ export const useEventFormStore = defineStore('eventForm', {
         path: '/application/practical-safety',
         completed: false,
         valid: false,
+        visited: false,
       },
       {
         id: 4,
@@ -91,6 +94,7 @@ export const useEventFormStore = defineStore('eventForm', {
         path: '/application/permits-operations',
         completed: false,
         valid: false,
+        visited: false,
       },
       {
         id: 5,
@@ -99,6 +103,7 @@ export const useEventFormStore = defineStore('eventForm', {
         path: '/application/summary',
         completed: false,
         valid: false,
+        visited: false,
       },
     ] as FormStep[],
   }),
@@ -142,6 +147,7 @@ export const useEventFormStore = defineStore('eventForm', {
       if (step) {
         step.completed = isValid
         step.valid = isValid
+        step.visited = true
       }
     },
 
@@ -159,8 +165,28 @@ export const useEventFormStore = defineStore('eventForm', {
 
     async saveDraft() {
       try {
-        // TODO: Call tRPC saveDraft endpoint
-        this.isDraft = true
+        const { $trpc } = useNuxtApp() as any
+        const eventData = this.mapFormDataToSchema()
+
+        if (this.eventId) {
+          // Update existing draft
+          await $trpc.events.saveDraft.mutate({
+            id: this.eventId,
+            ...eventData,
+          })
+        } else {
+          // Create new draft if we have enough data (Step 2 completed)
+          // We check if the required fields for creation are present
+          if (this.hasRequiredCreateFields(eventData)) {
+            const newEvent = await $trpc.events.create.mutate(eventData)
+            this.eventId = newEvent.id
+            this.isDraft = true
+          } else {
+            // Not enough data to persist yet, just keep in local state
+            console.log('Not enough data to create draft in DB yet')
+          }
+        }
+        
         return { success: true }
       }
       catch (error) {
@@ -171,7 +197,20 @@ export const useEventFormStore = defineStore('eventForm', {
 
     async submitEvent() {
       try {
-        // TODO: Call tRPC submit endpoint
+        const { $trpc } = useNuxtApp() as any
+        
+        // Ensure we have an event ID
+        if (!this.eventId) {
+          // Try to create it first
+          const result = await this.saveDraft()
+          if (!result.success || !this.eventId) {
+            throw new Error('Could not create event before submission')
+          }
+        }
+
+        // Submit
+        await $trpc.events.submit.mutate({ id: this.eventId })
+        
         this.isDraft = false
         return { success: true, eventId: this.eventId }
       }
@@ -179,6 +218,41 @@ export const useEventFormStore = defineStore('eventForm', {
         console.error('Failed to submit event:', error)
         return { success: false, error }
       }
+    },
+
+    mapFormDataToSchema() {
+      const { contactInfo, eventInfo } = this.formData
+      
+      return {
+        title: eventInfo.title,
+        purpose: eventInfo.purpose,
+        expectedAttendanceRange: eventInfo.attendanceRange,
+        commercial: contactInfo.isCommercial === true,
+        contactPersonName: contactInfo.contactPerson.fullName,
+        contactPersonPhone: contactInfo.contactPerson.phone,
+        recurring: eventInfo.isRecurring === true,
+        recurringInterval: eventInfo.isRecurring ? eventInfo.recurringInterval : null,
+        startAt: eventInfo.startAt,
+        endAt: eventInfo.endAt,
+        setupStartAt: eventInfo.setupStartAt,
+        setupEndAt: eventInfo.setupEndAt,
+        locationType: eventInfo.locationType || 'predefined',
+        locationAddress: eventInfo.locationAddress || undefined,
+        locationPresetId: eventInfo.locationPresetId || undefined,
+        typeTagCodes: eventInfo.typeTagCodes,
+      }
+    },
+
+    hasRequiredCreateFields(data: any) {
+      return (
+        data.title &&
+        data.purpose &&
+        data.expectedAttendanceRange &&
+        data.startAt &&
+        data.endAt &&
+        data.typeTagCodes &&
+        data.typeTagCodes.length > 0
+      )
     },
 
     resetForm() {

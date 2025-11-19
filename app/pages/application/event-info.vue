@@ -34,7 +34,8 @@
                 :model-value="value"
                 :label="$t('form.step2.startAt')"
                 :placeholder="$t('form.step2.startAt')"
-                :error="errors.startAt"
+                :error="!!errors.startAt"
+                :error-message="errors.startAt || ''"
                 required
                 readonly
               />
@@ -57,7 +58,8 @@
                 :model-value="value"
                 :label="$t('form.step2.endAt')"
                 :placeholder="$t('form.step2.endAt')"
-                :error="errors.endAt"
+                :error="!!errors.endAt"
+                :error-message="errors.endAt || ''"
                 required
                 readonly
               />
@@ -69,7 +71,7 @@
 
     <!-- 2.1 Location -->
     <h4 class="heading-m mb-16">{{ $t('form.step2.location') }}</h4>
-    
+
     <div class="form-grid gap-24 mb-24">
       <div class="form-row">
         <Checkbox
@@ -78,28 +80,33 @@
           :label="$t('form.step2.customAddress')"
         />
       </div>
-      
+
       <div v-if="isCustomAddress" class="form-row">
         <Input
           id="event-location-address"
           v-model="formData.locationAddress"
           :label="$t('form.step2.addressInput')"
-          :error="errors.locationAddress"
-          required
+          :error="!!errors.locationAddress"
+          :error-message="errors.locationAddress || ''"
+          @blur="validateField('locationAddress')"
           placeholder="Indtast adresse..."
         />
       </div>
-      
+
       <div v-else class="form-row">
         <div class="dropdown-wrapper">
-          <label class="label-text text-m mb-8">{{ $t('form.step2.presetLocation') }} <span class="required">*</span></label>
+          <label class="label-text text-m mb-8"
+            >{{ $t('form.step2.presetLocation') }} <span class="required">*</span></label
+          >
           <DropdownButton
             v-model="formData.locationPresetId"
             :options="locationOptions"
             button-label="Vælg sted..."
             width="100%"
           />
-          <p v-if="errors.locationPresetId" class="error-text text-s mt-8">{{ errors.locationPresetId }}</p>
+          <p v-if="errors.locationPresetId" class="error-text text-s mt-8">
+            {{ errors.locationPresetId }}
+          </p>
         </div>
       </div>
     </div>
@@ -140,19 +147,21 @@
           id="event-title"
           v-model="formData.title"
           :label="$t('form.step2.eventTitle')"
-          :error="errors.title"
-          required
+          :error="!!errors.title"
+          :error-message="errors.title || ''"
+          @blur="validateField('title')"
           placeholder="F.eks. Sommerfest 2025"
         />
       </div>
-      
+
       <div class="form-row">
         <Textarea
           id="event-purpose"
           v-model="formData.purpose"
           :label="$t('form.step2.purpose')"
-          :error="errors.purpose"
-          required
+          :error="!!errors.purpose"
+          :error-message="errors.purpose || ''"
+          @blur="validateField('purpose')"
           placeholder="Beskriv formålet med arrangementet..."
           :rows="4"
         />
@@ -160,13 +169,17 @@
 
       <div class="form-row">
         <div class="dropdown-wrapper">
-          <label class="label-text text-m mb-8">{{ $t('form.step2.expectedAttendance') }} <span class="required">*</span></label>
+          <label class="label-text text-m mb-8"
+            >{{ $t('form.step2.expectedAttendance') }} <span class="required">*</span></label
+          >
           <DropdownButton
             v-model="formData.attendanceRange"
             :options="attendanceOptions"
             button-label="Vælg antal..."
           />
-          <p v-if="errors.attendanceRange" class="error-text text-s mt-8">{{ errors.attendanceRange }}</p>
+          <p v-if="errors.attendanceRange" class="error-text text-s mt-8">
+            {{ errors.attendanceRange }}
+          </p>
         </div>
       </div>
 
@@ -183,7 +196,9 @@
         <p v-if="formData.relevantInfoDocuments.length > 0" class="text-s mt-8">
           {{ formData.relevantInfoDocuments[0].name }}
         </p>
-        <p v-if="errors.relevantInfoDocuments" class="error-text text-s mt-8">{{ errors.relevantInfoDocuments }}</p>
+        <p v-if="errors.relevantInfoDocuments" class="error-text text-s mt-8">
+          {{ errors.relevantInfoDocuments }}
+        </p>
       </div>
     </div>
 
@@ -212,7 +227,8 @@
                 :model-value="value"
                 :label="$t('form.step2.setupStart')"
                 :placeholder="$t('form.step2.setupStart')"
-                :error="errors.setupStartAt"
+                :error="!!errors.setupStartAt"
+                :error-message="errors.setupStartAt || ''"
                 required
                 readonly
               />
@@ -235,7 +251,8 @@
                 :model-value="value"
                 :label="$t('form.step2.setupEnd')"
                 :placeholder="$t('form.step2.setupEnd')"
-                :error="errors.setupEndAt"
+                :error="!!errors.setupEndAt"
+                :error-message="errors.setupEndAt || ''"
                 required
                 readonly
               />
@@ -265,13 +282,17 @@
 
       <div v-if="formData.isRecurring === true" class="form-row">
         <div class="dropdown-wrapper">
-          <label class="label-text text-m mb-8">{{ $t('form.step2.recurringInterval') }} <span class="required">*</span></label>
+          <label class="label-text text-m mb-8"
+            >{{ $t('form.step2.recurringInterval') }} <span class="required">*</span></label
+          >
           <DropdownButton
             v-model="formData.recurringInterval"
             :options="recurringOptions"
             button-label="Vælg interval..."
           />
-          <p v-if="errors.recurringInterval" class="error-text text-s mt-8">{{ errors.recurringInterval }}</p>
+          <p v-if="errors.recurringInterval" class="error-text text-s mt-8">
+            {{ errors.recurringInterval }}
+          </p>
         </div>
       </div>
     </div>
@@ -280,7 +301,7 @@
 
 <script setup lang="ts">
 import { reactive, computed, onMounted, onUnmounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useEventFormStore } from '../../stores/event-form'
 import { Input, RadioGroup, DropdownButton, Checkbox, Textarea, Badge } from 'fk-designsystem'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
@@ -289,6 +310,7 @@ import { da } from 'date-fns/locale'
 import { createEventSchema } from '../../shared-schemas/event-schema-adapter'
 import { useStepControls } from '../../composables/useStepControls'
 const router = useRouter()
+const route = useRoute()
 const formStore = useEventFormStore()
 const stepControls = useStepControls()
 const fileInput = ref<HTMLInputElement | null>(null)
@@ -316,18 +338,20 @@ const isCustomAddress = computed({
 
 // Validation errors
 const errors = reactive({
-  startAt: '',
-  endAt: '',
-  locationPresetId: '',
-  locationAddress: '',
-  typeTagCodes: '',
-  title: '',
-  purpose: '',
-  attendanceRange: '',
-  setupStartAt: '',
-  setupEndAt: '',
-  recurringInterval: '',
-  relevantInfoDocuments: '',
+  title: null as string | null,
+  purpose: null as string | null,
+  startAt: null as string | null,
+  endAt: null as string | null,
+  locationType: null as string | null,
+  locationPresetId: null as string | null,
+  locationAddress: null as string | null,
+  attendanceRange: null as string | null,
+  setupStartAt: null as string | null,
+  setupEndAt: null as string | null,
+  isRecurring: null as string | null,
+  recurringInterval: null as string | null,
+  typeTagCodes: null as string | null,
+  relevantInfoDocuments: '' as string | null,
 })
 
 // Options
@@ -380,6 +404,8 @@ const mapFormToSchemaInput = () => {
     purpose: data.purpose,
     expectedAttendanceRange: data.attendanceRange,
     commercial: formStore.formData.contactInfo.isCommercial === true,
+    contactPersonName: formStore.formData.contactInfo.contactPerson.fullName,
+    contactPersonPhone: formStore.formData.contactInfo.contactPerson.phone,
     recurring: data.isRecurring === true,
     recurringInterval: data.isRecurring ? data.recurringInterval : null,
     startAt: data.startAt,
@@ -393,10 +419,31 @@ const mapFormToSchemaInput = () => {
   }
 }
 
+const validateField = (field: keyof typeof errors) => {
+  const input = mapFormToSchemaInput()
+  const result = createEventSchema.safeParse(input)
+
+  if (!result.success) {
+    const formatted = result.error.format()
+    // @ts-expect-error index access
+    const fieldError = formatted[field]
+    if (fieldError && fieldError._errors.length > 0) {
+      // @ts-expect-error index access
+      errors[field] = fieldError._errors[0]
+    } else {
+      // @ts-expect-error index access
+      errors[field] = null
+    }
+  } else {
+    // @ts-expect-error index access
+    errors[field] = null
+  }
+}
+
 const applyValidationErrors = (issues: { path: (string | number)[]; message: string }[]) => {
   Object.keys(errors).forEach((key) => {
     // @ts-expect-error index
-    errors[key] = ''
+    errors[key] = null
   })
 
   for (const issue of issues) {
@@ -443,21 +490,34 @@ const applyValidationErrors = (issues: { path: (string | number)[]; message: str
   }
 }
 
-const validateAndProceed = async () => {
+const validateForm = (silent = false) => {
   try {
     const input = mapFormToSchemaInput()
     createEventSchema.parse(input)
-    formStore.markStepCompleted(2, true)
-    const nextPath = formStore.getStepPath(3)
-    if (nextPath) {
-      formStore.goToStep(3)
-      await router.push(nextPath)
+    // Clear errors if valid
+    if (!silent) {
+      Object.keys(errors).forEach((key) => {
+        // @ts-expect-error index
+        errors[key] = null
+      })
     }
+    return true
   } catch (error: any) {
-    if (error?.issues) {
+    if (!silent && error?.issues) {
       applyValidationErrors(error.issues)
     }
-    formStore.markStepCompleted(2, false)
+    return false
+  }
+}
+
+const validateAndProceed = async () => {
+  const isValid = validateForm(true)
+  formStore.markStepCompleted(2, isValid)
+
+  const nextPath = formStore.getStepPath(3)
+  if (nextPath) {
+    formStore.goToStep(3)
+    await router.push(nextPath)
   }
 }
 
@@ -475,7 +535,7 @@ const toggleEventType = (typeCode: string) => {
 const handleFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
-  
+
   if (file) {
     // Validate file size (5MB = 5 * 1024 * 1024 bytes)
     const maxSize = 5 * 1024 * 1024
@@ -500,10 +560,17 @@ const handleFileUpload = (event: Event) => {
 onMounted(() => {
   formStore.setCurrentStepByPath('/application/event-info')
   stepControls.value.onNext = validateAndProceed
+
+  const currentStep = formStore.getCurrentStep
+  if (route.query.validate === 'true' || (currentStep?.visited && !currentStep?.valid)) {
+    validateForm()
+  }
 })
 
 onUnmounted(() => {
-  stepControls.value.onNext = undefined
+  if (stepControls.value.onNext === validateAndProceed) {
+    stepControls.value.onNext = undefined
+  }
 })
 
 definePageMeta({
@@ -514,6 +581,8 @@ definePageMeta({
 </script>
 
 <style scoped lang="scss">
+@use '~/assets/scss/variables' as *;
+
 .event-info-step {
   // Typography classes are global from design system
 }
@@ -521,17 +590,17 @@ definePageMeta({
 .header {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: $spacing-24;
 }
 
 .title {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: $spacing-16;
 }
 
 .title-icon {
-  color: #0057B8;
+  color: $color-primary;
 }
 
 .form-grid {
@@ -542,73 +611,73 @@ definePageMeta({
 .form-row {
   display: flex;
   flex-direction: column;
-  
+
   &.two-cols {
     flex-direction: row;
   }
 }
 
 .gap-12 {
-  gap: 12px;
+  gap: $spacing-12;
 }
 
 .gap-24 {
-  gap: 24px;
+  gap: $spacing-24;
 }
 
 .mb-8 {
-  margin-bottom: 8px;
+  margin-bottom: $spacing-8;
 }
 
 .mb-12 {
-  margin-bottom: 12px;
+  margin-bottom: $spacing-12;
 }
 
 .mb-16 {
-  margin-bottom: 16px;
+  margin-bottom: $spacing-16;
 }
 
 .mb-24 {
-  margin-bottom: 24px;
+  margin-bottom: $spacing-24;
 }
 
 .mb-40 {
-  margin-bottom: 40px;
+  margin-bottom: $spacing-40;
 }
 
 .mt-8 {
-  margin-top: 8px;
+  margin-top: $spacing-8;
 }
 
 .pt-16 {
-  padding-top: 16px;
+  padding-top: $spacing-16;
 }
 
 .pb-40 {
-  padding-bottom: 40px;
+  padding-bottom: $spacing-40;
 }
 
 .hr {
   height: 1px;
-  background-color: #e5e5e5;
+  background-color: $color-grey-300;
   border: none;
 }
 
 .badge-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: $spacing-12;
 }
 
 .badge-selectable {
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   &:hover {
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  
+
   &:active {
     transform: translateY(0);
   }
@@ -620,7 +689,7 @@ definePageMeta({
 
 .label-text {
   font-weight: 600;
-  color: #333;
+  color: $color-text-primary;
   display: block;
 }
 
@@ -629,40 +698,40 @@ definePageMeta({
 }
 
 .required {
-  color: #d32f2f;
+  color: $color-critical;
 }
 
 .file-input {
   padding: 12px;
   border: 2px dashed #d1d1d1;
   border-radius: 8px;
-  background: #fafafa;
+  background: $color-grey-100;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: #0057B8;
-    background: #f0f7ff;
+    border-color: $color-primary;
+    background: $color-brand-100;
   }
 
   &::file-selector-button {
     padding: 8px 16px;
     border: none;
     border-radius: 4px;
-    background: #0057B8;
-    color: white;
+    background: $color-primary;
+    color: $color-white;
     font-weight: 500;
     cursor: pointer;
     margin-right: 12px;
 
     &:hover {
-      background: #004a9c;
+      background: $color-primary-dark;
     }
   }
 }
 
 .error-text {
-  color: #d32f2f;
+  color: $color-critical;
   font-weight: 500;
 }
 </style>

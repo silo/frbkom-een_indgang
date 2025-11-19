@@ -1,12 +1,13 @@
 import { fileURLToPath } from 'node:url'
 
 const authServerUtilsPath = fileURLToPath(
-  new URL('./node_modules/nuxt-auth-utils/dist/runtime/server/utils/session.js', import.meta.url),
+  new URL('./node_modules/nuxt-auth-utils/dist/runtime/server/utils/session.js', import.meta.url)
 )
 
 const netsEnvironment = process.env.NUXT_PUBLIC_NETS_ENVIRONMENT ?? 'preproduction'
-const netsIssuer = process.env.NUXT_PUBLIC_NETS_ISSUER
-  ?? (netsEnvironment === 'production'
+const netsIssuer =
+  process.env.NUXT_PUBLIC_NETS_ISSUER ??
+  (netsEnvironment === 'production'
     ? 'https://netseidbroker.dk/op'
     : 'https://pp.netseidbroker.dk/op')
 const baseUrl = process.env.NUXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
@@ -14,7 +15,6 @@ const enableDevAuth = process.env.ENABLE_DEV_AUTH === 'true'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-
   alias: {
     // Ensure Nitro resolves server session helpers to the actual runtime file
     '#auth-utils/server': authServerUtilsPath,
@@ -77,9 +77,7 @@ export default defineNuxtConfig({
   },
 
   // CSS
-  css: [
-    'fk-designsystem/style.css',
-  ],
+  css: ['fk-designsystem/style.css', '~/assets/scss/main.scss'],
 
   // TypeScript Configuration
   typescript: {

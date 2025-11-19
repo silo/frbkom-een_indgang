@@ -56,8 +56,9 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@typescript-eslint/parser": "^8.46.3",
+    "@iconify-json/fa7-solid": "^1.2.2",
     "@types/node": "^22.10.2",
+    "@typescript-eslint/parser": "^8.46.3",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/test-utils": "^2.4.6",
     "dotenv": "^17.2.3",

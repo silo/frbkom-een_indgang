@@ -19,18 +19,24 @@
     <div class="form-grid gap-24 mb-24">
       <div class="form-row">
         <div class="dropdown-wrapper">
-          <label class="label-text text-m mb-8">{{ $t('form.step3.simultaneousPersons') }} <span class="required">*</span></label>
+          <label class="label-text text-m mb-8"
+            >{{ $t('form.step3.simultaneousPersons') }} <span class="required">*</span></label
+          >
           <DropdownButton
             v-model="formData.simultaneousPersons"
             :options="attendanceOptions"
             button-label="Vælg antal..."
           />
-          <p v-if="errors.simultaneousPersons" class="error-text text-s mt-8">{{ errors.simultaneousPersons }}</p>
+          <p v-if="errors.simultaneousPersons" class="error-text text-s mt-8">
+            {{ errors.simultaneousPersons }}
+          </p>
         </div>
       </div>
 
       <div class="form-row">
-        <h5 class="heading-s mb-12">{{ $t('form.step3.hasConstructions') }} <span class="required">*</span></h5>
+        <h5 class="heading-s mb-12">
+          {{ $t('form.step3.hasConstructions') }} <span class="required">*</span>
+        </h5>
         <RadioGroup
           id="has-temporary-constructions"
           name="has-temporary-constructions"
@@ -45,8 +51,9 @@
           id="construction-description"
           v-model="formData.constructionDescription"
           :label="$t('form.step3.constructionDescription')"
-          :error="errors.constructionDescription"
-          required
+          :error="!!errors.constructionDescription"
+          :error-message="errors.constructionDescription || ''"
+          @blur="validateField('constructionDescription')"
           placeholder="Beskriv hvilke konstruktioner og deres formål..."
           :rows="4"
         />
@@ -65,7 +72,9 @@
         <p v-if="formData.constructionCertificate" class="text-s mt-8">
           {{ formData.constructionCertificate.name }}
         </p>
-        <p v-if="errors.constructionCertificate" class="error-text text-s mt-8">{{ errors.constructionCertificate }}</p>
+        <p v-if="errors.constructionCertificate" class="error-text text-s mt-8">
+          {{ errors.constructionCertificate }}
+        </p>
       </div>
     </div>
 
@@ -78,7 +87,9 @@
 
     <div class="form-grid gap-24 mb-24">
       <div class="form-row">
-        <h5 class="heading-s mb-12">{{ $t('form.step3.br18Acknowledgment') }} <span class="required">*</span></h5>
+        <h5 class="heading-s mb-12">
+          {{ $t('form.step3.br18Acknowledgment') }} <span class="required">*</span>
+        </h5>
         <p class="text-s text-muted mb-12">
           {{ $t('form.step3.br18AcknowledgmentText') }}
         </p>
@@ -89,7 +100,9 @@
           :options="yesNoOptions"
           orientation="vertical"
         />
-        <p v-if="errors.br18Acknowledgment" class="error-text text-s mt-8">{{ errors.br18Acknowledgment }}</p>
+        <p v-if="errors.br18Acknowledgment" class="error-text text-s mt-8">
+          {{ errors.br18Acknowledgment }}
+        </p>
       </div>
 
       <div class="form-row">
@@ -112,7 +125,9 @@
 
     <div class="form-grid gap-24 mb-24">
       <div v-if="!isCustomAddress" class="form-row">
-        <h5 class="heading-s mb-12">{{ $t('form.step3.planChoice') }} <span class="required">*</span></h5>
+        <h5 class="heading-s mb-12">
+          {{ $t('form.step3.planChoice') }} <span class="required">*</span>
+        </h5>
         <RadioGroup
           id="arrangement-plan-type"
           name="arrangement-plan-type"
@@ -120,11 +135,15 @@
           :options="planTypeOptions"
           orientation="vertical"
         />
-        <p v-if="errors.arrangementPlanType" class="error-text text-s mt-8">{{ errors.arrangementPlanType }}</p>
+        <p v-if="errors.arrangementPlanType" class="error-text text-s mt-8">
+          {{ errors.arrangementPlanType }}
+        </p>
       </div>
 
       <div v-if="formData.arrangementPlanType === 'upload' || isCustomAddress" class="form-row">
-        <label class="label-text text-m mb-8">{{ $t('form.step3.uploadPlan') }} <span class="required">*</span></label>
+        <label class="label-text text-m mb-8"
+          >{{ $t('form.step3.uploadPlan') }} <span class="required">*</span></label
+        >
         <p class="text-s text-muted mb-12">Upload PDF (maks. 5MB)</p>
         <input
           ref="planFileInput"
@@ -136,12 +155,14 @@
         <p v-if="formData.arrangementPlanDocument" class="text-s mt-8">
           {{ formData.arrangementPlanDocument.name }}
         </p>
-        <p v-if="errors.arrangementPlanDocument" class="error-text text-s mt-8">{{ errors.arrangementPlanDocument }}</p>
+        <p v-if="errors.arrangementPlanDocument" class="error-text text-s mt-8">
+          {{ errors.arrangementPlanDocument }}
+        </p>
       </div>
 
       <div v-if="formData.arrangementPlanType === 'planner' && !isCustomAddress" class="form-row">
         <div class="planner-placeholder">
-          <Icon name="fa7-solid:map" size="48" style="color: #0057B8;" />
+          <Icon name="fa7-solid:map" size="48" style="color: #0057b8" />
           <p class="text-m mt-16">{{ $t('form.step3.plannerComingSoon') }}</p>
         </div>
       </div>
@@ -156,7 +177,9 @@
 
     <div class="form-grid gap-24 mb-40">
       <div class="form-row">
-        <h5 class="heading-s mb-12">{{ $t('form.step3.hasSound') }} <span class="required">*</span></h5>
+        <h5 class="heading-s mb-12">
+          {{ $t('form.step3.hasSound') }} <span class="required">*</span>
+        </h5>
         <RadioGroup
           id="has-sound"
           name="has-sound"
@@ -171,31 +194,38 @@
           id="sound-description"
           v-model="formData.soundDescription"
           :label="$t('form.step3.soundDescription')"
-          :error="errors.soundDescription"
-          required
+          :error="!!errors.soundDescription"
+          :error-message="errors.soundDescription || ''"
+          @blur="validateField('soundDescription')"
           placeholder="Beskriv type og lydstyrke (dB)..."
           :rows="3"
         />
       </div>
 
       <div v-if="formData.hasSound === true" class="form-row two-cols gap-24">
-        <Input
-          id="sound-responsible-name"
-          v-model="formData.soundResponsibleName"
-          :label="$t('form.step3.soundResponsibleName')"
-          :error="errors.soundResponsibleName"
-          required
-          placeholder="Fulde navn"
-        />
-        <Input
-          id="sound-responsible-phone"
-          v-model="formData.soundResponsiblePhone"
-          :label="$t('form.step3.soundResponsiblePhone')"
-          type="tel"
-          :error="errors.soundResponsiblePhone"
-          required
-          placeholder="Telefonnummer"
-        />
+        <div>
+          <Input
+            id="sound-responsible-name"
+            v-model="formData.soundResponsibleName"
+            :label="$t('form.step3.soundResponsibleName')"
+            :error="!!errors.soundResponsibleName"
+            :error-message="errors.soundResponsibleName || ''"
+            @blur="validateField('soundResponsibleName')"
+            placeholder="Fulde navn"
+          />
+        </div>
+        <div>
+          <Input
+            id="sound-responsible-phone"
+            v-model="formData.soundResponsiblePhone"
+            :label="$t('form.step3.soundResponsiblePhone')"
+            type="tel"
+            :error="!!errors.soundResponsiblePhone"
+            :error-message="errors.soundResponsiblePhone || ''"
+            @blur="validateField('soundResponsiblePhone')"
+            placeholder="Telefonnummer"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -203,14 +233,16 @@
 
 <script setup lang="ts">
 import { reactive, computed, onMounted, onUnmounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useEventFormStore } from '../../stores/event-form'
 import { useI18n } from 'vue-i18n'
 import { Input, RadioGroup, DropdownButton, Textarea } from 'fk-designsystem'
 import { useStepControls } from '../../composables/useStepControls'
+import { safetyInfoSchema, soundInfoSchema } from '~~/shared/schemas/event-info'
 
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
 const formStore = useEventFormStore()
 const stepControls = useStepControls()
 const constructionFileInput = ref<HTMLInputElement | null>(null)
@@ -259,7 +291,7 @@ const planTypeOptions = [
 const handleConstructionFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
-  
+
   if (file) {
     const maxSize = 5 * 1024 * 1024
     if (file.size > maxSize) {
@@ -282,7 +314,7 @@ const handleConstructionFileUpload = (event: Event) => {
 const handlePlanFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
-  
+
   if (file) {
     const maxSize = 5 * 1024 * 1024
     if (file.size > maxSize) {
@@ -302,100 +334,149 @@ const handlePlanFileUpload = (event: Event) => {
   }
 }
 
-const validateAndProceed = async () => {
-  let isValid = true
-
-  if (!formData.value.simultaneousPersons) {
-    errors.simultaneousPersons = t('validation.required')
-    isValid = false
-  } else {
-    errors.simultaneousPersons = ''
+const mapSafetyToSchemaInput = () => {
+  const data = formStore.formData.practicalInfo
+  const eventInfo = formStore.formData.eventInfo
+  
+  return {
+    eventId: '00000000-0000-0000-0000-000000000000', // Dummy ID
+    simultaneousPersonsRange: data.simultaneousPersons,
+    hasTemporaryConstructions: data.hasTemporaryConstructions === true,
+    constructionsDescription: data.constructionDescription || null,
+    constructionsCertificateDocumentId: data.constructionCertificate ? '00000000-0000-0000-0000-000000000000' : null,
+    hasReadBR18Bilag11: data.br18Acknowledgment === true,
+    otherConsiderations: data.otherConsiderations || null,
+    arrangementPlanType: data.arrangementPlanType || null,
+    arrangementPlanDocumentId: data.arrangementPlanDocument ? '00000000-0000-0000-0000-000000000000' : null,
+    locationType: eventInfo.locationType,
   }
+}
 
-  if (formData.value.hasTemporaryConstructions === null) {
-    errors.constructionDescription = t('validation.required')
+const mapSoundToSchemaInput = () => {
+  const data = formStore.formData.practicalInfo
+  
+  return {
+    eventId: '00000000-0000-0000-0000-000000000000', // Dummy ID
+    hasSound: data.hasSound === true,
+    description: data.soundDescription || null,
+    responsibleName: data.soundResponsibleName || null,
+    responsiblePhone: data.soundResponsiblePhone || null,
+  }
+}
+
+const validateField = (field: keyof typeof errors) => {
+  if (['simultaneousPersons', 'constructionDescription', 'constructionCertificate', 'br18Acknowledgment', 'arrangementPlanType', 'arrangementPlanDocument'].includes(field)) {
+    const input = mapSafetyToSchemaInput()
+    const result = safetyInfoSchema.safeParse(input)
+    
+    if (!result.success) {
+      const formatted = result.error.format()
+      // @ts-expect-error index access
+      const fieldError = formatted[field === 'simultaneousPersons' ? 'simultaneousPersonsRange' : field === 'constructionCertificate' ? 'constructionsCertificateDocumentId' : field === 'br18Acknowledgment' ? 'hasReadBR18Bilag11' : field === 'arrangementPlanDocument' ? 'arrangementPlanDocumentId' : field === 'constructionDescription' ? 'constructionsDescription' : field]
+      
+      if (fieldError && fieldError._errors.length > 0) {
+        // @ts-expect-error index access
+        errors[field] = t('validation.required') // Simplified error message
+      } else {
+        // @ts-expect-error index access
+        errors[field] = ''
+      }
+    } else {
+      // @ts-expect-error index access
+      errors[field] = ''
+    }
+  } else if (['soundDescription', 'soundResponsibleName', 'soundResponsiblePhone'].includes(field)) {
+    const input = mapSoundToSchemaInput()
+    const result = soundInfoSchema.safeParse(input)
+    
+    if (!result.success) {
+      const formatted = result.error.format()
+      // @ts-expect-error index access
+      const fieldError = formatted[field === 'soundDescription' ? 'description' : field === 'soundResponsibleName' ? 'responsibleName' : field === 'soundResponsiblePhone' ? 'responsiblePhone' : field]
+      
+      if (fieldError && fieldError._errors.length > 0) {
+        // @ts-expect-error index access
+        errors[field] = field === 'soundResponsiblePhone' ? t('validation.invalidPhone') : t('validation.required')
+      } else {
+        // @ts-expect-error index access
+        errors[field] = ''
+      }
+    } else {
+      // @ts-expect-error index access
+      errors[field] = ''
+    }
+  }
+}
+
+const validateForm = (silent = false) => {
+  let isValid = true
+  
+  // Safety Info Validation
+  const safetyInput = mapSafetyToSchemaInput()
+  const safetyResult = safetyInfoSchema.safeParse(safetyInput)
+  
+  if (!safetyResult.success) {
     isValid = false
-  } else if (formData.value.hasTemporaryConstructions) {
-    if (!formData.value.constructionDescription) {
-      errors.constructionDescription = t('validation.required')
-      isValid = false
-    } else {
-      errors.constructionDescription = ''
+    if (!silent) {
+      const formatted = safetyResult.error.format()
+      
+      if (formatted.simultaneousPersonsRange) errors.simultaneousPersons = t('validation.required')
+      else errors.simultaneousPersons = ''
+        
+      if (formatted.constructionsDescription) errors.constructionDescription = t('validation.required')
+      else errors.constructionDescription = ''
+        
+      if (formatted.constructionsCertificateDocumentId) errors.constructionCertificate = t('validation.required')
+      else errors.constructionCertificate = ''
+        
+      if (formatted.hasReadBR18Bilag11) errors.br18Acknowledgment = t('validation.required')
+      else errors.br18Acknowledgment = ''
+        
+      if (formatted.arrangementPlanType) errors.arrangementPlanType = t('validation.required')
+      else errors.arrangementPlanType = ''
+        
+      if (formatted.arrangementPlanDocumentId) errors.arrangementPlanDocument = t('validation.required')
+      else errors.arrangementPlanDocument = ''
     }
-
-    if (!formData.value.constructionCertificate) {
-      errors.constructionCertificate = t('validation.required')
-      isValid = false
-    } else {
-      errors.constructionCertificate = ''
-    }
-  } else {
+  } else if (!silent) {
+    errors.simultaneousPersons = ''
     errors.constructionDescription = ''
     errors.constructionCertificate = ''
-  }
-
-  if (formData.value.br18Acknowledgment !== true) {
-    errors.br18Acknowledgment = t('validation.required')
-    isValid = false
-  } else {
     errors.br18Acknowledgment = ''
-  }
-
-  if (!isCustomAddress.value) {
-    if (!formData.value.arrangementPlanType) {
-      errors.arrangementPlanType = t('validation.required')
-      isValid = false
-    } else {
-      errors.arrangementPlanType = ''
-    }
-  }
-
-  const needsUpload = isCustomAddress.value || formData.value.arrangementPlanType === 'upload'
-  if (needsUpload && !formData.value.arrangementPlanDocument) {
-    errors.arrangementPlanDocument = t('validation.required')
-    isValid = false
-  } else {
+    errors.arrangementPlanType = ''
     errors.arrangementPlanDocument = ''
   }
-
-  if (formData.value.hasSound === null) {
-    errors.soundDescription = t('validation.required')
+  
+  // Sound Info Validation
+  const soundInput = mapSoundToSchemaInput()
+  const soundResult = soundInfoSchema.safeParse(soundInput)
+  
+  if (!soundResult.success) {
     isValid = false
-  } else if (formData.value.hasSound) {
-    if (!formData.value.soundDescription) {
-      errors.soundDescription = t('validation.required')
-      isValid = false
-    } else {
-      errors.soundDescription = ''
+    if (!silent) {
+      const formatted = soundResult.error.format()
+      
+      if (formatted.description) errors.soundDescription = t('validation.required')
+      else errors.soundDescription = ''
+        
+      if (formatted.responsibleName) errors.soundResponsibleName = t('validation.required')
+      else errors.soundResponsibleName = ''
+        
+      if (formatted.responsiblePhone) errors.soundResponsiblePhone = t('validation.invalidPhone')
+      else errors.soundResponsiblePhone = ''
     }
-
-    if (!formData.value.soundResponsibleName) {
-      errors.soundResponsibleName = t('validation.required')
-      isValid = false
-    } else {
-      errors.soundResponsibleName = ''
-    }
-
-    if (
-      !formData.value.soundResponsiblePhone ||
-      !/^\d{8}$/.test(formData.value.soundResponsiblePhone.replace(/\s/g, ''))
-    ) {
-      errors.soundResponsiblePhone = t('validation.invalidPhone')
-      isValid = false
-    } else {
-      errors.soundResponsiblePhone = ''
-    }
-  } else {
+  } else if (!silent) {
     errors.soundDescription = ''
     errors.soundResponsibleName = ''
     errors.soundResponsiblePhone = ''
   }
+  
+  return isValid
+}
 
+const validateAndProceed = async () => {
+  const isValid = validateForm(true)
   formStore.markStepCompleted(3, isValid)
-
-  if (!isValid) {
-    return
-  }
 
   const nextPath = formStore.getStepPath(4)
   if (nextPath) {
@@ -411,10 +492,17 @@ onMounted(() => {
   if (isCustomAddress.value) {
     formStore.formData.practicalInfo.arrangementPlanType = 'upload'
   }
+
+  const currentStep = formStore.getCurrentStep
+  if (route.query.validate === 'true' || (currentStep?.visited && !currentStep?.valid)) {
+    validateForm()
+  }
 })
 
 onUnmounted(() => {
-  stepControls.value.onNext = undefined
+  if (stepControls.value.onNext === validateAndProceed) {
+    stepControls.value.onNext = undefined
+  }
 })
 
 definePageMeta({
@@ -425,6 +513,8 @@ definePageMeta({
 </script>
 
 <style scoped lang="scss">
+@use '~/assets/scss/variables' as *;
+
 .practical-safety-step {
   // Typography classes are global from design system
 }
@@ -432,17 +522,17 @@ definePageMeta({
 .header {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: $spacing-24;
 }
 
 .title {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: $spacing-16;
 }
 
 .title-icon {
-  color: #0057B8;
+  color: $color-primary;
 }
 
 .form-grid {
@@ -453,65 +543,65 @@ definePageMeta({
 .form-row {
   display: flex;
   flex-direction: column;
-  
+
   &.two-cols {
     flex-direction: row;
   }
 }
 
 .gap-12 {
-  gap: 12px;
+  gap: $spacing-12;
 }
 
 .gap-24 {
-  gap: 24px;
+  gap: $spacing-24;
 }
 
 .mb-8 {
-  margin-bottom: 8px;
+  margin-bottom: $spacing-8;
 }
 
 .mb-12 {
-  margin-bottom: 12px;
+  margin-bottom: $spacing-12;
 }
 
 .mb-16 {
-  margin-bottom: 16px;
+  margin-bottom: $spacing-16;
 }
 
 .mb-24 {
-  margin-bottom: 24px;
+  margin-bottom: $spacing-24;
 }
 
 .mb-40 {
-  margin-bottom: 40px;
+  margin-bottom: $spacing-40;
 }
 
 .mt-8 {
-  margin-top: 8px;
+  margin-top: $spacing-8;
 }
 
 .mt-16 {
-  margin-top: 16px;
+  margin-top: $spacing-16;
 }
 
 .pt-16 {
-  padding-top: 16px;
+  padding-top: $spacing-16;
 }
 
 .pb-40 {
-  padding-bottom: 40px;
+  padding-bottom: $spacing-40;
 }
 
 .hr {
   height: 1px;
-  background-color: #e5e5e5;
+  background-color: $color-grey-300;
   border: none;
 }
 
 .label-text {
   font-weight: 600;
-  color: #333;
+  color: $color-text-primary;
   display: block;
 }
 
@@ -520,40 +610,40 @@ definePageMeta({
 }
 
 .required {
-  color: #d32f2f;
+  color: $color-critical;
 }
 
 .file-input {
-  padding: 12px;
-  border: 2px dashed #d1d1d1;
+  padding: $spacing-12;
+  border: 2px dashed $color-grey-400;
   border-radius: 8px;
-  background: #fafafa;
+  background: $color-grey-100;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: #0057B8;
-    background: #f0f7ff;
+    border-color: $color-primary;
+    background: $color-brand-100;
   }
 
   &::file-selector-button {
     padding: 8px 16px;
     border: none;
     border-radius: 4px;
-    background: #0057B8;
-    color: white;
+    background: $color-primary;
+    color: $color-white;
     font-weight: 500;
     cursor: pointer;
     margin-right: 12px;
 
     &:hover {
-      background: #004a9c;
+      background: $color-primary-dark;
     }
   }
 }
 
 .error-text {
-  color: #d32f2f;
+  color: $color-critical;
   font-weight: 500;
 }
 
@@ -562,10 +652,10 @@ definePageMeta({
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px;
+  padding: $spacing-48;
   border: 2px dashed #d1d1d1;
   border-radius: 8px;
-  background: #fafafa;
+  background: $color-grey-100;
   min-height: 300px;
 }
 </style>

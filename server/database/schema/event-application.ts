@@ -15,6 +15,8 @@ export const eventApplication = pgTable(
       enum: ['0_50', '51_200', '201_500', '501_1000', '1001_5000', '5001_plus'],
     }).notNull(),
     commercial: boolean('commercial').notNull().default(false),
+    contactPersonName: text('contact_person_name'),
+    contactPersonPhone: text('contact_person_phone'),
     recurring: boolean('recurring').notNull().default(false),
     recurringInterval: text('recurring_interval', { enum: ['daily', 'weekly', 'monthly'] }),
     startAt: timestamp('start_at', { withTimezone: true }).notNull(),

@@ -147,6 +147,17 @@
       "missingFieldsOther": "{count} felter mangler at blive udfyldt",
       "noMissingFields": "Alle felter er udfyldt",
       "fillStep": "Udfyld"
+    },
+    "confirmation": {
+      "title": "Tak for din ansøgning",
+      "subtitle": "Vi har modtaget din ansøgning og behandler den hurtigst muligt.",
+      "referenceNumber": "Referencenummer",
+      "nextSteps": "Hvad sker der nu?",
+      "step1": "Vi gennemgår din ansøgning for at sikre, at alt er i orden.",
+      "step2": "Hvis vi har spørgsmål, kontakter vi dig på den oplyste email eller telefon.",
+      "step3": "Du modtager svar, når vi har behandlet din ansøgning.",
+      "backToHome": "Tilbage til forsiden",
+      "viewApplication": "Se din ansøgning"
     }
   },
   "events": {
@@ -161,6 +172,11 @@
       "partially_approved": "Delvist godkendt",
       "approved": "Godkendt",
       "rejected": "Afvist"
+    },
+    "home": {
+      "welcome": "Velkommen til {appName}",
+      "description": "Her kan du oprette og administrere dine arrangementsansøgninger.",
+      "noEvents": "Ingen arrangementer endnu."
     }
   },
   "admin": {

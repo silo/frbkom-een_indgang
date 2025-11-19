@@ -17,40 +17,50 @@
 
     <div class="form-grid gap-24 mb-24">
       <div class="form-row two-cols gap-24">
-        <Input
-          id="contact-cvr-cpr"
-          v-model="contactInfo.cvrCpr"
-          :label="$t('form.step1.cvrCpr')"
-          :error="errors.cvrCpr"
-          required
-        />
-        <Input
-          id="contact-full-name"
-          v-model="contactInfo.fullName"
-          :label="$t('form.step1.fullName')"
-          :error="errors.fullName"
-          required
-        />
+        <div>
+          <Input
+            id="contact-cvr-cpr"
+            v-model="contactInfo.cvrCpr"
+            :label="$t('form.step1.cvrCpr')"
+            :error="!!errors.cvrCpr"
+            :error-message="errors.cvrCpr || ''"
+            @blur="validateField('cvrCpr')"
+          />
+        </div>
+        <div>
+          <Input
+            id="contact-full-name"
+            v-model="contactInfo.fullName"
+            :label="$t('form.step1.fullName')"
+            :error="!!errors.fullName"
+            :error-message="errors.fullName || ''"
+            @blur="validateField('fullName')"
+          />
+        </div>
       </div>
-      <div class="form-row">
-        <Input
-          id="contact-phone"
-          v-model="contactInfo.phone"
-          :label="$t('form.step1.phone')"
-          type="tel"
-          :error="errors.phone"
-          required
-        />
-      </div>
-      <div class="form-row">
-        <Input
-          id="contact-email"
-          v-model="contactInfo.email"
-          :label="$t('form.step1.email')"
-          type="email"
-          :error="errors.email"
-          required
-        />
+      <div class="form-row two-cols gap-24">
+        <div>
+          <Input
+            id="contact-phone"
+            v-model="contactInfo.phone"
+            :label="$t('form.step1.phone')"
+            type="tel"
+            :error="!!errors.phone"
+            :error-message="errors.phone || ''"
+            @blur="validateField('phone')"
+          />
+        </div>
+        <div>
+          <Input
+            id="contact-email"
+            v-model="contactInfo.email"
+            :label="$t('form.step1.email')"
+            type="email"
+            :error="!!errors.email"
+            :error-message="errors.email || ''"
+            @blur="validateField('email')"
+          />
+        </div>
       </div>
       <div class="form-row gap-12">
         <h5 class="heading-s">{{ $t('form.step1.isCommercial') }}</h5>
@@ -70,32 +80,38 @@
 
     <div class="section-header mb-24">
       <h4 class="heading-m">{{ $t('form.step1.contactPerson') }}</h4>
-      <Tooltip id="contact-person-help" text="Kontaktpersonen er den primære person, vi vil kontakte vedrørende arrangementet" placement="top">
-        <Icon
-          name="fa7-solid:circle-question"
-          size="18"
-          style="color: #6a6a6a"
-        />
+      <Tooltip
+        id="contact-person-help"
+        text="Kontaktpersonen er den primære person, vi vil kontakte vedrørende arrangementet"
+        placement="top"
+      >
+        <Icon name="fa7-solid:circle-question" size="18" style="color: #6a6a6a" />
       </Tooltip>
     </div>
 
     <div class="form-grid gap-24 mb-40">
       <div class="form-row two-cols gap-24">
-        <Input
-          id="contact-person-name"
-          v-model="contactInfo.contactPerson.fullName"
-          :label="$t('form.step1.contactPersonName')"
-          :error="errors.contactPersonName"
-          required
-        />
-        <Input
-          id="contact-person-phone"
-          v-model="contactInfo.contactPerson.phone"
-          :label="$t('form.step1.contactPersonPhone')"
-          type="tel"
-          :error="errors.contactPersonPhone"
-          required
-        />
+        <div>
+          <Input
+            id="contact-person-name"
+            v-model="contactInfo.contactPerson.fullName"
+            :label="$t('form.step1.contactPersonName')"
+            :error="!!errors.contactPersonName"
+            :error-message="errors.contactPersonName || ''"
+            @blur="validateField('contactPersonName')"
+          />
+        </div>
+        <div>
+          <Input
+            id="contact-person-phone"
+            v-model="contactInfo.contactPerson.phone"
+            :label="$t('form.step1.contactPersonPhone')"
+            type="tel"
+            :error="!!errors.contactPersonPhone"
+            :error-message="errors.contactPersonPhone || ''"
+            @blur="validateField('contactPersonPhone')"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -103,14 +119,16 @@
 
 <script setup lang="ts">
 import { reactive, computed, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useEventFormStore } from '../../stores/event-form'
 import { useI18n } from 'vue-i18n'
 import { Input, RadioGroup, Tooltip } from 'fk-designsystem'
 import { useStepControls } from '../../composables/useStepControls'
+import { contactInfoSchema } from '~~/shared/schemas/event'
 
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
 const formStore = useEventFormStore()
 const stepControls = useStepControls()
 const contactInfo = formStore.formData.contactInfo
@@ -121,69 +139,91 @@ const commercialOptions = computed(() => [
 ])
 
 const errors = reactive({
-  cvrCpr: '',
-  fullName: '',
-  phone: '',
-  email: '',
-  contactPersonName: '',
-  contactPersonPhone: '',
+  cvrCpr: null as string | null,
+  fullName: null as string | null,
+  phone: null as string | null,
+  email: null as string | null,
+  contactPersonName: null as string | null,
+  contactPersonPhone: null as string | null,
 })
 
 const resetErrors = () => {
-  errors.cvrCpr = ''
-  errors.fullName = ''
-  errors.phone = ''
-  errors.email = ''
-  errors.contactPersonName = ''
-  errors.contactPersonPhone = ''
+  errors.cvrCpr = null
+  errors.fullName = null
+  errors.phone = null
+  errors.email = null
+  errors.contactPersonName = null
+  errors.contactPersonPhone = null
 }
 
-const validateForm = () => {
-  resetErrors()
-  let isValid = true
+const validateField = (field: keyof typeof errors) => {
+  switch (field) {
+    case 'cvrCpr': {
+      const result = contactInfoSchema.shape.cvrCpr.safeParse(contactInfo.cvrCpr)
+      errors.cvrCpr = result.success ? null : t('validation.invalidCVR')
+      break
+    }
+    case 'fullName': {
+      const result = contactInfoSchema.shape.fullName.safeParse(contactInfo.fullName)
+      errors.fullName = result.success ? null : t('validation.required')
+      break
+    }
+    case 'phone': {
+      const result = contactInfoSchema.shape.phone.safeParse(contactInfo.phone)
+      errors.phone = result.success ? null : t('validation.invalidPhone')
+      break
+    }
+    case 'email': {
+      const result = contactInfoSchema.shape.email.safeParse(contactInfo.email)
+      errors.email = result.success ? null : t('validation.invalidEmail')
+      break
+    }
+    case 'contactPersonName': {
+      const result = contactInfoSchema.shape.contactPerson.shape.fullName.safeParse(
+        contactInfo.contactPerson.fullName
+      )
+      errors.contactPersonName = result.success ? null : t('validation.required')
+      break
+    }
+    case 'contactPersonPhone': {
+      const result = contactInfoSchema.shape.contactPerson.shape.phone.safeParse(
+        contactInfo.contactPerson.phone
+      )
+      errors.contactPersonPhone = result.success ? null : t('validation.invalidPhone')
+      break
+    }
+  }
+}
 
-  if (!contactInfo.cvrCpr || !/^\d{8}$|^\d{10}$/.test(contactInfo.cvrCpr)) {
-    errors.cvrCpr = t('validation.invalidCVR')
-    isValid = false
+const validateForm = (silent = false) => {
+  if (!silent) resetErrors()
+  const result = contactInfoSchema.safeParse(contactInfo)
+
+  if (!result.success) {
+    if (!silent) {
+      const formattedErrors = result.error.format()
+      
+      if (formattedErrors.cvrCpr) errors.cvrCpr = t('validation.invalidCVR')
+      if (formattedErrors.fullName) errors.fullName = t('validation.required')
+      if (formattedErrors.phone) errors.phone = t('validation.invalidPhone')
+      if (formattedErrors.email) errors.email = t('validation.invalidEmail')
+      
+      if (formattedErrors.contactPerson?.fullName) {
+        errors.contactPersonName = t('validation.required')
+      }
+      if (formattedErrors.contactPerson?.phone) {
+        errors.contactPersonPhone = t('validation.invalidPhone')
+      }
+    }
+    return false
   }
 
-  if (!contactInfo.fullName || contactInfo.fullName.length < 2) {
-    errors.fullName = t('validation.required')
-    isValid = false
-  }
-
-  if (!contactInfo.phone || !/^\d{8}$/.test(contactInfo.phone.replace(/\s/g, ''))) {
-    errors.phone = t('validation.invalidPhone')
-    isValid = false
-  }
-
-  if (!contactInfo.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email)) {
-    errors.email = t('validation.invalidEmail')
-    isValid = false
-  }
-
-  if (!contactInfo.contactPerson.fullName || contactInfo.contactPerson.fullName.length < 2) {
-    errors.contactPersonName = t('validation.required')
-    isValid = false
-  }
-
-  if (
-    !contactInfo.contactPerson.phone ||
-    !/^\d{8}$/.test(contactInfo.contactPerson.phone.replace(/\s/g, ''))
-  ) {
-    errors.contactPersonPhone = t('validation.invalidPhone')
-    isValid = false
-  }
-
-  return isValid
+  return true
 }
 
 const goToNextStep = async () => {
-  const isValid = validateForm()
+  const isValid = validateForm(true)
   formStore.markStepCompleted(1, isValid)
-  if (!isValid) {
-    return
-  }
 
   const nextStepPath = formStore.getStepPath(2)
   if (nextStepPath) {
@@ -195,10 +235,17 @@ const goToNextStep = async () => {
 onMounted(() => {
   formStore.setCurrentStepByPath('/application/contact-info')
   stepControls.value.onNext = goToNextStep
+
+  const currentStep = formStore.getCurrentStep
+  if (route.query.validate === 'true' || (currentStep?.visited && !currentStep?.valid)) {
+    validateForm()
+  }
 })
 
 onUnmounted(() => {
-  stepControls.value.onNext = undefined
+  if (stepControls.value.onNext === goToNextStep) {
+    stepControls.value.onNext = undefined
+  }
 })
 
 definePageMeta({
@@ -209,35 +256,38 @@ definePageMeta({
 </script>
 
 <style scoped lang="scss">
+@use '~/assets/scss/variables' as *;
+
 .contact-info-step {
   // Typography classes are global from design system
+  width: 100%;
 }
 
 .header {
   display: flex;
   align-items: center;
-  gap: 1.5rem; // $spacing-lg
+  gap: $spacing-24;
 }
 
 .title {
   display: flex;
   align-items: center;
-  gap: 1rem; // $spacing-md
+  gap: $spacing-16;
 }
 
 .title-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px; // $size-40
+  width: 40px;
   height: 40px;
-  border-radius: 9999px; // $border-radius-full
-  background: white;
-  border: 1px solid #EBEBEB; // $color-grey-300
+  border-radius: 9999px;
+  background: $color-white;
+  border: 1px solid $color-grey-300;
 }
 
 .title-icon :deep(svg) {
-  color: #141414; // $color-grey-1000
+  color: $color-text-primary;
 }
 
 .form-grid {
@@ -255,13 +305,13 @@ definePageMeta({
 
 .section-header {
   display: flex;
-  gap: 1rem; // $spacing-md
+  gap: $spacing-16;
   align-items: center;
 }
 
 .hr {
   height: 1px;
-  background: #EBEBEB; // $color-grey-300
+  background: $color-grey-300;
   border: none;
 }
 
@@ -297,7 +347,7 @@ definePageMeta({
 }
 
 .text-muted {
-  color: #6A6A6A; // $text-tertiary
+  color: $color-text-muted;
 }
 
 .heading-m {
@@ -325,17 +375,17 @@ definePageMeta({
 h2 {
   font-size: 1.75rem;
   margin-bottom: 2rem;
-  color: var(--color-text-primary);
+  color: $color-text-primary;
 }
 
 h3 {
   font-size: 1.25rem;
   margin-bottom: 1.5rem;
-  color: var(--color-text-secondary);
+  color: $color-text-secondary;
 }
 
 .form-section {
-  background: var(--color-background-light, #f9fafb);
+  background: $color-bg-surface;
   padding: 2rem;
   border-radius: 8px;
   margin-bottom: 2rem;
@@ -355,19 +405,19 @@ label {
   display: block;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: var(--color-text-primary);
+  color: $color-text-primary;
 }
 
 .required {
-  color: var(--color-error, #dc2626);
+  color: $color-critical;
 }
 
-input[type="text"],
-input[type="tel"],
-input[type="email"] {
+input[type='text'],
+input[type='tel'],
+input[type='email'] {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid var(--color-border, #d1d5db);
+  border: 1px solid $color-grey-400;
   border-radius: 4px;
   font-size: 1rem;
   transition: border-color 0.2s ease;
@@ -375,7 +425,7 @@ input[type="email"] {
 
 input:focus {
   outline: none;
-  border-color: var(--color-primary);
+  border-color: $color-primary;
 }
 
 .radio-group {
@@ -392,7 +442,7 @@ input:focus {
   font-weight: normal;
 }
 
-.radio-label input[type="radio"] {
+.radio-label input[type='radio'] {
   width: 20px;
   height: 20px;
   cursor: pointer;
@@ -400,7 +450,7 @@ input:focus {
 
 .error-message {
   display: block;
-  color: var(--color-error, #dc2626);
+  color: $color-critical;
   font-size: 0.875rem;
   margin-top: 0.25rem;
 }

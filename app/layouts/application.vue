@@ -4,7 +4,7 @@
     <aside class="sidebar">
       <div class="sidebar-top">
         <NuxtLink to="/">
-          <img src="/fk-logo.svg" alt="Frederiksberg Kommune" height="40">
+          <img src="/fk-logo.svg" alt="Frederiksberg Kommune" height="40" />
         </NuxtLink>
       </div>
 
@@ -16,12 +16,14 @@
       </div>
 
       <div class="sidebar-steps">
-        <VerticalStepper
-          v-if="formStore.steps"
-          v-model="selectedStepIndex"
-          :items="stepperItems"
-          :clickable="true"
-        />
+        <ClientOnly>
+          <VerticalStepper
+            v-if="formStore.steps"
+            v-model="selectedStepIndex"
+            :items="stepperItems"
+            :clickable="true"
+          />
+        </ClientOnly>
       </div>
 
       <nav class="sidebar-bottom">
@@ -36,9 +38,11 @@
     <!-- Content -->
     <section class="content">
       <div class="topbar">
-        <Button variant="secondary" icon-name="fa7-solid:arrow-left" @click="handleBack">
-          Tilbage
-        </Button>
+        <ClientOnly>
+          <Button variant="secondary" icon-name="fa7-solid:arrow-left" @click="handleBack">
+            Tilbage
+          </Button>
+        </ClientOnly>
         <div class="topbar-right" />
       </div>
 
@@ -47,35 +51,27 @@
           <slot />
 
           <div class="bottom-cta">
-            <Button
-              variant="secondary"
-              :full-width="false"
-              :loading="isSavingDraft"
-              @click="handleSaveDraft"
-            >
-              {{ $t('form.saveDraft') }}
-            </Button>
-
-            <Button
-              v-if="!formStore.isLastStep"
-              variant="primary"
-              :full-width="true"
-              icon-name="fa7-solid:arrow-right"
-              icon-position="right"
-              :disabled="!hasNextHandler"
-              @click="handleNext"
-            >
-              Gå videre
-            </Button>
-            <Button
-              v-else
-              variant="primary"
-              :full-width="true"
-              :disabled="!formStore.canSubmit || !hasSubmitHandler"
-              @click="handleSubmit"
-            >
-              Indsend ansøgning
-            </Button>
+            <ClientOnly>
+              <Button
+                v-if="!formStore.isLastStep"
+                variant="primary"
+                :full-width="true"
+                icon-name="fa7-solid:arrow-right"
+                icon-position="right"
+                @click="handleNext"
+              >
+                Gå videre
+              </Button>
+              <Button
+                v-else
+                variant="primary"
+                :full-width="true"
+                :disabled="!formStore.canSubmit || !hasSubmitHandler"
+                @click="handleSubmit"
+              >
+                Indsend ansøgning
+              </Button>
+            </ClientOnly>
           </div>
         </div>
       </div>
@@ -84,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { Button, VerticalStepper } from 'fk-designsystem'
 import { useEventFormStore } from '../stores/event-form'
@@ -93,13 +89,11 @@ import { useStepControls } from '../composables/useStepControls'
 const router = useRouter()
 const formStore = useEventFormStore()
 const stepControls = useStepControls()
-const isSavingDraft = ref(false)
 
 if (!stepControls.value) {
   stepControls.value = {}
 }
 
-const hasNextHandler = computed(() => Boolean(stepControls.value && stepControls.value.onNext))
 const hasSubmitHandler = computed(() => Boolean(stepControls.value && stepControls.value.onSubmit))
 
 const stepperItems = computed(() => {
@@ -107,8 +101,9 @@ const stepperItems = computed(() => {
 
   return formStore.steps.map((step) => ({
     label: step.title,
-    filled: step.completed ? 5 : step.valid ? 3 : 0,
-    total: 5,
+    id: step.id,
+    filled: step.completed ? 1 : 0,
+    total: 1,
     disabled: false,
   }))
 })
@@ -148,16 +143,6 @@ const handleSubmit = async () => {
     return
   }
   await stepControls.value.onSubmit()
-}
-
-const handleSaveDraft = async () => {
-  if (isSavingDraft.value) return
-  try {
-    isSavingDraft.value = true
-    await formStore.saveDraft()
-  } finally {
-    isSavingDraft.value = false
-  }
 }
 </script>
 

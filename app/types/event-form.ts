@@ -66,6 +66,7 @@ export interface FormStep {
   path: string
   completed: boolean
   valid: boolean
+  visited?: boolean
 }
 
 export type StepKey = 'contact-info' | 'event-info' | 'practical-safety' | 'permits-operations' | 'summary'
