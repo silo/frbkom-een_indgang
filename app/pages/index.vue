@@ -12,15 +12,26 @@
         Her kan du oprette og administrere dine arrangementsansøgninger.
       </p>
 
-      <NuxtLink
-        to="/application/contact-info"
-        class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-      >
-        {{ $t('events.createNew') }}
-      </NuxtLink>
+      <div class="flex gap-4">
+        <NuxtLink
+          to="/application/contact-info"
+          class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          {{ $t('events.createNew') }}
+        </NuxtLink>
+        
+        <NuxtLink
+          v-if="!loggedIn"
+          to="/api/auth/login"
+          external
+          class="inline-block bg-white text-blue-600 border border-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50 transition-colors"
+        >
+          Log ind med MitID
+        </NuxtLink>
+      </div>
     </section>
 
-    <section class="bg-white rounded-lg shadow p-6">
+    <section v-if="loggedIn" class="bg-white rounded-lg shadow p-6">
       <h2 class="text-xl font-semibold mb-4">
         {{ $t('events.myEvents') }}
       </h2>
@@ -33,6 +44,7 @@
 
 <script setup lang="ts">
 const config = useRuntimeConfig()
+const { loggedIn } = useUserSession()
 const appName = config.public.appName
 
 definePageMeta({
