@@ -35,7 +35,6 @@
 
 <script setup lang="ts">
 const handleLogout = () => {
-  // TODO: Implement logout in Phase 4
-  console.log('Logout clicked')
+  navigateTo('/api/admin-auth/logout', { external: true })
 }
 </script>

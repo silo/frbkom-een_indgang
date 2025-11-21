@@ -95,7 +95,7 @@ const createCodeChallenge = async (verifier: string) => {
 
 const getRedirectUri = (event: H3Event) => {
   const currentUrl = new URL(getRequestURL(event))
-  return `${currentUrl.protocol}//${currentUrl.host}/auth/callback`
+  return `${currentUrl.protocol}//${currentUrl.host}/api/auth/callback`
 }
 
 const getBasicAuthHeader = (clientId: string, clientSecret: string) =>
