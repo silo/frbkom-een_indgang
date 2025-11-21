@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm'
 import { boolean, index, integer, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 import { user } from './user'
 import { locationPreset } from './location-preset'
@@ -49,3 +50,14 @@ export const eventApplication = pgTable(
     ),
   }),
 )
+
+export const eventApplicationRelations = relations(eventApplication, ({ one }) => ({
+  owner: one(user, {
+    fields: [eventApplication.ownerUserId],
+    references: [user.id],
+  }),
+  locationPreset: one(locationPreset, {
+    fields: [eventApplication.locationPresetId],
+    references: [locationPreset.id],
+  }),
+}))

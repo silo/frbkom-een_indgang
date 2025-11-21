@@ -17,19 +17,25 @@ export const adminRouter = router({
         .object({
           status: z.enum(['draft', 'submitted']).optional(),
           reviewStatus: reviewStatusEnum.optional(),
+          search: z.string().trim().max(200).optional(),
           limit: z.number().min(1).max(100).default(50),
           offset: z.number().min(0).default(0),
         })
         .optional(),
     )
     .query(async ({ ctx, input }) => {
-      const { limit = 50, offset = 0, status, reviewStatus } = input || {}
+      const { limit = 50, offset = 0, status, reviewStatus, search } = input || {}
+      const normalizedSearch = search?.trim()
 
       const events = await ctx.db.query.eventApplication.findMany({
-        where: (events, { and, eq }) => {
+        where: (events, { and, eq, ilike, or }) => {
           const conditions = []
           if (status) conditions.push(eq(events.status, status))
           if (reviewStatus) conditions.push(eq(events.reviewStatus, reviewStatus))
+          if (normalizedSearch) {
+            const pattern = `%${normalizedSearch}%`
+            conditions.push(or(ilike(events.title, pattern), ilike(events.purpose, pattern)))
+          }
           return conditions.length > 0 ? and(...conditions) : undefined
         },
         limit,

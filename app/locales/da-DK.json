@@ -13,7 +13,8 @@
     "error": "Der opstod en fejl",
     "success": "Gennemført",
     "required": "Påkrævet felt",
-    "optional": "Valgfrit"
+    "optional": "Valgfrit",
+    "retry": "Prøv igen"
   },
   "nav": {
     "home": "Forside",
@@ -166,6 +167,7 @@
     "status": {
       "draft": "Kladde",
       "submitted": "Indsendt",
+      "all": "Alle",
       "unprocessed": "Ubehandlet",
       "in_review": "Under behandling",
       "partially_approved": "Delvist godkendt",
@@ -185,6 +187,40 @@
     "departments": "Afdelinger",
     "approve": "Godkend",
     "reject": "Afvis",
-    "assignDepartment": "Tildel afdeling"
+    "assignDepartment": "Tildel afdeling",
+    "filters": {
+      "searchLabel": "Søg i ansøgninger",
+      "searchPlaceholder": "Titel eller formål",
+      "reviewStatusLabel": "Statusfilter"
+    },
+    "metrics": {
+      "title": "Status på ansøgninger"
+    },
+    "table": {
+      "event": "Arrangement",
+      "applicant": "Ansøger",
+      "submitted": "Indsendt",
+      "status": "Status",
+      "actions": "Handlinger",
+      "open": "Åbn"
+    },
+    "empty": {
+      "title": "Ingen ansøgninger matcher",
+      "subtitle": "Juster filtre eller søg efter en anden titel."
+    },
+    "detail": {
+      "back": "Tilbage til oversigten",
+      "overview": "Overblik",
+      "basicInfo": "Grundlæggende oplysninger",
+      "timing": "Tidspunkter",
+      "contact": "Kontakt",
+      "submittedAt": "Indsendt",
+      "eventId": "Ansøgnings-ID",
+      "reviewStatus": "Sagsstatus",
+      "submissionStatus": "Indsendelsesstatus",
+      "purpose": "Formål",
+      "location": "Lokation",
+      "upcomingSections": "Flere administrationsfunktioner kommer snart"
+    }
   }
 }

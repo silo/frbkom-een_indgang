@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "dotenv -e .env.development -- nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
@@ -28,7 +28,12 @@
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "tsx server/database/seed.ts",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:dev:generate": "dotenv -e .env.development -- drizzle-kit generate",
+    "db:dev:push": "dotenv -e .env.development -- drizzle-kit push",
+    "db:dev:migrate": "dotenv -e .env.development -- drizzle-kit migrate",
+    "db:dev:seed": "dotenv -e .env.development -- tsx server/database/seed.ts",
+    "db:dev:studio": "dotenv -e .env.development -- drizzle-kit studio"
   },
   "dependencies": {
     "@nuxt/eslint": "1.10.0",
@@ -62,6 +67,7 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/test-utils": "^2.4.6",
     "dotenv": "^17.2.3",
+    "dotenv-cli": "^7.4.2",
     "drizzle-kit": "^0.30.2",
     "happy-dom": "^15.11.7",
     "prettier": "^3.4.2",
