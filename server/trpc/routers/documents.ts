@@ -7,7 +7,7 @@ import {
   deleteDocumentSchema,
   getDocumentSchema,
 } from '../../../shared/schemas/document'
-import { eventDocument, eventApplication } from '../../database/schema'
+import { eventDocument, eventApplication, eventAuditLog } from '../../database/schema'
 
 export const documentsRouter = router({
   // Upload document
@@ -21,7 +21,9 @@ export const documentsRouter = router({
       throw new TRPCError({ code: 'NOT_FOUND', message: 'Event not found' })
     }
 
-    if (event.ownerUserId !== ctx.user.id) {
+    const canAdminister = event.ownerUserId === ctx.user.id || ctx.user.role === 'admin'
+
+    if (!canAdminister) {
       throw new TRPCError({
         code: 'FORBIDDEN',
         message: 'Not authorized to upload documents for this event',
@@ -29,6 +31,17 @@ export const documentsRouter = router({
     }
 
     const [document] = await ctx.db.insert(eventDocument).values(input).returning()
+
+    await ctx.db.insert(eventAuditLog).values({
+      eventId: input.eventId,
+      actorUserId: ctx.user.id,
+      action: 'add_document',
+      payload: {
+        documentId: document.id,
+        fileName: document.fileName,
+        kind: document.kind,
+      },
+    })
 
     return document
   }),
@@ -102,11 +115,22 @@ export const documentsRouter = router({
       where: eq(eventApplication.id, document.eventId),
     })
 
-    if (!event || event.ownerUserId !== ctx.user.id) {
+    if (!event || (event.ownerUserId !== ctx.user.id && ctx.user.role !== 'admin')) {
       throw new TRPCError({ code: 'FORBIDDEN', message: 'Not authorized' })
     }
 
     await ctx.db.delete(eventDocument).where(eq(eventDocument.id, input.id))
+
+    await ctx.db.insert(eventAuditLog).values({
+      eventId: document.eventId,
+      actorUserId: ctx.user.id,
+      action: 'remove_document',
+      payload: {
+        documentId: document.id,
+        fileName: document.fileName,
+        kind: document.kind,
+      },
+    })
 
     return { success: true }
   }),

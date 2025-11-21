@@ -5,6 +5,7 @@ export const documentKindEnum = z.enum([
   'construction_certificate',
   'plan',
   'police_approval',
+  'approval_document',
 ])
 
 // Maximum 5MB as per runtime config

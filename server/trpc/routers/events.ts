@@ -7,6 +7,7 @@ import {
   saveDraftEventSchema,
 } from '../../../shared/schemas/event'
 import { eventApplication } from '../../database/schema'
+import { ensureDefaultDepartmentStatus } from '../../utils/department-defaults'
 import { z } from 'zod'
 
 export const eventsRouter = router({
@@ -28,6 +29,8 @@ export const eventsRouter = router({
         summaryCompletionPct: 0,
       })
       .returning()
+
+    await ensureDefaultDepartmentStatus(ctx.db, event.id)
 
     // Link event type tags
     // TODO Phase 2: Get tag IDs from codes and link with eventTypeTagLink
@@ -134,6 +137,8 @@ export const eventsRouter = router({
         })
         .where(eq(eventApplication.id, input.id))
         .returning()
+
+      await ensureDefaultDepartmentStatus(ctx.db, updated.id)
 
       return updated
     }),

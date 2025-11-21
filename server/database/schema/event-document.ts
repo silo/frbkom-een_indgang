@@ -9,7 +9,7 @@ export const eventDocument = pgTable(
       .notNull()
       .references(() => eventApplication.id, { onDelete: 'cascade' }),
     kind: text('kind', {
-      enum: ['attachment', 'construction_certificate', 'plan', 'police_approval'],
+      enum: ['attachment', 'construction_certificate', 'plan', 'police_approval', 'approval_document'],
     }).notNull(),
     fileName: text('file_name').notNull(),
     mimeType: text('mime_type').notNull(),

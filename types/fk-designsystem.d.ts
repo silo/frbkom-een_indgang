@@ -47,4 +47,8 @@ declare module 'fk-designsystem' {
   export type TableAlign = import('../node_modules/fk-designsystem/dist/types/table').TableAlign
   export type SortDirection = import('../node_modules/fk-designsystem/dist/types/table').SortDirection
   export const Table: VueComponent<TableProps>
+
+  export type ModalProps = import('../node_modules/fk-designsystem/dist/types/modal').ModalProps
+  export type ModalAction = import('../node_modules/fk-designsystem/dist/types/modal').ModalAction
+  export const Modal: VueComponent<ModalProps>
 }

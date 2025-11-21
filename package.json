@@ -43,6 +43,7 @@
     "@nuxt/test-utils": "3.20.1",
     "@nuxtjs/i18n": "^9.1.0",
     "@pinia/nuxt": "^0.11.3",
+    "@sendgrid/mail": "^8.1.6",
     "@trpc/client": "^11.0.0",
     "@trpc/server": "^11.0.0",
     "@vuepic/vue-datepicker": "^12.0.4",

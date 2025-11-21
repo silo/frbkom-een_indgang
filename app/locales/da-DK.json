@@ -210,17 +210,102 @@
     },
     "detail": {
       "back": "Tilbage til oversigten",
-      "overview": "Overblik",
       "basicInfo": "Grundlæggende oplysninger",
       "timing": "Tidspunkter",
       "contact": "Kontakt",
       "submittedAt": "Indsendt",
+      "startTime": "Start",
+      "endTime": "Slut",
+      "setup": "Opsætning og nedtagning",
       "eventId": "Ansøgnings-ID",
       "reviewStatus": "Sagsstatus",
       "submissionStatus": "Indsendelsesstatus",
       "purpose": "Formål",
       "location": "Lokation",
-      "upcomingSections": "Flere administrationsfunktioner kommer snart"
+      "locationPending": "Lokation ikke angivet",
+      "attendance": "Forventet antal deltagere",
+      "commercial": "Kommercielt arrangement",
+      "recurring": "Tilbagevendende",
+      "recurringDaily": "Dagligt",
+      "recurringWeekly": "Ugentligt",
+      "recurringMonthly": "Månedligt",
+      "statusDropdownLabel": "Opdater status",
+      "actions": {
+        "startReview": "Start sagsbehandling",
+        "markPartiallyApproved": "Markér som delvist godkendt",
+        "approve": "Godkend ansøgning",
+        "reject": "Afvis ansøgning"
+      },
+      "departmentsTitle": "Involverede afdelinger",
+      "departmentsSubtitle": "Tilknyt og opdater status for de afdelinger, der behandler ansøgningen.",
+      "departmentStatusLabel": "Afdelingsstatus",
+      "departmentNoteLabel": "Noter til afdeling",
+      "departmentUpdated": "Senest opdateret {date}",
+      "departmentUnassigned": "Ikke tilføjet endnu. Tildel afdelingen, hvis de skal deltage i behandlingen.",
+      "departmentAssign": "Tilføj afdeling",
+      "departmentStatuses": {
+        "pending": "Afventer",
+        "in_review": "Under behandling",
+        "approved": "Godkendt"
+      },
+      "documentsTitle": "Dokumenter",
+      "documentsSubtitle": "Vis og download vedhæftede filer eller upload godkendelsesbreve.",
+      "documentsCta": "Upload godkendelse",
+      "applicationDocuments": "Ansøgningens dokumenter",
+      "approvalDocuments": "Godkendelsesdokumenter",
+      "documentDownload": "Download",
+      "documentKinds": {
+        "attachment": "Bilag",
+        "certificate": "Certifikat",
+        "plan": "Plan",
+        "police": "Polititilladelse",
+        "approval": "Godkendelse"
+      },
+      "noDocuments": "Ingen dokumenter fra ansøgeren.",
+      "noApprovalDocuments": "Ingen godkendelser uploadet endnu.",
+      "auditTitle": "Aktivitetshistorik",
+      "auditSubtitle": "Alle ændringer på ansøgningen registreres her.",
+      "audit": {
+        "actions": {
+          "create": "Ansøgning oprettet",
+          "update": "Ansøgning opdateret",
+          "status": "Status ændret",
+          "addDocument": "Dokument tilføjet",
+          "removeDocument": "Dokument fjernet"
+        }
+      },
+      "noAuditEntries": "Ingen aktiviteter registreret endnu.",
+      "approvalModal": {
+        "title": "Godkend ansøgningen",
+        "body": "Upload godkendelses-PDF'er til journalisering. Mindst ét dokument er påkrævet.",
+        "uploadLabel": "Godkendelsesdokumenter (PDF)",
+        "uploadHelper": "Kun PDF. Maks 5MB pr. fil.",
+        "confirm": "Godkend ansøgning",
+        "validation": {
+          "files": "Tilføj mindst ét godkendelsesdokument."
+        },
+        "fileTooLarge": "{name}: Filen må højst være 5MB.",
+        "fileWrongType": "{name}: Kun PDF-filer er tilladt.",
+        "error": "Det lykkedes ikke at gemme godkendelsesdokumenterne. Prøv igen."
+      },
+      "rejectModal": {
+        "title": "Afvis ansøgningen",
+        "body": "Forklar ansøgeren hvorfor ansøgningen afvises. Beskeden sendes via e-mail.",
+        "noteLabel": "Besked til ansøgeren",
+        "confirm": "Afvis ansøgning",
+        "validation": "Skriv en begrundelse for afvisningen.",
+        "error": "Afvisningen kunne ikke gemmes. Prøv igen."
+      },
+      "messages": {
+        "statusUpdated": "Sagsstatus er opdateret.",
+        "statusFailed": "Kunne ikke opdatere sagsstatus.",
+        "departmentAssigned": "Afdelingen er tilføjet til sagen.",
+        "departmentSaved": "Afdelingens status er opdateret.",
+        "departmentFailed": "Kunne ikke gemme afdelingsstatus.",
+        "documentDownloadFailed": "Filen kunne ikke downloades.",
+        "documentDeleted": "Dokumentet er slettet.",
+        "documentDeleteFailed": "Kunne ikke slette dokumentet."
+      }
     }
   }
 }
