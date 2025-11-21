@@ -2,6 +2,11 @@ import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 import * as schema from './schema'
 
+type DrizzleInstance = ReturnType<typeof drizzle>
+type DatabaseInstance = DrizzleInstance & {
+  query: DrizzleInstance extends { query: infer Q } ? Q : Record<string, never>
+}
+
 const resolveDatabaseUrl = () => {
   const envUrl = process.env.NUXT_DATABASE_URL || process.env.DATABASE_URL
   if (envUrl) {
@@ -16,9 +21,9 @@ const resolveDatabaseUrl = () => {
 
 const databaseUrl = resolveDatabaseUrl()
 
-const db: ReturnType<typeof drizzle> = (() => {
+const db: DatabaseInstance = (() => {
   if (!databaseUrl) {
-    return new Proxy({} as ReturnType<typeof drizzle>, {
+    return new Proxy({} as DatabaseInstance, {
       get() {
         throw new Error('Database is not configured. Please set DATABASE_URL environment variable.')
       },
@@ -31,7 +36,7 @@ const db: ReturnType<typeof drizzle> = (() => {
       idle_timeout: 20,
       connect_timeout: 10,
     })
-    return drizzle(client, { schema })
+    return drizzle(client, { schema }) as DatabaseInstance
   } catch (error) {
     console.error('Failed to connect to database:', error)
     throw error

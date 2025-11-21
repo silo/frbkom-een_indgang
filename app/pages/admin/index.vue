@@ -1,21 +1,15 @@
 <template>
   <div class="admin-dashboard">
     <header class="dashboard-header">
-      <div>
-        <p class="eyebrow">{{ $t('admin.dashboard') }}</p>
-        <h1>{{ $t('admin.allEvents') }}</h1>
-      </div>
-      <p class="result-count">
-        {{ events.length }}
-      </p>
+      <h1>
+        {{ t('admin.allEvents') }}
+        <span class="dashboard-count-badge">
+          {{ t('admin.applicationsCount', { count: events.length }) }}
+        </span>
+      </h1>
     </header>
 
-    <section class="events-panel">
-      <div class="panel-header">
-        <h2>{{ $t('admin.allEvents') }}</h2>
-        <span class="result-count">{{ events.length }}</span>
-      </div>
-
+    <section>
       <div v-if="pending" class="panel-state">
         <p>{{ $t('common.loading') }}</p>
       </div>
@@ -32,41 +26,43 @@
         <p>{{ $t('admin.empty.subtitle') }}</p>
       </div>
 
-      <div v-else class="table-wrapper">
-        <Table
-          class="events-table"
-          :pagination="false"
-          :columns="tableColumns"
-          :rows="events"
-          row-key="id"
-        >
-          <template #cell-event="{ row }">
-            <p class="event-title">{{ row.title }}</p>
-            <p class="event-purpose">{{ row.purpose }}</p>
-          </template>
+      <Table
+        v-else
+        class="fk-table events-table"
+        :pagination="false"
+        :columns="tableColumns"
+        :rows="events"
+        row-key="id"
+      >
+        <template #cell-title="{ row }">
+          <p class="event-title">{{ row.title }}</p>
+          <p class="event-location">{{ formatLocation(row) }}</p>
+        </template>
 
-          <template #cell-applicant="{ row }">
-            <p class="applicant-name">{{ row.owner?.name || '—' }}</p>
-            <p class="applicant-email">{{ row.owner?.email || '—' }}</p>
-          </template>
+        <template #cell-type="{ row }">
+          <p class="event-meta-text">{{ formatTypeTags(row.typeTags) }}</p>
+        </template>
 
-          <template #cell-submitted="{ row }">
-            {{ formatDateTime(row.createdAt) }}
-          </template>
+        <template #cell-date="{ row }">
+          <p class="event-meta-text">{{ formatEventDate(row) }}</p>
+        </template>
 
-          <template #cell-status="{ row }">
-            <span class="status-badge" :class="getStatusBadgeClass(row.reviewStatus)">
-              {{ getStatusLabel(row.reviewStatus) }}
-            </span>
-          </template>
+        <template #cell-departments="{ row }">
+          <p class="event-meta-text">{{ formatDepartments(row.departments) }}</p>
+        </template>
 
-          <template #cell-actions="{ row }">
-            <NuxtLink class="table-link" :to="`/admin/events/${row.id}`">
-              {{ $t('admin.table.open') }}
-            </NuxtLink>
-          </template>
-        </Table>
-      </div>
+        <template #cell-status="{ row }">
+          <span class="status-badge" :class="getStatusBadgeClass(row.reviewStatus)">
+            {{ getStatusLabel(row.reviewStatus) }}
+          </span>
+        </template>
+
+        <template #cell-actions="{ row }">
+          <NuxtLink class="table-link" :to="`/admin/events/${row.id}`">
+            {{ $t('admin.table.openApplication') }}
+          </NuxtLink>
+        </template>
+      </Table>
     </section>
   </div>
 </template>
@@ -109,35 +105,59 @@ onMounted(() => {
 })
 
 const events = computed<AdminEventList>(() => data.value ?? [])
-
-const dateFormatter = new Intl.DateTimeFormat('da-DK', {
-  dateStyle: 'medium',
-  timeStyle: 'short',
-})
+type AdminEvent = Record<string, any>
 
 const statusClassMap: Record<ReviewStatus, string> = {
   unprocessed: 'badge-neutral',
-  in_review: 'badge-info',
+  in_review: 'badge-neutral',
   partially_approved: 'badge-warning',
   approved: 'badge-success',
   rejected: 'badge-critical',
 }
 
 const tableColumns = computed<TableColumn[]>(() => [
-  { key: 'event', label: t('admin.table.event'), width: '32%' },
-  { key: 'applicant', label: t('admin.table.applicant'), width: '22%' },
-  { key: 'submitted', label: t('admin.table.submitted'), width: '18%' },
-  { key: 'status', label: t('admin.table.status'), width: '16%' },
-  { key: 'actions', label: t('admin.table.actions'), align: 'right', width: '12%' },
+  { key: 'title', label: t('admin.table.eventTitle'), width: '30%' },
+  { key: 'type', label: t('admin.table.type'), width: '18%' },
+  { key: 'date', label: t('admin.table.date'), width: '16%' },
+  { key: 'departments', label: t('admin.table.department'), width: '20%' },
+  { key: 'status', label: t('admin.table.status'), width: '10%' },
+  { key: 'actions', label: '', align: 'right', width: '6%' },
 ])
 
-const formatDateTime = (value?: string | null) => {
-  if (!value) return '—'
+const formatLocation = (event: AdminEvent) =>
+  event.locationAddress || event.locationPreset?.name || t('admin.detail.locationPending')
+
+const eventDateFormatter = new Intl.DateTimeFormat('da-DK', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+})
+
+const formatEventDate = (event: AdminEvent) => {
+  if (!event.startAt) return '—'
   try {
-    return dateFormatter.format(new Date(value))
+    const start = new Date(event.startAt)
+    const end = event.endAt ? new Date(event.endAt) : null
+    const startLabel = eventDateFormatter.format(start)
+    if (!end) {
+      return startLabel
+    }
+    const sameDay = start.toDateString() === end.toDateString()
+    const endLabel = eventDateFormatter.format(end)
+    return sameDay ? startLabel : `${startLabel} - ${endLabel}`
   } catch {
-    return value
+    return '—'
   }
+}
+
+const formatTypeTags = (tags?: { name: string }[]) => {
+  if (!tags?.length) return '—'
+  return tags.map((tag) => tag.name).join(', ')
+}
+
+const formatDepartments = (departments?: string[]) => {
+  if (!departments?.length) return '—'
+  return departments.join(', ')
 }
 
 const getStatusLabel = (status: ReviewStatus) => t(`events.status.${status}`)
@@ -163,16 +183,16 @@ const getStatusBadgeClass = (status: ReviewStatus) => statusClassMap[status] ?? 
   margin: 4px 0 0;
 }
 
-.eyebrow {
+.dashboard-count-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 12px;
+  padding: 2px 12px;
+  border-radius: 999px;
   font-size: 14px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #5a6a85;
-}
-
-.result-count {
-  font-size: 16px;
-  color: #6b7280;
+  font-weight: 600;
+  color: #0f172a;
+  background: #e2e8f0;
 }
 
 
@@ -205,49 +225,29 @@ const getStatusBadgeClass = (status: ReviewStatus) => statusClassMap[status] ?? 
   background: #fecaca;
 }
 
-.events-panel {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 0 0 16px;
-}
-
-.panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-
-.table-wrapper {
-  overflow-x: auto;
-}
-
 .events-table {
   width: 100%;
 }
 
 .event-title {
   font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
   color: #111827;
 }
 
-.event-purpose {
-  color: #6b7280;
-  font-size: 14px;
+.event-location {
   margin-top: 4px;
-}
-
-.applicant-name {
-  font-weight: 500;
-  color: #111827;
-}
-
-.applicant-email {
-  color: #4b5563;
   font-size: 14px;
+  line-height: 20px;
+  color: #6a6a6a;
+}
+
+.event-meta-text {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--text-text-tertiary, #6a6a6a);
 }
 
 .panel-state {
@@ -271,7 +271,9 @@ const getStatusBadgeClass = (status: ReviewStatus) => statusClassMap[status] ?? 
 
 .table-link {
   font-weight: 600;
-  color: #2563eb;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--text-text-brand, #0a6b3e);
   text-decoration: none;
 }
 

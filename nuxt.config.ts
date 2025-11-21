@@ -48,6 +48,9 @@ export default defineNuxtConfig({
     sendgridTemplateSubmissionConfirmed: '',
     sendgridTemplateApproved: '',
     sendgridTemplateRejected: '',
+    departmentEmailBylivDrift: '',
+    departmentEmailKlimaMiljo: '',
+    departmentEmailByggeriArkitektur: '',
 
     // Public keys (client + server)
     public: {

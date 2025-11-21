@@ -21,7 +21,8 @@
     "myEvents": "Mine arrangementer",
     "newEvent": "Opret nyt arrangement",
     "logout": "Log ud",
-    "login": "Log ind"
+    "login": "Log ind",
+    "adminUser": "Administrator"
   },
   "auth": {
     "loginWithMitID": "Log ind med MitID",
@@ -183,6 +184,7 @@
   "admin": {
     "dashboard": "Administratoroverblik",
     "allEvents": "Alle arrangementer",
+    "applicationsCount": "{count} ansøgninger",
     "eventDetails": "Arrangementdetaljer",
     "departments": "Afdelinger",
     "approve": "Godkend",
@@ -197,19 +199,33 @@
       "title": "Status på ansøgninger"
     },
     "table": {
-      "event": "Arrangement",
-      "applicant": "Ansøger",
-      "submitted": "Indsendt",
+      "eventTitle": "Arrangementstitel",
+      "type": "Type",
+      "date": "Dato",
+      "department": "Afdeling",
       "status": "Status",
-      "actions": "Handlinger",
-      "open": "Åbn"
+      "openApplication": "Åbn ansøgning"
     },
     "empty": {
       "title": "Ingen ansøgninger matcher",
       "subtitle": "Juster filtre eller søg efter en anden titel."
     },
     "detail": {
-      "back": "Tilbage til oversigten",
+      "back": "Tilbage",
+      "contactTitle": "Kontaktoplysninger",
+      "eventInfoTitle": "Eventoplysninger",
+      "eventAvailability": "Tidsplan",
+      "eventAbout": "Om arrangementet",
+      "eventTitleLabel": "Titel",
+      "practicalSafetyTitle": "Praktiske forhold og sikkerhed",
+      "fireAndConstruction": "Brand og konstruktioner",
+      "constructionCertificate": "Certifikat for konstruktioner",
+      "otherConsiderations": "Andre hensyn",
+      "arrangementPlan": "Arrangementsplan",
+      "sound": "Lyd",
+      "permitsTitle": "Tilladelser og drift",
+      "blockage": "Afspærring",
+      "wasteHandling": "Affaldshåndtering",
       "basicInfo": "Grundlæggende oplysninger",
       "timing": "Tidspunkter",
       "contact": "Kontakt",
@@ -234,9 +250,11 @@
         "startReview": "Start sagsbehandling",
         "markPartiallyApproved": "Markér som delvist godkendt",
         "approve": "Godkend ansøgning",
-        "reject": "Afvis ansøgning"
+        "reject": "Afvis ansøgning",
+        "startApproval": "Send godkendelse"
       },
-      "departmentsTitle": "Involverede afdelinger",
+      "departmentsTitle": "Afdelinger",
+      "departmentNotifyCta": "Underret afdelinger",
       "departmentsSubtitle": "Tilknyt og opdater status for de afdelinger, der behandler ansøgningen.",
       "departmentStatusLabel": "Afdelingsstatus",
       "departmentNoteLabel": "Noter til afdeling",
@@ -248,11 +266,14 @@
         "in_review": "Under behandling",
         "approved": "Godkendt"
       },
+      "statusPanelTitle": "Afdelingsstatus",
+      "statusDownload": "Download godkendelse",
       "documentsTitle": "Dokumenter",
       "documentsSubtitle": "Vis og download vedhæftede filer eller upload godkendelsesbreve.",
       "documentsCta": "Upload godkendelse",
       "applicationDocuments": "Ansøgningens dokumenter",
       "approvalDocuments": "Godkendelsesdokumenter",
+      "documentOpen": "Åbn dokument",
       "documentDownload": "Download",
       "documentKinds": {
         "attachment": "Bilag",
@@ -278,8 +299,10 @@
       "approvalModal": {
         "title": "Godkend ansøgningen",
         "body": "Upload godkendelses-PDF'er til journalisering. Mindst ét dokument er påkrævet.",
+        "departmentLabel": "Vælg afdeling",
         "uploadLabel": "Godkendelsesdokumenter (PDF)",
         "uploadHelper": "Kun PDF. Maks 5MB pr. fil.",
+        "noteLabel": "Besked til afdelingen",
         "confirm": "Godkend ansøgning",
         "validation": {
           "files": "Tilføj mindst ét godkendelsesdokument."

@@ -1,50 +1,10 @@
 <template>
-  <div class="admin-event-detail">
-    <header class="detail-hero">
-      <div class="hero-left">
-        <Button variant="secondary" icon-name="fa7-solid:arrow-left" @click="handleBack">
-          {{ $t('admin.detail.back') }}
-        </Button>
-
-        <div v-if="event" class="hero-text">
-          <div class="hero-title">
-            <h1>{{ event.title }}</h1>
-            <Badge :label="getReviewStatusLabel(event.reviewStatus)" :variant="reviewStatusVariant[event.reviewStatus]" />
-          </div>
-          <p class="hero-meta">
-            {{ formatDateRange(event.startAt, event.endAt) }} ·
-            {{ resolveLocation(event) }}
-          </p>
-        </div>
-      </div>
-
-      <div v-if="event" class="hero-actions">
-        <Button
-          v-if="event.reviewStatus === 'unprocessed'"
-          variant="ghost"
-          :loading="reviewStatusLoading"
-          @click="handleReviewStatusChange('in_review')"
-        >
-          {{ $t('admin.detail.actions.startReview') }}
-        </Button>
-
-        <Button
-          v-else-if="event.reviewStatus === 'in_review'"
-          variant="ghost"
-          :loading="reviewStatusLoading"
-          @click="handleReviewStatusChange('partially_approved')"
-        >
-          {{ $t('admin.detail.actions.markPartiallyApproved') }}
-        </Button>
-
-        <Button variant="danger" :disabled="isApproving" @click="openRejectModal">
-          {{ $t('admin.detail.actions.reject') }}
-        </Button>
-        <Button variant="primary" :disabled="isRejecting" @click="openApproveModal">
-          {{ $t('admin.detail.actions.approve') }}
-        </Button>
-      </div>
-    </header>
+  <div class="admin-event-page">
+    <section class="detail-toolbar">
+      <Button variant="secondary" icon-name="fa7-solid:arrow-left" @click="handleBack">
+        {{ $t('admin.detail.back') }}
+      </Button>
+    </section>
 
     <section v-if="feedbackMessage" class="detail-feedback" :class="`is-${feedbackMessage.type}`">
       <div>
@@ -56,273 +16,305 @@
       </Button>
     </section>
 
-    <section v-if="eventPending" class="detail-state">
+    <section v-if="event" class="detail-hero-card">
+      <div class="hero-heading">
+        <h1>{{ event.title }}</h1>
+      </div>
+      <div class="hero-meta-row">
+        <div class="hero-meta" aria-live="polite">
+          <span class="hero-meta-item">
+            <Icon name="fa7-solid:location-dot" size="14" aria-hidden="true" />
+            <span>{{ heroLocation }}</span>
+          </span>
+          <span class="hero-meta-item">
+            <Icon name="fa7-solid:calendar-days" size="14" aria-hidden="true" />
+            <span>{{ heroDateRange }}</span>
+          </span>
+          <span class="hero-meta-item">
+            <Icon name="fa7-solid:tag" size="14" aria-hidden="true" />
+            <span>{{ heroTypeLabel }}</span>
+          </span>
+          <span class="hero-meta-item hero-meta-status">
+            <Badge :label="getReviewStatusLabel(event.reviewStatus)" :variant="reviewStatusVariant[event.reviewStatus]" />
+          </span>
+        </div>
+        <div class="hero-actions">
+          <Button variant="primary" icon-name="fa7-solid:envelope-circle-check" @click="openApprovalModal">
+            {{ $t('admin.detail.actions.startApproval') }}
+          </Button>
+        </div>
+      </div>
+    </section>
+
+    <section v-else-if="eventPending" class="detail-card detail-state">
       <p>{{ $t('common.loading') }}</p>
     </section>
 
-    <section v-else-if="eventError" class="detail-state">
+    <section v-else-if="eventError" class="detail-card detail-state">
       <p>{{ $t('common.error') }}</p>
       <Button variant="secondary" @click="refreshEvent">
         {{ $t('common.retry') }}
       </Button>
     </section>
 
-    <template v-else-if="event">
-      <section class="case-overview">
-        <div class="case-card">
-          <p class="card-label">{{ $t('admin.detail.reviewStatus') }}</p>
-          <div class="case-status-row">
-            <Badge :label="getReviewStatusLabel(event.reviewStatus)" :variant="reviewStatusVariant[event.reviewStatus]" />
-            <DropdownButton
-              v-model="reviewStatusDraft"
-              class="status-dropdown"
-              :disabled="reviewStatusLoading"
-              :button-label="$t('admin.detail.statusDropdownLabel')"
-              :options="reviewStatusOptions"
-              @select="onReviewStatusSelect"
-            />
-          </div>
-        </div>
-        <div class="case-card">
-          <p class="card-label">{{ $t('admin.detail.submissionStatus') }}</p>
-          <Badge :label="getSubmissionStatus(event.status)" variant="info" />
-          <p class="case-secondary">{{ $t('admin.detail.submittedAt') }} · {{ formatDateTime(event.createdAt) }}</p>
-        </div>
-        <div class="case-card">
-          <p class="card-label">{{ $t('admin.detail.recurring') }}</p>
-          <p class="card-value">{{ getRecurringLabel(event) }}</p>
-          <p v-if="event.recurring && event.recurringInterval" class="case-secondary">
-            {{ getRecurringIntervalLabel(event.recurringInterval) }}
-          </p>
-        </div>
-      </section>
+    <section class="detail-map-card" aria-live="polite">
+      <img
+        v-if="heroMapImage"
+        :src="heroMapImage"
+        :alt="heroMapAlt"
+        :width="mapSize.width"
+        :height="mapSize.height"
+        loading="lazy"
+      >
+      <div v-else class="map-fallback">
+        <p>{{ $t('admin.detail.locationPending') }}</p>
+      </div>
+    </section>
 
-      <section class="info-grid">
-        <article class="info-card">
-          <div class="info-card-header">
-            <p class="card-label">{{ $t('admin.detail.basicInfo') }}</p>
-            <span class="info-id">{{ event.id }}</span>
-          </div>
-          <dl>
-            <dt>{{ $t('admin.table.event') }}</dt>
-            <dd>{{ event.title }}</dd>
-            <dt>{{ $t('admin.detail.purpose') }}</dt>
-            <dd>{{ event.purpose }}</dd>
-            <dt>{{ $t('admin.detail.location') }}</dt>
-            <dd>{{ resolveLocation(event) }}</dd>
-            <dt>{{ $t('admin.detail.attendance') }}</dt>
-            <dd>{{ formatAttendanceLabel(event.expectedAttendanceRange) }}</dd>
-            <dt>{{ $t('admin.detail.commercial') }}</dt>
-            <dd>{{ event.commercial ? $t('form.step1.yes') : $t('form.step1.no') }}</dd>
-          </dl>
-        </article>
-
-        <article class="info-card">
-          <p class="card-label">{{ $t('admin.detail.contact') }}</p>
-          <dl>
-            <dt>{{ $t('admin.table.applicant') }}</dt>
-            <dd>{{ event.owner?.name || '—' }}</dd>
-            <dt>Email</dt>
-            <dd>{{ event.owner?.email || '—' }}</dd>
-            <dt>{{ $t('form.step1.phone') }}</dt>
-            <dd>{{ event.owner?.phone || '—' }}</dd>
-            <dt>CVR</dt>
-            <dd>{{ event.owner?.companyCvr || '—' }}</dd>
-          </dl>
-        </article>
-
-        <article class="info-card">
-          <p class="card-label">{{ $t('admin.detail.timing') }}</p>
-          <dl>
-            <dt>{{ $t('admin.detail.submittedAt') }}</dt>
-            <dd>{{ formatDateTime(event.createdAt) }}</dd>
-            <dt>{{ $t('admin.detail.startTime') }}</dt>
-            <dd>{{ formatDateTime(event.startAt) }}</dd>
-            <dt>{{ $t('admin.detail.endTime') }}</dt>
-            <dd>{{ formatDateTime(event.endAt) }}</dd>
-            <dt>{{ $t('admin.detail.setup') }}</dt>
-            <dd>{{ formatSetupRange(event.setupStartAt, event.setupEndAt) }}</dd>
-          </dl>
-        </article>
-      </section>
-
-      <section class="department-section">
-        <header class="section-heading">
-          <div>
-            <h2>{{ $t('admin.detail.departmentsTitle') }}</h2>
-            <p>{{ $t('admin.detail.departmentsSubtitle') }}</p>
-          </div>
-        </header>
-
-        <div v-if="departmentsPending || departmentStatusesPending" class="detail-state inline">
-          <p>{{ $t('common.loading') }}</p>
-        </div>
-
-        <div v-else class="department-grid">
-          <article v-for="card in departmentCards" :key="card.id" class="department-card">
-            <div class="department-header">
-              <h3>{{ card.name }}</h3>
-              <Badge
-                v-if="card.status"
-                :label="getDepartmentStatusLabel(card.status)"
-                :variant="departmentStatusVariant[card.status]"
-              />
-            </div>
-
-            <p v-if="card.updatedAt" class="department-updated">
-              {{ $t('admin.detail.departmentUpdated', { date: formatDateTime(card.updatedAt) }) }}
-            </p>
-
-            <div v-if="card.status" class="department-controls">
-              <DropdownButton
-                :model-value="getDraftStatus(card.id, card.status)"
-                :options="departmentStatusOptions"
-                :button-label="$t('admin.detail.departmentStatusLabel')"
-                @select="handleDepartmentStatusSelect(card.id, $event)"
-              />
-              <Textarea
-                :model-value="getDraftNote(card.id, card.note)"
-                :label="$t('admin.detail.departmentNoteLabel')"
-                :rows="3"
-                :disabled="departmentSaving[card.id]"
-                @update:model-value="handleDepartmentNoteInput(card.id, $event as string)"
-              />
-              <div class="department-actions">
-                <Button
-                  variant="secondary"
-                  size="small"
-                  :loading="departmentSaving[card.id]"
-                  @click="handleDepartmentSave(card.id)"
-                >
-                  {{ $t('common.save') }}
-                </Button>
+    <div class="detail-columns">
+      <div class="detail-main">
+        <article class="detail-card">
+          <header class="detail-card-header">
+            <h2>{{ $t('admin.detail.contactTitle') }}</h2>
+          </header>
+          <div class="detail-grid detail-grid--two">
+            <div
+              v-for="(column, columnIndex) in contactColumns"
+              :key="`contact-column-${columnIndex}`"
+              class="detail-subsection"
+            >
+              <div v-for="field in column" :key="field.label" class="detail-field">
+                <p class="detail-field-label">{{ field.label }}</p>
+                <p class="detail-field-value">{{ field.value }}</p>
               </div>
             </div>
-
-            <div v-else class="department-empty">
-              <p>{{ $t('admin.detail.departmentUnassigned') }}</p>
-              <Button variant="secondary" size="small" :loading="departmentSaving[card.id]" @click="handleDepartmentAssign(card.id)">
-                {{ $t('admin.detail.departmentAssign') }}
-              </Button>
-            </div>
-
-            <p v-if="departmentErrors[card.id]" class="inline-error">
-              {{ departmentErrors[card.id] }}
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <section class="documents-section">
-        <header class="section-heading">
-          <div>
-            <h2>{{ $t('admin.detail.documentsTitle') }}</h2>
-            <p>{{ $t('admin.detail.documentsSubtitle') }}</p>
           </div>
-          <Button variant="secondary" size="small" @click="openApproveModal">
-            {{ $t('admin.detail.documentsCta') }}
+
+        </article>
+
+        <article class="detail-card">
+          <header class="detail-card-header">
+            <h2>{{ $t('admin.detail.eventInfoTitle') }}</h2>
+          </header>
+          <div class="detail-subsection">
+            <h3>{{ $t('admin.detail.eventAvailability') }}</h3>
+            <div class="detail-grid detail-grid--two">
+              <div v-for="field in eventAvailabilityFields" :key="field.label" class="detail-field">
+                <p class="detail-field-label">{{ field.label }}</p>
+                <p class="detail-field-value">{{ field.value }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="detail-divider" role="presentation" />
+          <div class="detail-subsection">
+            <h3>{{ $t('admin.detail.eventAbout') }}</h3>
+            <div class="detail-field">
+              <p class="detail-field-label">{{ $t('admin.detail.eventTitleLabel') }}</p>
+              <p class="detail-field-value">{{ event?.title || placeholder }}</p>
+            </div>
+            <div class="detail-field">
+              <p class="detail-field-label">{{ $t('admin.detail.purpose') }}</p>
+              <p class="detail-field-value">{{ event?.purpose || placeholder }}</p>
+            </div>
+            <div class="detail-grid detail-grid--two">
+              <div v-for="field in eventAboutFields" :key="field.label" class="detail-field">
+                <p class="detail-field-label">{{ field.label }}</p>
+                <p class="detail-field-value">{{ field.value }}</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="detail-card">
+          <header class="detail-card-header">
+            <h2>{{ $t('admin.detail.practicalSafetyTitle') }}</h2>
+          </header>
+          <div class="detail-subsection">
+            <h3>{{ $t('admin.detail.fireAndConstruction') }}</h3>
+            <div class="detail-grid detail-grid--two">
+              <div v-for="field in fireSafetyFields" :key="field.label" class="detail-field">
+                <p class="detail-field-label">{{ field.label }}</p>
+                <p class="detail-field-value">{{ field.value }}</p>
+              </div>
+            </div>
+            <div class="detail-field">
+              <p class="detail-field-label">{{ $t('admin.detail.constructionCertificate') }}</p>
+              <p class="detail-field-value">{{ certificateLabel }}</p>
+            </div>
+            <div class="detail-field">
+              <p class="detail-field-label">{{ $t('admin.detail.otherConsiderations') }}</p>
+              <p class="detail-field-value">{{ otherConsiderations }}</p>
+            </div>
+          </div>
+          <div class="detail-divider" role="presentation" />
+          <div class="detail-subsection">
+            <h3>{{ $t('admin.detail.arrangementPlan') }}</h3>
+            <div class="detail-grid detail-grid--two">
+              <div v-for="field in arrangementPlanFields" :key="field.label" class="detail-field">
+                <p class="detail-field-label">{{ field.label }}</p>
+                <p class="detail-field-value">{{ field.value }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="detail-divider" role="presentation" />
+          <div class="detail-subsection">
+            <h3>{{ $t('admin.detail.sound') }}</h3>
+            <div v-for="field in soundFields" :key="field.label" class="detail-field">
+              <p class="detail-field-label">{{ field.label }}</p>
+              <p class="detail-field-value">{{ field.value }}</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="detail-card">
+          <header class="detail-card-header">
+            <h2>{{ $t('admin.detail.permitsTitle') }}</h2>
+          </header>
+          <div class="detail-subsection">
+            <h3>{{ $t('admin.detail.blockage') }}</h3>
+            <div class="detail-grid detail-grid--two">
+              <div v-for="field in blockageFields" :key="field.label" class="detail-field">
+                <p class="detail-field-label">{{ field.label }}</p>
+                <p class="detail-field-value">{{ field.value }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="detail-divider" role="presentation" />
+          <div class="detail-subsection">
+            <h3>{{ $t('admin.detail.wasteHandling') }}</h3>
+            <div v-for="field in wasteFields" :key="field.label" class="detail-field">
+              <p class="detail-field-label">{{ field.label }}</p>
+              <p class="detail-field-value">{{ field.value }}</p>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <aside class="detail-sidebar" aria-live="polite">
+        <article class="detail-card sidebar-card">
+          <header class="detail-card-header">
+            <h2>{{ $t('admin.detail.departmentsTitle') }}</h2>
+          </header>
+          <div class="department-checkbox-list">
+            <label v-for="card in departmentCards" :key="card.id" class="department-checkbox">
+              <Checkbox
+                :model-value="departmentSelection[card.id] || false"
+                :disabled="card.slug === DEFAULT_DEPARTMENT_SLUG"
+                @update:model-value="getDepartmentToggleHandler(card.id)"
+              />
+              <span>{{ card.name }}</span>
+            </label>
+          </div>
+          <p v-if="departmentAssignmentError" class="inline-error">{{ departmentAssignmentError }}</p>
+          <Button
+            variant="secondary"
+            :disabled="!hasDepartmentChanges || departmentAssignmentLoading"
+            :loading="departmentAssignmentLoading"
+            @click="handleDepartmentAssignments"
+          >
+            {{ $t('admin.detail.departmentNotifyCta') }}
           </Button>
-        </header>
+        </article>
 
-        <div class="documents-grid">
-          <article class="documents-card">
-            <h3>{{ $t('admin.detail.applicationDocuments') }}</h3>
-            <ul v-if="applicationDocuments.length" class="document-list">
-              <li v-for="doc in applicationDocuments" :key="doc.id">
-                <div>
-                  <p class="document-name">{{ doc.fileName }}</p>
-                  <p class="document-meta">
-                    {{ getDocumentKindLabel(doc.kind) }} · {{ formatFileSize(doc.sizeBytes) }} ·
-                    {{ formatDateTime(doc.uploadedAt) }}
-                  </p>
-                </div>
-                <div class="document-actions">
-                  <Button
-                    variant="ghost"
-                    size="small"
-                    :loading="documentDownloadState[doc.id]"
-                    @click="handleDocumentDownload(doc.id, doc.fileName)"
-                  >
-                    {{ $t('admin.detail.documentDownload') }}
-                  </Button>
-                </div>
-              </li>
-            </ul>
-            <p v-else class="empty-text">{{ $t('admin.detail.noDocuments') }}</p>
-          </article>
+        <article class="detail-card sidebar-card">
+          <header class="detail-card-header">
+            <h2>{{ $t('admin.detail.statusPanelTitle') }}</h2>
+          </header>
+          <ul class="department-summary-list">
+            <li
+              v-for="card in departmentCards"
+              :key="card.id"
+              class="status-pill"
+              :class="{ 'is-approved': card.status === 'approved' }"
+            >
+              <div>
+                <p class="status-name">{{ card.name }}</p>
+                <p class="status-text">
+                  <Icon v-if="card.status === 'approved'" name="fa7-solid:check" size="14" aria-hidden="true" />
+                  {{ card.status ? getDepartmentStatusLabel(card.status) : $t('admin.detail.departmentStatuses.pending') }}
+                </p>
+              </div>
+              <button
+                v-if="card.status === 'approved' && canDownloadApproval"
+                type="button"
+                class="status-download"
+                @click="downloadLatestApproval"
+              >
+                {{ $t('admin.detail.statusDownload') }}
+                <Icon name="fa7-solid:download" size="14" aria-hidden="true" />
+              </button>
+            </li>
+          </ul>
+        </article>
+      </aside>
+    </div>
 
-          <article class="documents-card">
-            <h3>{{ $t('admin.detail.approvalDocuments') }}</h3>
-            <ul v-if="approvalDocuments.length" class="document-list">
-              <li v-for="doc in approvalDocuments" :key="doc.id">
-                <div>
-                  <p class="document-name">{{ doc.fileName }}</p>
-                  <p class="document-meta">
-                    {{ formatFileSize(doc.sizeBytes) }} · {{ formatDateTime(doc.uploadedAt) }}
-                  </p>
-                </div>
-                <div class="document-actions">
-                  <Button
-                    variant="ghost"
-                    size="small"
-                    :loading="documentDownloadState[doc.id]"
-                    @click="handleDocumentDownload(doc.id, doc.fileName)"
-                  >
-                    {{ $t('admin.detail.documentDownload') }}
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="small"
-                    :loading="documentDeletingState[doc.id]"
-                    @click="handleDocumentDelete(doc.id)"
-                  >
-                    {{ $t('common.delete') }}
-                  </Button>
-                </div>
-              </li>
-            </ul>
-            <p v-else class="empty-text">{{ $t('admin.detail.noApprovalDocuments') }}</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="audit-section">
-        <header class="section-heading">
-          <div>
-            <h2>{{ $t('admin.detail.auditTitle') }}</h2>
-            <p>{{ $t('admin.detail.auditSubtitle') }}</p>
+    <section class="attachments-section">
+      <header class="attachments-header">
+        <h2>{{ $t('admin.detail.applicationDocuments') }}</h2>
+      </header>
+      <div v-if="applicationDocuments.length" class="attachment-grid">
+        <button
+          v-for="doc in applicationDocuments"
+          :key="doc.id"
+          type="button"
+          class="attachment-card"
+          :disabled="documentDownloadState[doc.id]"
+          @click="handleDocumentDownload(doc.id, doc.fileName)"
+        >
+          <span class="attachment-icon">
+            <Icon name="fa7-solid:file" size="20" aria-hidden="true" />
+          </span>
+          <div class="attachment-content">
+            <p class="attachment-name">{{ doc.fileName }}</p>
+            <p class="attachment-link">{{ $t('admin.detail.documentOpen') }}</p>
           </div>
-        </header>
+        </button>
+      </div>
+      <p v-else class="empty-text">{{ $t('admin.detail.noDocuments') }}</p>
+    </section>
 
-        <div v-if="auditLogPending" class="detail-state inline">
-          <p>{{ $t('common.loading') }}</p>
+    <section class="detail-card audit-card">
+      <header class="detail-card-header">
+        <div>
+          <h2>{{ $t('admin.detail.auditTitle') }}</h2>
+          <p>{{ $t('admin.detail.auditSubtitle') }}</p>
         </div>
-
-        <ul v-else-if="auditEntries.length" class="audit-list">
-          <li v-for="entry in auditEntries" :key="entry.id">
-            <div>
-              <p class="audit-action">{{ formatAuditAction(entry) }}</p>
-              <p class="audit-meta">{{ entry.actor?.name || '—' }} · {{ formatDateTime(entry.createdAt) }}</p>
-            </div>
-            <p v-if="entry.payload?.note" class="audit-note">{{ entry.payload.note }}</p>
-          </li>
-        </ul>
-        <p v-else class="empty-text">{{ $t('admin.detail.noAuditEntries') }}</p>
-      </section>
-    </template>
+      </header>
+      <div v-if="auditLogPending" class="detail-state inline">
+        <p>{{ $t('common.loading') }}</p>
+      </div>
+      <ul v-else-if="auditEntries.length" class="audit-list">
+        <li v-for="entry in auditEntries" :key="entry.id">
+          <div>
+            <p class="audit-action">{{ formatAuditAction(entry) }}</p>
+            <p class="audit-meta">{{ entry.actor?.name || placeholder }} · {{ formatDateTime(entry.createdAt) }}</p>
+          </div>
+          <p v-if="entry.payload?.note" class="audit-note">{{ entry.payload.note }}</p>
+        </li>
+      </ul>
+      <p v-else class="empty-text">{{ $t('admin.detail.noAuditEntries') }}</p>
+    </section>
 
     <Modal
-      v-model="isApproveModalOpen"
+      v-model="isApprovalModalOpen"
       :title="$t('admin.detail.approvalModal.title')"
       :width="560"
-      :dismissible="!isApproving"
-      :close-on-esc="!isApproving"
-      :actions="approveModalActions"
-      @action="handleApproveModalAction"
+      :dismissible="!approvalSending"
+      :close-on-esc="!approvalSending"
+      :actions="approvalModalActions"
+      @action="handleApprovalModalAction"
       @close="resetApprovalModal"
     >
       <p class="modal-intro">{{ $t('admin.detail.approvalModal.body') }}</p>
+      <DropdownButton
+        v-model="approvalDepartmentId"
+        :options="departmentOptions"
+        :button-label="$t('admin.detail.approvalModal.departmentLabel')"
+        :disabled="approvalSending"
+      />
       <FileUpload
+        class="mt-16"
         :label="$t('admin.detail.approvalModal.uploadLabel')"
         :helper-text="$t('admin.detail.approvalModal.uploadHelper')"
         accept=".pdf"
@@ -331,38 +323,38 @@
         @remove="handleApprovalFileRemove"
         @cancel="handleApprovalFileRemove"
       />
-      <p v-if="approvalUploadError" class="inline-error">{{ approvalUploadError }}</p>
-    </Modal>
-
-    <Modal
-      v-model="isRejectModalOpen"
-      :title="$t('admin.detail.rejectModal.title')"
-      :width="520"
-      :actions="rejectModalActions"
-      @action="handleRejectModalAction"
-      @close="resetRejectModal"
-    >
-      <p class="modal-intro">{{ $t('admin.detail.rejectModal.body') }}</p>
       <Textarea
-        v-model="rejectionNote"
-        :label="$t('admin.detail.rejectModal.noteLabel')"
+        v-model="approvalMessage"
+        class="mt-16"
+        :label="$t('admin.detail.approvalModal.noteLabel')"
         :rows="4"
-        :error="!!rejectionError"
-        :error-message="rejectionError || ''"
+        :disabled="approvalSending"
       />
+      <p v-if="approvalError" class="inline-error">{{ approvalError }}</p>
     </Modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
-import { Button, Badge, DropdownButton, Textarea, FileUpload, Modal } from 'fk-designsystem'
-import type { ModalAction, FileUploadItem } from 'fk-designsystem'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import type { inferRouterProxyClient } from '@trpc/client'
-import type { DepartmentStatus } from '~/shared/schemas/department-status'
-import type { ReviewStatus } from '~/shared/schemas/event'
-import type { DocumentKind } from '~/shared/schemas/document'
+import {
+  Badge,
+  Button,
+  Checkbox,
+  DropdownButton,
+  FileUpload,
+  Modal,
+  Textarea,
+  type DropdownOption,
+  type FileUploadItem,
+  type ModalAction,
+  type BadgeVariant,
+} from 'fk-designsystem'
 import type { AppRouter } from '~/server/trpc/routers'
+import type { AttendanceRange, ReviewStatus } from '~/shared/schemas/event'
+import type { DepartmentStatus } from '~/shared/schemas/department-status'
+import { DEFAULT_DEPARTMENT_SLUG } from '~~/shared/constants/departments'
 
 definePageMeta({
   layout: 'admin',
@@ -372,97 +364,224 @@ definePageMeta({
   },
 })
 
+type FeedbackMessage = {
+  type: 'success' | 'error'
+  title: string
+  text: string
+}
+
+type ApprovalAttachment = {
+  fileName: string
+  mimeType: string
+  sizeBytes: number
+  base64: string
+}
+
 const route = useRoute()
 const router = useRouter()
 const { $trpc } = useNuxtApp()
 const trpc = $trpc as inferRouterProxyClient<AppRouter>
 const { t } = useI18n()
 
+const placeholder = '—'
+const mapSize = { width: 1200, height: 320 }
+const yesLabel = computed(() => t('form.step1.yes'))
+const noLabel = computed(() => t('form.step1.no'))
+
 const eventId = computed(() => route.params.id as string)
 
+const fetchEvent = () => trpc.admin.byId.query({ id: eventId.value })
+const fetchDepartments = () => trpc.admin.departments.query()
+const fetchDepartmentStatuses = () => trpc.admin.listDepartmentStatuses.query({ eventId: eventId.value })
+const fetchDocuments = () => trpc.documents.list.query({ eventId: eventId.value })
+const fetchAudit = () => trpc.admin.auditLog.query({ eventId: eventId.value })
+
+type DepartmentEntry = Awaited<ReturnType<typeof fetchDepartments>>[number]
+type DepartmentStatusEntry = Awaited<ReturnType<typeof fetchDepartmentStatuses>>[number]
+type DocumentListEntry = Awaited<ReturnType<typeof fetchDocuments>>[number]
+type AuditEntry = Awaited<ReturnType<typeof fetchAudit>>[number]
+
 const {
-  data: eventData,
+  data: eventResponse,
   pending: eventPending,
   error: eventError,
   refresh: refreshEvent,
-} = useAsyncData(() => trpc.admin.byId.query({ id: eventId.value }), {
+} = useAsyncData(() => `admin-event-${eventId.value}`, fetchEvent, {
+  immediate: false,
+  server: false,
   watch: [eventId],
 })
 
-const {
-  data: departmentsData,
-  pending: departmentsPending,
-} = useAsyncData(() => trpc.admin.departments.query(), {})
+const { data: departmentsData, refresh: refreshDepartments } = useAsyncData(
+  'admin-departments',
+  fetchDepartments,
+  {
+    immediate: false,
+    server: false,
+  },
+)
 
-const {
-  data: departmentStatusesData,
-  pending: departmentStatusesPending,
-  refresh: refreshDepartmentStatuses,
-} = useAsyncData(() => trpc.admin.listDepartmentStatuses.query({ eventId: eventId.value }), {
-  watch: [eventId],
-})
+const { data: departmentStatusesData, refresh: refreshDepartmentStatuses } = useAsyncData(
+  () => `admin-department-statuses-${eventId.value}`,
+  fetchDepartmentStatuses,
+  {
+    immediate: false,
+    server: false,
+    watch: [eventId],
+  },
+)
 
-const {
-  data: documentsData,
-  refresh: refreshDocuments,
-} = useAsyncData(() => trpc.documents.list.query({ eventId: eventId.value }), {
-  watch: [eventId],
-})
+const { data: documentsData, refresh: refreshDocuments } = useAsyncData(
+  () => `admin-documents-${eventId.value}`,
+  fetchDocuments,
+  {
+    immediate: false,
+    server: false,
+    watch: [eventId],
+  },
+)
 
 const {
   data: auditLogData,
   pending: auditLogPending,
   refresh: refreshAuditLog,
-} = useAsyncData(() => trpc.admin.auditLog.query({ eventId: eventId.value }), {
+} = useAsyncData(() => `admin-audit-${eventId.value}`, fetchAudit, {
+  immediate: false,
+  server: false,
   watch: [eventId],
 })
 
-const event = computed(() => eventData.value)
-const departments = computed(() => departmentsData.value ?? [])
+onMounted(() => {
+  refreshEvent()
+  refreshDepartments()
+  refreshDepartmentStatuses()
+  refreshDocuments()
+  refreshAuditLog()
+})
 
-type DepartmentStatusRow = {
-  id: string
-  departmentId: string
-  status: DepartmentStatus
-  note: string | null
-  updatedAt: string | null
+const feedbackMessage = ref<FeedbackMessage | null>(null)
+const departmentAssignmentError = ref('')
+const departmentAssignmentLoading = ref(false)
+const documentDownloadState = reactive<Record<string, boolean>>({})
+const departmentSelection = reactive<Record<string, boolean>>({})
+const initialDepartmentSelection = ref<Set<string>>(new Set())
+
+const departmentsList = computed<DepartmentEntry[]>(() => departmentsData.value ?? ([] as DepartmentEntry[]))
+const departmentStatuses = computed<DepartmentStatusEntry[]>(
+  () => departmentStatusesData.value ?? ([] as DepartmentStatusEntry[]),
+)
+const departmentStatusesMap = computed(() => {
+  const entries = new Map<string, DepartmentStatusEntry>()
+  departmentStatuses.value.forEach((status) => {
+    entries.set(status.departmentId, status)
+  })
+  return entries
+})
+
+const syncDepartmentSelection = () => {
+  if (!departmentsList.value.length) {
+    return
+  }
+  const assigned = new Set<string>()
+  const nextSelection: Record<string, boolean> = {}
+  departmentsList.value.forEach((dept) => {
+    const isAssigned = departmentStatusesMap.value.has(dept.id)
+    nextSelection[dept.id] = isAssigned
+    if (isAssigned) {
+      assigned.add(dept.id)
+    }
+  })
+  Object.keys(departmentSelection).forEach((key) => {
+    if (!(key in nextSelection)) {
+      delete departmentSelection[key]
+    }
+  })
+  Object.entries(nextSelection).forEach(([key, value]) => {
+    departmentSelection[key] = value
+  })
+  initialDepartmentSelection.value = assigned
 }
 
-type EventDocumentRow = {
-  id: string
-  eventId: string
-  kind: DocumentKind
-  fileName: string
-  mimeType: string
-  sizeBytes: number
-  uploadedAt: string
+watch([departmentsData, departmentStatusesData], () => {
+  syncDepartmentSelection()
+}, { immediate: true })
+
+const event = computed(() => eventResponse.value?.event ?? null)
+const typeTags = computed(() => eventResponse.value?.typeTags ?? [])
+const safetyInfo = computed(() => eventResponse.value?.safetyInfo ?? null)
+const soundInfo = computed(() => eventResponse.value?.soundInfo ?? null)
+const wasteInfo = computed(() => eventResponse.value?.wasteInfo ?? null)
+const foodInfo = computed(() => eventResponse.value?.foodInfo ?? null)
+const accessInfo = computed(() => eventResponse.value?.accessInfo ?? null)
+
+const heroLocation = computed(() => {
+  if (!event.value) return placeholder
+  if (event.value.locationType === 'predefined') {
+    return event.value.locationPreset?.name ?? placeholder
+  }
+  return event.value.locationAddress ?? placeholder
+})
+
+const dateTimeFormatter = new Intl.DateTimeFormat('da-DK', {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+})
+
+const dateFormatter = new Intl.DateTimeFormat('da-DK', {
+  dateStyle: 'medium',
+})
+
+const formatDateTime = (value?: string | Date | null) => {
+  if (!value) return placeholder
+  try {
+    return dateTimeFormatter.format(new Date(value))
+  } catch {
+    return placeholder
+  }
 }
 
-type AuditPayload = {
-  fromStatus?: ReviewStatus
-  toStatus?: ReviewStatus
-  note?: string
-  fileName?: string
+const formatDateRange = (start?: string | Date | null, end?: string | Date | null) => {
+  if (!start || !end) return placeholder
+  try {
+    return `${dateFormatter.format(new Date(start))} · ${dateFormatter.format(new Date(end))}`
+  } catch {
+    return placeholder
+  }
 }
 
-type AuditEntry = {
-  id: string
-  action: string
-  payload?: AuditPayload | null
-  createdAt: string
-  actor?: { id: string; name: string | null; email: string | null } | null
+const attendanceRangeLabels: Record<AttendanceRange, string> = {
+  '0_50': '0-50',
+  '51_200': '51-200',
+  '201_500': '201-500',
+  '501_1000': '501-1000',
+  '1001_5000': '1001-5000',
+  '5001_plus': '5000+',
 }
 
-type SelectOption = {
-  label: string
-  value: string
+const formatAttendanceRange = (range?: AttendanceRange | null) => {
+  if (!range) return placeholder
+  return attendanceRangeLabels[range] ?? placeholder
 }
 
-const departmentStatuses = computed<DepartmentStatusRow[]>(() => departmentStatusesData.value ?? [])
-const documents = computed<EventDocumentRow[]>(() => documentsData.value ?? [])
-const auditEntries = computed<AuditEntry[]>(() => auditLogData.value ?? [])
+const boolLabel = (value?: boolean | null) => {
+  if (value === null || value === undefined) return placeholder
+  return value ? yesLabel.value : noLabel.value
+}
 
-const reviewStatusVariant: Record<ReviewStatus, import('fk-designsystem').BadgeVariant> = {
+const heroDateRange = computed(() => formatDateRange(event.value?.startAt ?? null, event.value?.endAt ?? null))
+const heroTypeLabel = computed(() => {
+  if (!typeTags.value.length) return placeholder
+  return typeTags.value.map((tag) => tag.name).join(', ')
+})
+const heroMapImage = computed(() => event.value?.locationPreset?.imageUrl ?? null)
+const heroMapAlt = computed(() => {
+  if (!heroMapImage.value) {
+    return t('admin.detail.locationPending')
+  }
+  return `${t('admin.detail.location')}: ${heroLocation.value}`
+})
+
+const reviewStatusVariant: Record<ReviewStatus, BadgeVariant> = {
   unprocessed: 'neutral',
   in_review: 'info',
   partially_approved: 'warning',
@@ -470,513 +589,269 @@ const reviewStatusVariant: Record<ReviewStatus, import('fk-designsystem').BadgeV
   rejected: 'critical',
 }
 
-const departmentStatusVariant: Record<DepartmentStatus, import('fk-designsystem').BadgeVariant> = {
-  pending: 'neutral',
-  in_review: 'info',
-  approved: 'success',
+const getReviewStatusLabel = (status: ReviewStatus) => t(`events.status.${status}`)
+const getDepartmentStatusLabel = (status: DepartmentStatus) =>
+  t(`admin.detail.departmentStatuses.${status}`)
+
+type DetailField = {
+  label: string
+  value: string
 }
 
+const contactColumns = computed<DetailField[][]>(() => {
+  const current = event.value
+  return [
+    [
+      { label: t('form.step1.fullName'), value: current?.owner?.name ?? placeholder },
+      { label: t('form.step1.email'), value: current?.owner?.email ?? placeholder },
+      { label: t('form.step1.phone'), value: current?.owner?.phone ?? placeholder },
+    ],
+    [
+      { label: t('form.step1.contactPersonName'), value: current?.contactPersonName ?? placeholder },
+      { label: t('form.step1.contactPersonPhone'), value: current?.contactPersonPhone ?? placeholder },
+      { label: 'CVR / CPR', value: current?.owner?.companyCvr ?? placeholder },
+    ],
+  ]
+})
+
+const eventAvailabilityFields = computed<DetailField[]>(() => {
+  const current = event.value
+  return [
+    { label: t('form.step2.startAt'), value: formatDateTime(current?.startAt ?? null) },
+    { label: t('form.step2.endAt'), value: formatDateTime(current?.endAt ?? null) },
+    { label: t('form.step2.setupStart'), value: formatDateTime(current?.setupStartAt ?? null) },
+    { label: t('form.step2.setupEnd'), value: formatDateTime(current?.setupEndAt ?? null) },
+    { label: t('admin.detail.recurring'), value: boolLabel(current?.recurring) },
+    {
+      label: t('form.step2.expectedAttendance'),
+      value: formatAttendanceRange(current?.expectedAttendanceRange as AttendanceRange | undefined),
+    },
+  ]
+})
+
+const recurringLabels: Record<string, string> = {
+  daily: t('admin.detail.recurringDaily'),
+  weekly: t('admin.detail.recurringWeekly'),
+  monthly: t('admin.detail.recurringMonthly'),
+}
+
+const eventAboutFields = computed<DetailField[]>(() => {
+  const current = event.value
+  return [
+    { label: t('form.step2.eventTypes'), value: heroTypeLabel.value },
+    { label: t('form.step1.isCommercial'), value: boolLabel(current?.commercial) },
+    {
+      label: t('form.step2.recurringInterval'),
+      value: current?.recurring && current.recurringInterval
+        ? recurringLabels[current.recurringInterval] ?? placeholder
+        : placeholder,
+    },
+  ]
+})
+
+const fireSafetyFields = computed<DetailField[]>(() => {
+  const info = safetyInfo.value
+  return [
+    {
+      label: t('form.step3.simultaneousPersons'),
+      value: formatAttendanceRange(info?.simultaneousPersonsRange as AttendanceRange | undefined),
+    },
+    { label: t('form.step3.hasConstructions'), value: boolLabel(info?.hasTemporaryConstructions) },
+    { label: t('form.step3.br18Acknowledgment'), value: boolLabel(info?.hasReadBR18Bilag11) },
+  ]
+})
+
+const certificateLabel = computed(() => boolLabel(Boolean(safetyInfo.value?.constructionsCertificateDocumentId)))
+const otherConsiderations = computed(() => safetyInfo.value?.otherConsiderations?.trim() || placeholder)
+
+const arrangementPlanFields = computed<DetailField[]>(() => {
+  const info = safetyInfo.value
+  return [
+    { label: t('form.step3.arrangementPlan'), value: info?.constructionsDescription || placeholder },
+    { label: t('form.step3.otherSpecialConsiderations'), value: otherConsiderations.value },
+  ]
+})
+
+const soundFields = computed<DetailField[]>(() => {
+  const info = soundInfo.value
+  return [
+    { label: t('form.step3.hasSound'), value: boolLabel(info?.hasSound) },
+    { label: t('form.step3.soundDescription'), value: info?.description || placeholder },
+    { label: t('form.step3.soundResponsibleName'), value: info?.responsibleName || placeholder },
+    { label: t('form.step3.soundResponsiblePhone'), value: info?.responsiblePhone || placeholder },
+  ]
+})
+
+const blockageFields = computed<DetailField[]>(() => {
+  const info = accessInfo.value
+  return [
+    { label: t('form.step4.needsBlockage'), value: boolLabel(info?.needsBlockage) },
+    { label: t('form.step4.blockageDescription'), value: info?.blockageDescription || placeholder },
+    { label: t('form.step4.hasPolicePermission'), value: boolLabel(info?.policePermissionApplied) },
+  ]
+})
+
+const wasteFields = computed<DetailField[]>(() => {
+  const waste = wasteInfo.value
+  const food = foodInfo.value
+  return [
+    { label: t('form.step4.needsWaste'), value: boolLabel(waste?.needsWasteHandling) },
+    { label: t('form.step4.wasteDescription'), value: waste?.description || placeholder },
+    { label: t('form.step4.hasFoodDrinks'), value: boolLabel(food?.hasFoodOrBeverage) },
+    { label: t('form.step4.foodDescription'), value: food?.description || placeholder },
+  ]
+})
+
 const departmentCards = computed(() =>
-  departments.value.map((dept) => {
-    const status = departmentStatuses.value.find((entry) => entry.departmentId === dept.id)
+  departmentsList.value.map((dept) => {
+    const statusEntry = departmentStatusesMap.value.get(dept.id)
     return {
       id: dept.id,
       name: dept.name,
       slug: dept.slug,
-      status: status?.status ?? null,
-      note: status?.note ?? null,
-      updatedAt: status?.updatedAt ?? null,
+      status: statusEntry?.status ?? null,
     }
   }),
 )
 
-const departmentDraft = reactive<Record<string, { status: DepartmentStatus; note: string }>>({})
-const departmentSaving = reactive<Record<string, boolean>>({})
-const departmentErrors = reactive<Record<string, string>>({})
+const departmentOptions = computed<DropdownOption[]>(() =>
+  departmentCards.value
+    .filter((card) => initialDepartmentSelection.value.has(card.id))
+    .map((card) => ({
+      value: card.id,
+      label: card.name,
+    })),
+)
 
-const syncDepartmentDrafts = () => {
-  departmentCards.value.forEach((card) => {
-    if (!card.status) return
-    departmentDraft[card.id] = {
-      status: card.status,
-      note: card.note ?? '',
-    }
-  })
+const handleDepartmentToggle = (id: string, selected: boolean) => {
+  departmentSelection[id] = selected
 }
 
-watch(
-  departmentCards,
-  () => {
-    syncDepartmentDrafts()
-  },
-  { immediate: true },
+const getDepartmentToggleHandler = (id: string) => (selected: boolean) => {
+  handleDepartmentToggle(id, selected)
+}
+
+const hasDepartmentChanges = computed(() =>
+  Object.entries(departmentSelection).some(
+    ([id, selected]) => selected && !initialDepartmentSelection.value.has(id),
+  ),
 )
 
-const departmentStatusOptions = computed(() =>
-  (['pending', 'in_review', 'approved'] as DepartmentStatus[]).map((status) => ({
-    label: getDepartmentStatusLabel(status),
-    value: status,
-  })),
-)
+const handleDepartmentAssignments = async () => {
+  departmentAssignmentError.value = ''
+  const newDepartmentIds = Object.entries(departmentSelection)
+    .filter(([id, selected]) => selected && !initialDepartmentSelection.value.has(id))
+    .map(([id]) => id)
 
-const reviewStatusOptions = computed(() =>
-  (['unprocessed', 'in_review', 'partially_approved'] as ReviewStatus[]).map((status) => ({
-    label: getReviewStatusLabel(status),
-    value: status,
-  })),
-)
+  if (!newDepartmentIds.length) {
+    return
+  }
 
-const reviewStatusDraft = ref<ReviewStatus>('unprocessed')
-watch(
-  () => event.value?.reviewStatus,
-  (status) => {
-    if (status) reviewStatusDraft.value = status
-  },
-  { immediate: true },
-)
-
-const reviewStatusLoading = ref(false)
-const isApproveModalOpen = ref(false)
-const isRejectModalOpen = ref(false)
-const isApproving = ref(false)
-const isRejecting = ref(false)
-const rejectionNote = ref('')
-const rejectionError = ref<string | null>(null)
-
-const pendingApprovalFiles = ref<File[]>([])
-const approvalUploadError = ref<string | null>(null)
-
-const feedbackMessage = ref<{ type: 'success' | 'error'; title: string; text: string } | null>(null)
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024
-const APPROVAL_KIND: DocumentKind = 'approval_document'
-
-const approvalUploadItems = computed<FileUploadItem[]>(() =>
-  pendingApprovalFiles.value.map((file) => ({
-    id: `${file.name}-${file.lastModified}`,
-    name: file.name,
-    sizeLabel: formatFileSize(file.size),
-    status: 'success',
-  })),
-)
-
-const applicationDocuments = computed(() =>
-  documents.value.filter((doc) => doc.kind !== APPROVAL_KIND),
-)
-
-const approvalDocuments = computed(() =>
-  documents.value.filter((doc) => doc.kind === APPROVAL_KIND),
-)
-
-const documentDownloadState = reactive<Record<string, boolean>>({})
-const documentDeletingState = reactive<Record<string, boolean>>({})
-
-const approveModalActions = computed<ModalAction[]>(() => [
-  {
-    id: 'cancel',
-    label: t('common.cancel'),
-    variant: 'secondary',
-    disabled: isApproving.value,
-  },
-  {
-    id: 'approve',
-    label: t('admin.detail.approvalModal.confirm'),
-    variant: 'primary',
-    loading: isApproving.value,
-    disabled: pendingApprovalFiles.value.length === 0,
-    autoClose: false,
-  },
-])
-
-const rejectModalActions = computed<ModalAction[]>(() => [
-  {
-    id: 'cancel',
-    label: t('common.cancel'),
-    variant: 'secondary',
-    disabled: isRejecting.value,
-  },
-  {
-    id: 'reject',
-    label: t('admin.detail.rejectModal.confirm'),
-    variant: 'danger',
-    loading: isRejecting.value,
-    autoClose: false,
-  },
-])
-
-const dateTimeFormatter = new Intl.DateTimeFormat('da-DK', {
-  dateStyle: 'medium',
-  timeStyle: 'short',
-})
-
-const formatDateTime = (value?: string | null) => {
-  if (!value) return '—'
+  departmentAssignmentLoading.value = true
   try {
-    return dateTimeFormatter.format(new Date(value))
-  } catch {
-    return value
+    await trpc.admin.assignDepartments.mutate({
+      eventId: eventId.value,
+      departmentIds: newDepartmentIds,
+    })
+    feedbackMessage.value = {
+      type: 'success',
+      title: t('common.success'),
+      text: t('admin.detail.messages.departmentAssigned'),
+    }
+    await Promise.all([refreshDepartmentStatuses(), refreshAuditLog()])
+  } catch (error) {
+    console.error('Failed to assign departments', error)
+    departmentAssignmentError.value = t('admin.detail.messages.departmentFailed')
+    feedbackMessage.value = {
+      type: 'error',
+      title: t('common.error'),
+      text: t('admin.detail.messages.departmentFailed'),
+    }
+  } finally {
+    departmentAssignmentLoading.value = false
   }
 }
 
-const formatDateRange = (start?: string | null, end?: string | null) => {
-  if (!start || !end) return '—'
-  return `${formatDateTime(start)} → ${formatDateTime(end)}`
+const documentsList = computed<DocumentListEntry[]>(
+  () => documentsData.value ?? ([] as DocumentListEntry[]),
+)
+const applicationDocuments = computed<DocumentListEntry[]>(() =>
+  documentsList.value
+    .filter((doc) => doc.kind !== 'approval_document')
+    .sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()),
+)
+const approvalDocuments = computed<DocumentListEntry[]>(() =>
+  documentsList.value
+    .filter((doc) => doc.kind === 'approval_document')
+    .sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()),
+)
+const canDownloadApproval = computed(() => approvalDocuments.value.length > 0)
+
+const base64ToBlob = (base64: string, mimeType: string) => {
+  const byteCharacters = atob(base64)
+  const byteNumbers = new Array(byteCharacters.length)
+  for (let i = 0; i < byteCharacters.length; i += 1) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i)
+  }
+  const byteArray = new Uint8Array(byteNumbers)
+  return new Blob([byteArray], { type: mimeType })
 }
 
-const formatSetupRange = (start?: string | null, end?: string | null) => {
-  if (!start && !end) return '—'
-  if (start && end) return `${formatDateTime(start)} → ${formatDateTime(end)}`
-  return formatDateTime(start ?? end)
+const handleDocumentDownload = async (documentId: string, fallbackName: string) => {
+  documentDownloadState[documentId] = true
+  try {
+    const doc = await trpc.documents.get.query({ id: documentId })
+    const blob = base64ToBlob(doc.content, doc.mimeType)
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = doc.fileName || fallbackName
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  } catch (error) {
+    console.error('Document download failed', error)
+    feedbackMessage.value = {
+      type: 'error',
+      title: t('common.error'),
+      text: t('admin.detail.messages.documentDownloadFailed'),
+    }
+  } finally {
+    documentDownloadState[documentId] = false
+  }
 }
 
-const attendanceLabels: Record<string, string> = {
-  '0_50': '0-50',
-  '51_200': '51-200',
-  '201_500': '201-500',
-  '501_1000': '501-1000',
-  '1001_5000': '1001-5000',
-  '5001_plus': '5001+',
+const downloadLatestApproval = () => {
+  const latest = approvalDocuments.value[0]
+  if (!latest) return
+  return handleDocumentDownload(latest.id, latest.fileName)
 }
 
-const formatAttendanceLabel = (value?: string | null) => attendanceLabels[value ?? ''] || '—'
+const auditEntries = computed<AuditEntry[]>(() => auditLogData.value ?? ([] as AuditEntry[]))
 
-const getRecurringLabel = (current: { recurring: boolean }) =>
-  current.recurring ? t('form.step1.yes') : t('form.step1.no')
-
-const recurringIntervalLabels = computed<Record<string, string>>(() => ({
-  daily: t('admin.detail.recurringDaily'),
-  weekly: t('admin.detail.recurringWeekly'),
-  monthly: t('admin.detail.recurringMonthly'),
-}))
-
-const getRecurringIntervalLabel = (value?: string | null) =>
-  (value && recurringIntervalLabels.value[value]) || '—'
-
-const getReviewStatusLabel = (status: ReviewStatus) => t(`events.status.${status}`)
-const getSubmissionStatus = (status: 'draft' | 'submitted') => t(`events.status.${status}`)
-const getDepartmentStatusLabel = (status: DepartmentStatus) =>
-  t(`admin.detail.departmentStatuses.${status}`)
-
-const resolveLocation = (current: NonNullable<typeof event.value>) =>
-  current.locationAddress || t('admin.detail.locationPending')
-
-const getDocumentKindLabel = (kind: DocumentKind) => {
-  switch (kind) {
-    case 'attachment':
-      return t('admin.detail.documentKinds.attachment')
-    case 'construction_certificate':
-      return t('admin.detail.documentKinds.certificate')
-    case 'plan':
-      return t('admin.detail.documentKinds.plan')
-    case 'police_approval':
-      return t('admin.detail.documentKinds.police')
-    case 'approval_document':
-      return t('admin.detail.documentKinds.approval')
+const formatAuditAction = (entry: AuditEntry) => {
+  switch (entry.action) {
+    case 'create':
+      return t('admin.detail.audit.actions.create')
+    case 'update':
+      return t('admin.detail.audit.actions.update')
+    case 'add_document':
+      return t('admin.detail.audit.actions.addDocument')
+    case 'remove_document':
+      return t('admin.detail.audit.actions.removeDocument')
+    case 'status_change':
     default:
-      return 'PDF'
+      return t('admin.detail.audit.actions.status')
   }
 }
 
-const getDraftStatus = (id: string, fallback: DepartmentStatus) =>
-  departmentDraft[id]?.status ?? fallback
-
-const getDraftNote = (id: string, fallback: string | null) =>
-  departmentDraft[id]?.note ?? fallback ?? ''
-
-const updateDepartmentDraftStatus = (id: string, status: DepartmentStatus) => {
-  const draft = departmentDraft[id] ?? { status, note: '' }
-  draft.status = status
-  departmentDraft[id] = draft
-}
-
-const updateDepartmentDraftNote = (id: string, value: string) => {
-  const draft = departmentDraft[id] ?? { status: 'pending', note: value }
-  draft.note = value
-  departmentDraft[id] = draft
-}
-
-const handleDepartmentStatusSelect = (departmentId: string, option: SelectOption) => {
-  updateDepartmentDraftStatus(departmentId, option.value as DepartmentStatus)
-}
-
-const handleDepartmentNoteInput = (departmentId: string, value: string) => {
-  updateDepartmentDraftNote(departmentId, value)
-}
-
-const setFeedback = (type: 'success' | 'error', text: string) => {
-  feedbackMessage.value = {
-    type,
-    title: type === 'success' ? t('common.success') : t('common.error'),
-    text,
-  }
-}
-
-const refreshAll = async () => {
-  await Promise.all([refreshEvent(), refreshDepartmentStatuses(), refreshDocuments(), refreshAuditLog()])
-}
-
-const handleReviewStatusChange = async (status: ReviewStatus) => {
-  await updateReviewStatus(status)
-}
-
-const onReviewStatusSelect = async (option: { value: string }) => {
-  const status = option.value as ReviewStatus
-  if (status === 'approved') {
-    openApproveModal()
-    return
-  }
-  if (status === 'rejected') {
-    openRejectModal()
-    return
-  }
-  await updateReviewStatus(status)
-}
-
-const updateReviewStatus = async (status: ReviewStatus, note?: string) => {
-  if (!event.value) return
-  try {
-    reviewStatusLoading.value = true
-    await trpc.admin.updateReviewStatus.mutate({
-      id: event.value.id,
-      reviewStatus: status,
-      note,
-    })
-    setFeedback('success', t('admin.detail.messages.statusUpdated'))
-    await refreshAll()
-  } catch (error) {
-    console.error(error)
-    setFeedback('error', t('admin.detail.messages.statusFailed'))
-  } finally {
-    reviewStatusLoading.value = false
-  }
-}
-
-const handleDepartmentAssign = async (departmentId: string) => {
-  if (!event.value) return
-  try {
-    departmentSaving[departmentId] = true
-    departmentErrors[departmentId] = ''
-    await trpc.admin.setDepartmentStatus.mutate({
-      eventId: event.value.id,
-      departmentId,
-      status: 'pending',
-      note: null,
-    })
-    await refreshDepartmentStatuses()
-    setFeedback('success', t('admin.detail.messages.departmentAssigned'))
-  } catch (error) {
-    console.error(error)
-    departmentErrors[departmentId] = t('admin.detail.messages.departmentFailed')
-  } finally {
-    departmentSaving[departmentId] = false
-  }
-}
-
-const handleDepartmentSave = async (departmentId: string) => {
-  if (!event.value) return
-  const draft = departmentDraft[departmentId]
-  if (!draft) return
-  try {
-    departmentSaving[departmentId] = true
-    departmentErrors[departmentId] = ''
-    await trpc.admin.setDepartmentStatus.mutate({
-      eventId: event.value.id,
-      departmentId,
-      status: draft.status,
-      note: draft.note,
-    })
-    await refreshDepartmentStatuses()
-    setFeedback('success', t('admin.detail.messages.departmentSaved'))
-  } catch (error) {
-    console.error(error)
-    departmentErrors[departmentId] = t('admin.detail.messages.departmentFailed')
-  } finally {
-    departmentSaving[departmentId] = false
-  }
-}
-
-const handleApprovalFilesAdded = (files: FileList) => {
-  const accepted: File[] = []
-  const errors: string[] = []
-  Array.from(files).forEach((file) => {
-    if (file.size > MAX_FILE_SIZE) {
-      errors.push(t('admin.detail.approvalModal.fileTooLarge', { name: file.name }))
-      return
-    }
-    if (file.type !== 'application/pdf') {
-      errors.push(t('admin.detail.approvalModal.fileWrongType', { name: file.name }))
-      return
-    }
-    accepted.push(file)
-  })
-  approvalUploadError.value = errors.join('\n') || null
-  if (!accepted.length) return
-  const next = [...pendingApprovalFiles.value]
-  accepted.forEach((file) => {
-    if (!next.find((existing) => existing.name === file.name && existing.size === file.size)) {
-      next.push(file)
-    }
-  })
-  pendingApprovalFiles.value = next
-}
-
-const handleApprovalFileRemove = (item?: FileUploadItem) => {
-  if (!item) {
-    pendingApprovalFiles.value = []
-    return
-  }
-  pendingApprovalFiles.value = pendingApprovalFiles.value.filter(
-    (file) => `${file.name}-${file.lastModified}` !== item.id,
-  )
-}
-
-const readFileAsBase64 = (file: File) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => {
-      const result = reader.result
-      if (typeof result === 'string') {
-        const base64 = result.split(',')[1] || ''
-        resolve(base64)
-      } else {
-        reject(new Error('Invalid file result'))
-      }
-    }
-    reader.onerror = () => reject(reader.error)
-    reader.readAsDataURL(file)
-  })
-
-const handleApproveModalAction = async (action: ModalAction) => {
-  if (action.id === 'cancel') {
-    resetApprovalModal()
-    return
-  }
-  if (action.id === 'approve') {
-    await handleApproveConfirm()
-  }
-}
-
-const handleApproveConfirm = async () => {
-  if (!event.value || pendingApprovalFiles.value.length === 0) {
-    approvalUploadError.value = t('admin.detail.approvalModal.validation.files')
-    return
-  }
-  try {
-    isApproving.value = true
-    approvalUploadError.value = null
-    for (const file of pendingApprovalFiles.value) {
-      const content = await readFileAsBase64(file)
-      await trpc.documents.upload.mutate({
-        eventId: event.value.id,
-        kind: APPROVAL_KIND,
-        fileName: file.name,
-        mimeType: 'application/pdf',
-        sizeBytes: file.size,
-        content,
-      })
-    }
-    await updateReviewStatus('approved')
-    resetApprovalModal()
-    await refreshDocuments()
-  } catch (error) {
-    console.error(error)
-    approvalUploadError.value = t('admin.detail.approvalModal.error')
-  } finally {
-    isApproving.value = false
-  }
-}
-
-const handleRejectModalAction = async (action: ModalAction) => {
-  if (action.id === 'cancel') {
-    resetRejectModal()
-    return
-  }
-  if (action.id === 'reject') {
-    await handleRejectConfirm()
-  }
-}
-
-const handleRejectConfirm = async () => {
-  if (!rejectionNote.value.trim()) {
-    rejectionError.value = t('admin.detail.rejectModal.validation')
-    return
-  }
-  if (!event.value) return
-  try {
-    isRejecting.value = true
-    rejectionError.value = null
-    await updateReviewStatus('rejected', rejectionNote.value.trim())
-    resetRejectModal()
-  } catch (error) {
-    console.error(error)
-    rejectionError.value = t('admin.detail.rejectModal.error')
-  } finally {
-    isRejecting.value = false
-  }
-}
-
-const handleDocumentDownload = async (id: string, fileName: string) => {
-  try {
-    documentDownloadState[id] = true
-    const doc = await trpc.documents.get.query({ id })
-    if (import.meta.client) {
-      const binary = atob(doc.content)
-      const bytes = new Uint8Array(binary.length)
-      for (let i = 0; i < binary.length; i += 1) {
-        bytes[i] = binary.charCodeAt(i)
-      }
-      const blob = new Blob([bytes], { type: doc.mimeType })
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = fileName
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
-    }
-  } catch (error) {
-    console.error(error)
-    setFeedback('error', t('admin.detail.messages.documentDownloadFailed'))
-  } finally {
-    documentDownloadState[id] = false
-  }
-}
-
-const handleDocumentDelete = async (id: string) => {
-  try {
-    documentDeletingState[id] = true
-    await trpc.documents.delete.mutate({ id })
-    await Promise.all([refreshDocuments(), refreshAuditLog()])
-    setFeedback('success', t('admin.detail.messages.documentDeleted'))
-  } catch (error) {
-    console.error(error)
-    setFeedback('error', t('admin.detail.messages.documentDeleteFailed'))
-  } finally {
-    documentDeletingState[id] = false
-  }
-}
-
-const formatAuditAction = (entry: (typeof auditEntries.value)[number]) => {
-  const mapping: Record<string, string> = {
-    create: t('admin.detail.audit.actions.create'),
-    update: t('admin.detail.audit.actions.update'),
-    status_change: t('admin.detail.audit.actions.status'),
-    add_document: t('admin.detail.audit.actions.addDocument'),
-    remove_document: t('admin.detail.audit.actions.removeDocument'),
-  }
-  const label = mapping[entry.action] ?? entry.action
-  if (entry.action === 'status_change' && entry.payload?.toStatus) {
-    return `${label}: ${getReviewStatusLabel(entry.payload.toStatus as ReviewStatus)}`
-  }
-  if (entry.action === 'add_document' && entry.payload?.fileName) {
-    return `${label}: ${entry.payload.fileName}`
-  }
-  if (entry.action === 'remove_document' && entry.payload?.fileName) {
-    return `${label}: ${entry.payload.fileName}`
-  }
-  return label
-}
+const approvalDepartmentId = ref('')
+const approvalMessage = ref('')
+const approvalFile = ref<ApprovalAttachment | null>(null)
+const approvalError = ref('')
+const approvalSending = ref(false)
+const isApprovalModalOpen = ref(false)
 
 const formatFileSize = (bytes: number) => {
   if (bytes >= 1024 * 1024) {
@@ -985,318 +860,187 @@ const formatFileSize = (bytes: number) => {
   return `${Math.max(1, Math.round(bytes / 1024))} KB`
 }
 
-const openApproveModal = () => {
-  isApproveModalOpen.value = true
+const approvalUploadItems = computed<FileUploadItem[]>(() => {
+  if (!approvalFile.value) return []
+  return [
+    {
+      id: approvalFile.value.fileName,
+      name: approvalFile.value.fileName,
+      sizeLabel: formatFileSize(approvalFile.value.sizeBytes),
+      status: 'success',
+    },
+  ]
+})
+
+const readFileAsBase64 = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      if (typeof reader.result !== 'string') {
+        reject(new Error('Invalid file content'))
+        return
+      }
+      const [, base64] = reader.result.split(',')
+      if (!base64) {
+        reject(new Error('Invalid file data'))
+        return
+      }
+      resolve(base64)
+    }
+    reader.onerror = () => reject(reader.error ?? new Error('File read failed'))
+    reader.readAsDataURL(file)
+  })
+
+const handleApprovalFilesAdded = async (files: FileList) => {
+  approvalError.value = ''
+  const file = files.item(0)
+  if (!file) return
+
+  if (file.type !== 'application/pdf') {
+    approvalError.value = t('admin.detail.approvalModal.fileWrongType', { name: file.name })
+    return
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    approvalError.value = t('admin.detail.approvalModal.fileTooLarge', { name: file.name })
+    return
+  }
+
+  try {
+    const base64 = await readFileAsBase64(file)
+    approvalFile.value = {
+      fileName: file.name,
+      mimeType: file.type,
+      sizeBytes: file.size,
+      base64,
+    }
+  } catch (error) {
+    console.error('Failed to process approval file', error)
+    approvalError.value = t('admin.detail.approvalModal.error')
+  }
 }
+
+const handleApprovalFileRemove = () => {
+  approvalFile.value = null
+  approvalError.value = ''
+}
+
+const canSubmitApproval = computed(
+  () =>
+    Boolean(
+      approvalDepartmentId.value &&
+        approvalMessage.value.trim().length >= 10 &&
+        approvalFile.value &&
+        !approvalSending.value,
+    ),
+)
+
+const approvalModalActions = computed<ModalAction[]>(() => [
+  {
+    id: 'cancel',
+    label: t('common.cancel'),
+    variant: 'secondary',
+    disabled: approvalSending.value,
+  },
+  {
+    id: 'confirm',
+    label: t('admin.detail.approvalModal.confirm'),
+    variant: 'primary',
+    loading: approvalSending.value,
+    disabled: !canSubmitApproval.value,
+  },
+])
+
+watch(
+  () => departmentOptions.value,
+  (options) => {
+    const safeOptions = options ?? []
+    if (!safeOptions.length) {
+      approvalDepartmentId.value = ''
+      return
+    }
+    if (!safeOptions.some((option) => option.value === approvalDepartmentId.value)) {
+      const [firstOption] = safeOptions
+      if (firstOption) {
+        approvalDepartmentId.value = firstOption.value as string
+      }
+    }
+  },
+  { immediate: true },
+)
 
 const resetApprovalModal = () => {
-  if (isApproving.value) return
-  isApproveModalOpen.value = false
-  pendingApprovalFiles.value = []
-  approvalUploadError.value = null
+  approvalMessage.value = ''
+  approvalFile.value = null
+  approvalError.value = ''
 }
 
-const openRejectModal = () => {
-  isRejectModalOpen.value = true
+const openApprovalModal = () => {
+  approvalError.value = ''
+  isApprovalModalOpen.value = true
 }
 
-const resetRejectModal = () => {
-  if (isRejecting.value) return
-  isRejectModalOpen.value = false
-  rejectionNote.value = ''
-  rejectionError.value = null
+const submitApproval = async () => {
+  approvalError.value = ''
+  if (!approvalDepartmentId.value) {
+    approvalError.value = t('validation.required')
+    return
+  }
+  if (!approvalFile.value) {
+    approvalError.value = t('admin.detail.approvalModal.validation.files')
+    return
+  }
+  if (approvalMessage.value.trim().length < 10) {
+    approvalError.value = t('validation.minLength', { min: 10 })
+    return
+  }
+
+  approvalSending.value = true
+  try {
+    await trpc.admin.sendApprovalNotice.mutate({
+      eventId: eventId.value,
+      departmentId: approvalDepartmentId.value,
+      message: approvalMessage.value.trim(),
+      attachment: {
+        fileName: approvalFile.value.fileName,
+        mimeType: approvalFile.value.mimeType as 'application/pdf',
+        sizeBytes: approvalFile.value.sizeBytes,
+        content: approvalFile.value.base64,
+      },
+    })
+    feedbackMessage.value = {
+      type: 'success',
+      title: t('common.success'),
+      text: t('admin.detail.messages.statusUpdated'),
+    }
+    isApprovalModalOpen.value = false
+    resetApprovalModal()
+    await Promise.all([refreshDocuments(), refreshAuditLog()])
+  } catch (error) {
+    console.error('Failed to send approval notice', error)
+    approvalError.value = t('admin.detail.approvalModal.error')
+    feedbackMessage.value = {
+      type: 'error',
+      title: t('common.error'),
+      text: t('admin.detail.approvalModal.error'),
+    }
+  } finally {
+    approvalSending.value = false
+  }
+}
+
+const handleApprovalModalAction = (actionId: string) => {
+  if (actionId === 'cancel') {
+    resetApprovalModal()
+    isApprovalModalOpen.value = false
+    return
+  }
+  if (actionId === 'confirm') {
+    submitApproval()
+  }
 }
 
 const handleBack = () => {
   router.push('/admin')
 }
-
-// Keep hero layout in sync with docs/Images/admin/detaljeside*.png mockups.
 </script>
-
-<style scoped lang="scss">
-.admin-event-detail {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-
-.detail-hero {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.hero-left {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.hero-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.hero-title h1 {
-  font-size: 28px;
-  margin: 0;
-}
-
-.hero-meta {
-  margin: 0;
-  color: #4b5563;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.detail-feedback {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-radius: 12px;
-}
-
-.detail-feedback.is-success {
-  background: #ecfdf5;
-  border: 1px solid #6ee7b7;
-}
-
-.detail-feedback.is-error {
-  background: #fef2f2;
-  border: 1px solid #fca5a5;
-}
-
-.detail-state {
-  padding: 32px;
-  text-align: center;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  background: #fff;
-}
-
-.detail-state.inline {
-  padding: 16px;
-}
-
-.case-overview {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
-}
-
-.case-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 16px;
-  background: #fff;
-}
-
-.case-status-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.case-secondary {
-  margin-top: 12px;
-  color: #6b7280;
-}
-
-.card-label {
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #6b7280;
-  margin-bottom: 8px;
-}
-
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-}
-
-.info-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  background: #fff;
-  padding: 20px;
-}
-
-.info-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.info-id {
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.info-card dl {
-  display: grid;
-  grid-template-columns: 140px 1fr;
-  row-gap: 8px;
-  column-gap: 12px;
-  font-size: 14px;
-}
-
-.info-card dt {
-  font-weight: 600;
-  color: #4b5563;
-}
-
-.department-section,
-.documents-section,
-.audit-section {
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 24px;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.section-heading {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.department-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-}
-
-.department-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.department-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.department-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.department-actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.department-empty {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  color: #6b7280;
-}
-
-.inline-error {
-  color: #b91c1c;
-  font-size: 14px;
-}
-
-.documents-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-}
-
-.documents-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.document-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.document-list li {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.document-name {
-  font-weight: 600;
-  margin: 0;
-}
-
-.document-meta,
-.audit-meta,
-.audit-note {
-  color: #6b7280;
-  margin: 0;
-}
-
-.document-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.audit-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.audit-action {
-  font-weight: 600;
-  margin: 0;
-}
-
-.empty-text {
-  color: #6b7280;
-  margin: 0;
-}
-
-.modal-intro {
-  margin-bottom: 16px;
-  color: #4b5563;
-}
-
-@media (max-width: 640px) {
-  .info-card dl {
-    grid-template-columns: 1fr;
-  }
-}
-</style>

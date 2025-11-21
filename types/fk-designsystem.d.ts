@@ -6,6 +6,10 @@ declare module 'fk-designsystem' {
   export type ButtonSize = import('../node_modules/fk-designsystem/dist/types/button').ButtonSize
   export const Button: VueComponent<ButtonProps>
 
+  export type AvatarDropdownProps = import('../node_modules/fk-designsystem/dist/types/avatar-dropdown').AvatarDropdownProps
+  export type AvatarDropdownItem = import('../node_modules/fk-designsystem/dist/types/avatar-dropdown').AvatarDropdownItem
+  export const AvatarDropdown: VueComponent<AvatarDropdownProps>
+
   export type InputProps = import('../node_modules/fk-designsystem/dist/types/input').InputProps
   export type InputIconColor = import('../node_modules/fk-designsystem/dist/types/input').InputIconColor
   export const Input: VueComponent<InputProps>

@@ -1,10 +1,11 @@
 import { and, eq } from 'drizzle-orm'
 import { department, departmentEventStatus } from '../database/schema'
 import type { Database } from '../database/client'
-
-export const CORE_DEPARTMENT_SLUGS = ['byliv-drift', 'klima-miljo', 'byggeri-arkitektur'] as const
-export type CoreDepartmentSlug = (typeof CORE_DEPARTMENT_SLUGS)[number]
-export const DEFAULT_DEPARTMENT_SLUG: CoreDepartmentSlug = 'byliv-drift'
+import {
+  CORE_DEPARTMENT_SLUGS,
+  DEFAULT_DEPARTMENT_SLUG,
+  type CoreDepartmentSlug,
+} from '../../shared/constants/departments'
 
 const slugOrder = new Map(CORE_DEPARTMENT_SLUGS.map((slug, index) => [slug, index]))
 
@@ -14,6 +15,9 @@ export const sortCoreDepartments = <T extends { slug: string }>(entries: T[]) =>
       CORE_DEPARTMENT_SLUGS.includes(entry.slug as CoreDepartmentSlug),
     )
     .sort((a, b) => (slugOrder.get(a.slug as CoreDepartmentSlug)! - slugOrder.get(b.slug as CoreDepartmentSlug)!))
+
+export { CORE_DEPARTMENT_SLUGS, DEFAULT_DEPARTMENT_SLUG }
+export type { CoreDepartmentSlug }
 
 export const ensureDefaultDepartmentStatus = async (db: Database, eventId: string) => {
   const [defaultDepartment] = await db
