@@ -44,7 +44,6 @@
   },
   "form": {
     "createEvent": "Opret nyt arrangement",
-    "saveDraft": "Gem kladde",
     "step1": {
       "title": "Kontaktoplysninger",
       "subtitle": "Giv os de grundlæggende kontaktoplysninger, så vi kan komme i kontakt med dig om arrangementet.",

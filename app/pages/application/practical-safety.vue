@@ -475,14 +475,14 @@ const validateForm = (silent = false) => {
 }
 
 const validateAndProceed = async () => {
-  const isValid = validateForm(true)
-  formStore.markStepCompleted(3, isValid)
-
   const nextPath = formStore.getStepPath(4)
   if (nextPath) {
     formStore.goToStep(4)
     await router.push(nextPath)
   }
+
+  const isValid = validateForm()
+  formStore.markStepCompleted(3, isValid)
 }
 
 onMounted(() => {

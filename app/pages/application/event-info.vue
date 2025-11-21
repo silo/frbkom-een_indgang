@@ -184,18 +184,16 @@
       </div>
 
       <div class="form-row">
-        <label class="label-text text-m mb-8">{{ $t('form.step2.relevantInfo') }}</label>
-        <p class="text-s text-muted mb-12">Upload PDF (maks. 5MB)</p>
-        <input
-          ref="fileInput"
-          type="file"
+        <FileUpload
+          :label="$t('form.step2.relevantInfo')"
+          helper-text="Upload PDF'er (maks. 5MB pr. fil)"
           accept=".pdf"
-          class="file-input"
-          @change="handleFileUpload"
+          :multiple="true"
+          :items="fileUploadItems"
+          @files-added="handleFilesAdded"
+          @remove="handleFileRemove"
+          @cancel="handleFileRemove"
         />
-        <p v-if="formData.relevantInfoDocuments.length > 0" class="text-s mt-8">
-          {{ formData.relevantInfoDocuments[0].name }}
-        </p>
         <p v-if="errors.relevantInfoDocuments" class="error-text text-s mt-8">
           {{ errors.relevantInfoDocuments }}
         </p>
@@ -300,20 +298,20 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, computed, onMounted, onUnmounted, ref } from 'vue'
+import { reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useEventFormStore } from '../../stores/event-form'
-import { Input, RadioGroup, DropdownButton, Checkbox, Textarea, Badge } from 'fk-designsystem'
+import { Input, RadioGroup, DropdownButton, Checkbox, Textarea, Badge, FileUpload } from 'fk-designsystem'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { da } from 'date-fns/locale'
 import { createEventSchema } from '../../shared-schemas/event-schema-adapter'
 import { useStepControls } from '../../composables/useStepControls'
+import type { FileUploadItem } from 'fk-designsystem'
 const router = useRouter()
 const route = useRoute()
 const formStore = useEventFormStore()
 const stepControls = useStepControls()
-const fileInput = ref<HTMLInputElement | null>(null)
 
 // Date formatting and locale
 const locale = da
@@ -511,14 +509,14 @@ const validateForm = (silent = false) => {
 }
 
 const validateAndProceed = async () => {
-  const isValid = validateForm(true)
-  formStore.markStepCompleted(2, isValid)
-
   const nextPath = formStore.getStepPath(3)
   if (nextPath) {
     formStore.goToStep(3)
     await router.push(nextPath)
   }
+
+  const isValid = validateForm()
+  formStore.markStepCompleted(2, isValid)
 }
 
 // Methods
@@ -532,29 +530,75 @@ const toggleEventType = (typeCode: string) => {
   errors.typeTagCodes = ''
 }
 
-const handleFileUpload = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
+const MAX_FILE_SIZE = 5 * 1024 * 1024
+const ALLOWED_MIME_TYPES = ['application/pdf']
 
-  if (file) {
-    // Validate file size (5MB = 5 * 1024 * 1024 bytes)
-    const maxSize = 5 * 1024 * 1024
-    if (file.size > maxSize) {
-      errors.relevantInfoDocuments = 'Filen må ikke være større end 5MB'
-      target.value = ''
-      return
-    }
+const getFileId = (file: File) => `${file.name}-${file.lastModified}-${file.size}`
 
-    // Validate file type
-    if (file.type !== 'application/pdf') {
-      errors.relevantInfoDocuments = 'Kun PDF-filer er tilladt'
-      target.value = ''
-      return
-    }
-
-    formStore.formData.eventInfo.relevantInfoDocuments = [file]
-    errors.relevantInfoDocuments = ''
+const formatFileSize = (bytes: number) => {
+  if (bytes >= 1024 * 1024) {
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
   }
+  return `${Math.max(1, Math.round(bytes / 1024))} KB`
+}
+
+const fileUploadItems = computed<FileUploadItem[]>(() =>
+  formStore.formData.eventInfo.relevantInfoDocuments.map((file) => ({
+    id: getFileId(file),
+    name: file.name,
+    sizeLabel: formatFileSize(file.size),
+    status: 'success',
+  })),
+)
+
+const handleFilesAdded = (files: FileList) => {
+  const nextFiles: File[] = []
+  const errorMessages: string[] = []
+
+  Array.from(files).forEach((file) => {
+    if (file.size > MAX_FILE_SIZE) {
+      errorMessages.push(`${file.name}: Filen må ikke være større end 5MB`)
+      return
+    }
+
+    if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+      errorMessages.push(`${file.name}: Kun PDF-filer er tilladt`)
+      return
+    }
+
+    nextFiles.push(file)
+  })
+
+  if (nextFiles.length > 0) {
+    const currentFiles = formStore.formData.eventInfo.relevantInfoDocuments
+    const mergedFiles: File[] = [...currentFiles]
+
+    nextFiles.forEach((file) => {
+      const id = getFileId(file)
+      const exists = mergedFiles.some((existing) => getFileId(existing) === id)
+      if (!exists) {
+        mergedFiles.push(file)
+      }
+    })
+
+    formStore.formData.eventInfo.relevantInfoDocuments = mergedFiles
+  }
+
+  errors.relevantInfoDocuments = errorMessages.length > 0 ? errorMessages.join('\n') : ''
+}
+
+const handleFileRemove = (_item?: FileUploadItem) => {
+  if (!_item) {
+    formStore.formData.eventInfo.relevantInfoDocuments = []
+    errors.relevantInfoDocuments = ''
+    return
+  }
+
+  const remainingFiles = formStore.formData.eventInfo.relevantInfoDocuments.filter(
+    (file) => getFileId(file) !== _item.id,
+  )
+  formStore.formData.eventInfo.relevantInfoDocuments = remainingFiles
+  errors.relevantInfoDocuments = ''
 }
 
 onMounted(() => {
@@ -699,35 +743,6 @@ definePageMeta({
 
 .required {
   color: $color-critical;
-}
-
-.file-input {
-  padding: 12px;
-  border: 2px dashed #d1d1d1;
-  border-radius: 8px;
-  background: $color-grey-100;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    border-color: $color-primary;
-    background: $color-brand-100;
-  }
-
-  &::file-selector-button {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    background: $color-primary;
-    color: $color-white;
-    font-weight: 500;
-    cursor: pointer;
-    margin-right: 12px;
-
-    &:hover {
-      background: $color-primary-dark;
-    }
-  }
 }
 
 .error-text {

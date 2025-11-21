@@ -8,22 +8,24 @@
         </NuxtLink>
       </div>
 
-      <div class="sidebar-intro">
-        <h3 class="heading-m pb-24">{{ $t('form.createEvent') }}</h3>
-        <p class="text-m text-muted">
-          Giv os de praktiske detaljer, så vi kan sætte gang i dit arrangement!
-        </p>
-      </div>
+      <div class="sidebar-body">
+        <div class="sidebar-intro">
+          <h3 class="heading-m pb-24">{{ $t('form.createEvent') }}</h3>
+          <p class="text-m text-muted">
+            Giv os de praktiske detaljer, så vi kan sætte gang i dit arrangement!
+          </p>
+        </div>
 
-      <div class="sidebar-steps">
-        <ClientOnly>
-          <VerticalStepper
-            v-if="formStore.steps"
-            v-model="selectedStepIndex"
-            :items="stepperItems"
-            :clickable="true"
-          />
-        </ClientOnly>
+        <div class="sidebar-steps">
+          <ClientOnly>
+            <VerticalStepper
+              v-if="formStore.steps"
+              v-model="selectedStepIndex"
+              :items="stepperItems"
+              :clickable="true"
+            />
+          </ClientOnly>
+        </div>
       </div>
 
       <nav class="sidebar-bottom">
@@ -36,15 +38,15 @@
     </aside>
 
     <!-- Content -->
-    <section class="content">
-      <div class="topbar">
-        <ClientOnly>
-          <Button variant="secondary" icon-name="fa7-solid:arrow-left" @click="handleBack">
-            Tilbage
-          </Button>
-        </ClientOnly>
-        <div class="topbar-right" />
-      </div>
+        <section class="content">
+          <div class="topbar">
+            <ClientOnly>
+              <Button variant="secondary" icon-name="fa7-solid:arrow-left" @click="handleBack">
+                Tilbage
+              </Button>
+            </ClientOnly>
+            <div class="topbar-right" />
+          </div>
 
       <div class="main">
         <div class="main-inner">
@@ -85,10 +87,12 @@ import { useRouter } from 'vue-router'
 import { Button, VerticalStepper } from 'fk-designsystem'
 import { useEventFormStore } from '../stores/event-form'
 import { useStepControls } from '../composables/useStepControls'
+import { useStepCompletion } from '../composables/useStepCompletion'
 
 const router = useRouter()
 const formStore = useEventFormStore()
 const stepControls = useStepControls()
+const { stepStatuses } = useStepCompletion()
 
 if (!stepControls.value) {
   stepControls.value = {}
@@ -96,16 +100,32 @@ if (!stepControls.value) {
 
 const hasSubmitHandler = computed(() => Boolean(stepControls.value && stepControls.value.onSubmit))
 
+const stepStatusMap = computed(() => {
+  const map = new Map<number, { total: number; missingCount: number }>()
+  stepStatuses.value.forEach((status) => {
+    map.set(status.id, { total: status.total, missingCount: status.missingCount })
+  })
+  return map
+})
+
 const stepperItems = computed(() => {
   if (!formStore.steps) return []
 
-  return formStore.steps.map((step) => ({
-    label: step.title,
-    id: step.id,
-    filled: step.completed ? 1 : 0,
-    total: 1,
-    disabled: false,
-  }))
+  const statuses = stepStatusMap.value
+
+  return formStore.steps.map((step) => {
+    const status = statuses.get(step.id)
+    const total = status?.total ?? 1
+    const filled = status ? total - status.missingCount : step.completed ? 1 : 0
+
+    return {
+      label: step.title,
+      id: step.id,
+      filled,
+      total,
+      disabled: false,
+    }
+  })
 })
 
 const selectedStepIndex = computed({
@@ -163,6 +183,16 @@ const handleSubmit = async () => {
   display: flex;
   flex-direction: column;
   padding-bottom: 32px;
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidebar-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
 }
 
 .sidebar-top {
@@ -185,7 +215,7 @@ const handleSubmit = async () => {
 }
 
 .sidebar-steps {
-  padding: 0 24px;
+  padding: 0 24px 24px;
 
   :deep(.fk-vertical-stepper-sub) {
     display: none;
