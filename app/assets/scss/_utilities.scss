@@ -285,3 +285,11 @@
 .text-center {
   text-align: center;
 }
+
+.eyebrow {
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $color-text-muted;
+  margin: 0;
+}
