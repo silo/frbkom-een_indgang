@@ -196,14 +196,15 @@
             <h2>{{ $t('admin.detail.departmentsTitle') }}</h2>
           </header>
           <div class="department-checkbox-list">
-            <label v-for="card in departmentCards" :key="card.id" class="department-checkbox">
+            <div v-for="card in departmentCards" :key="card.id" class="department-checkbox">
               <Checkbox
-                :model-value="departmentSelection[card.id] || false"
+                :id="`department-${card.id}`"
+                v-model="departmentSelection[card.id]"
                 :disabled="card.slug === DEFAULT_DEPARTMENT_SLUG"
-                @update:model-value="getDepartmentToggleHandler(card.id)"
+                :aria-labelledby="`department-label-${card.id}`"
               />
-              <span>{{ card.name }}</span>
-            </label>
+              <span :id="`department-label-${card.id}`">{{ card.name }}</span>
+            </div>
           </div>
           <p v-if="departmentAssignmentError" class="inline-error">{{ departmentAssignmentError }}</p>
           <Button
@@ -222,7 +223,7 @@
           </header>
           <ul class="department-summary-list">
             <li
-              v-for="card in assignedDepartmentCards"
+              v-for="card in selectedDepartmentCards"
               :key="card.id"
               class="status-pill"
               :class="{ 'is-approved': card.status === 'approved' }"
@@ -486,7 +487,8 @@ const syncDepartmentSelection = () => {
   const assigned = new Set<string>()
   const nextSelection: Record<string, boolean> = {}
   departmentsList.value.forEach((dept) => {
-    const isAssigned = departmentStatusesMap.value.has(dept.id)
+    const isDefaultDepartment = dept.slug === DEFAULT_DEPARTMENT_SLUG
+    const isAssigned = isDefaultDepartment || departmentStatusesMap.value.has(dept.id)
     nextSelection[dept.id] = isAssigned
     if (isAssigned) {
       assigned.add(dept.id)
@@ -503,7 +505,7 @@ const syncDepartmentSelection = () => {
   initialDepartmentSelection.value = assigned
 }
 
-watch([departmentsData, departmentStatusesData], () => {
+watch([departmentsList, departmentStatuses], () => {
   syncDepartmentSelection()
 }, { immediate: true })
 
@@ -715,7 +717,9 @@ const departmentCards = computed(() =>
   }),
 )
 
-const assignedDepartmentCards = computed(() => departmentCards.value.filter((card) => card.status !== null))
+const selectedDepartmentCards = computed(() =>
+  departmentCards.value.filter((card) => Boolean(departmentSelection[card.id])),
+)
 
 const departmentOptions = computed<DropdownOption[]>(() => {
   const assignedIds = [...initialDepartmentSelection.value]
@@ -729,14 +733,6 @@ const departmentOptions = computed<DropdownOption[]>(() => {
     label: card.name,
   }))
 })
-
-const handleDepartmentToggle = (id: string, selected: boolean) => {
-  departmentSelection[id] = selected
-}
-
-const getDepartmentToggleHandler = (id: string) => (selected: boolean) => {
-  handleDepartmentToggle(id, selected)
-}
 
 const hasDepartmentChanges = computed(() =>
   Object.entries(departmentSelection).some(
