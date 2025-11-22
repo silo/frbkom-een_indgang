@@ -6,9 +6,18 @@ import {
   updateEventSchema,
   saveDraftEventSchema,
 } from '../../../shared/schemas/event'
-import { eventApplication } from '../../database/schema'
-import { ensureDefaultDepartmentStatus } from '../../utils/department-defaults'
+import { eventApplication, locationPreset } from '../../database/schema'
+import {
+  DEFAULT_DEPARTMENT_SLUG,
+  ensureDefaultDepartmentStatus,
+  getDepartmentEmail,
+} from '../../utils/department-defaults'
+import { sendDepartmentNotificationEmail } from '../../utils/email'
 import { z } from 'zod'
+
+const emailDateFormatter = new Intl.DateTimeFormat('da-DK', { dateStyle: 'medium' })
+const formatDateRangeForEmail = (start: Date, end: Date) =>
+  `${emailDateFormatter.format(start)} - ${emailDateFormatter.format(end)}`
 
 export const eventsRouter = router({
   // Create a new event
@@ -30,7 +39,37 @@ export const eventsRouter = router({
       })
       .returning()
 
-    await ensureDefaultDepartmentStatus(ctx.db, event.id)
+    const { department: defaultDepartment, created: defaultDepartmentAssigned } =
+      await ensureDefaultDepartmentStatus(ctx.db, event.id)
+
+    if (defaultDepartmentAssigned) {
+      const recipient = getDepartmentEmail(DEFAULT_DEPARTMENT_SLUG)
+      if (!recipient) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Missing email configuration for default department',
+        })
+      }
+
+      let eventLocation = event.locationAddress ?? null
+      if (!eventLocation && event.locationPresetId) {
+        const preset = await ctx.db.query.locationPreset.findFirst({
+          where: eq(locationPreset.id, event.locationPresetId),
+        })
+        eventLocation = preset?.name ?? null
+      }
+
+      const eventDates = formatDateRangeForEmail(event.startAt, event.endAt)
+
+      await sendDepartmentNotificationEmail({
+        to: recipient,
+        departmentName: defaultDepartment.name,
+        eventTitle: event.title,
+        eventLocation,
+        eventDates,
+        applicantName: ctx.user.name ?? null,
+      })
+    }
 
     // Link event type tags
     // TODO Phase 2: Get tag IDs from codes and link with eventTypeTagLink

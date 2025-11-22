@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer'
 import { config } from 'dotenv'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
@@ -10,6 +11,13 @@ import {
   eventApplication,
   eventTypeTagLink,
   departmentEventStatus,
+  eventDocument,
+  eventSafetyInfo,
+  eventSoundInfo,
+  eventWasteInfo,
+  eventFoodInfo,
+  eventAccessInfo,
+  eventArtifact,
 } from './schema'
 
 // Load environment variables from .env file
@@ -26,6 +34,93 @@ if (!databaseUrl) {
 // Create database connection for seeding
 const client = postgres(databaseUrl)
 const db = drizzle(client, { schema })
+
+const SAMPLE_PDF_CONTENT = Buffer.from(
+  'Frederiksberg Kommune seed document placeholder PDF',
+  'utf-8',
+).toString('base64')
+
+type DocumentKind =
+  | 'attachment'
+  | 'construction_certificate'
+  | 'plan'
+  | 'police_approval'
+  | 'approval_document'
+type ArtifactKind = 'stage' | 'booth' | 'facility' | 'other'
+type AttendanceRange = '0_50' | '51_200' | '201_500' | '501_1000' | '1001_5000' | '5001_plus'
+
+type DepartmentStatusSeed = {
+  slug: string
+  status: 'pending' | 'in_review' | 'approved'
+  note?: string | null
+}
+
+type SampleDocument = {
+  ref?: string
+  kind: DocumentKind
+  fileName: string
+  mimeType?: string
+  sizeBytes?: number
+  content?: string
+}
+
+type SampleSafetyInfo = {
+  simultaneousPersonsRange: AttendanceRange
+  hasTemporaryConstructions: boolean
+  constructionsDescription?: string | null
+  constructionsCertificateDocumentRef?: string
+  hasReadBR18Bilag11: boolean
+  otherConsiderations?: string | null
+}
+
+type SampleSoundInfo = {
+  hasSound: boolean
+  description?: string | null
+  responsibleName?: string | null
+  responsiblePhone?: string | null
+}
+
+type SampleWasteInfo = {
+  needsWasteHandling: boolean
+  description?: string | null
+}
+
+type SampleFoodInfo = {
+  hasFoodOrBeverage: boolean
+  description?: string | null
+}
+
+type SampleAccessInfo = {
+  needsBlockage: boolean
+  blockageDescription?: string | null
+  policePermissionApplied: boolean
+  policeApprovalDocumentRef?: string
+}
+
+type SampleArtifact = {
+  kind: ArtifactKind
+  label: string
+  x: number
+  y: number
+  width: number
+  height: number
+  rotation?: number
+}
+
+type SampleEventConfig = {
+  data: typeof eventApplication.$inferInsert
+  tags?: string[]
+  departmentStatuses?: DepartmentStatusSeed[]
+  documents?: SampleDocument[]
+  safety?: SampleSafetyInfo
+  sound?: SampleSoundInfo
+  waste?: SampleWasteInfo
+  food?: SampleFoodInfo
+  access?: SampleAccessInfo
+  artifacts?: SampleArtifact[]
+}
+
+const defined = <T>(value: T | null | undefined): value is T => value !== null && value !== undefined
 
 export async function seed() {
   console.log('Seeding database...')
@@ -135,7 +230,7 @@ export async function seed() {
   const tagByCode = new Map(tags.map((entry) => [entry.code, entry]))
   const departmentBySlug = new Map(departments.map((entry) => [entry.slug, entry]))
 
-  const sampleEvents = [
+  const sampleEvents: SampleEventConfig[] = [
     {
       data: {
         ownerUserId: citizens[0].id,
@@ -160,6 +255,59 @@ export async function seed() {
       departmentStatuses: [
         { slug: 'byliv-drift', status: 'in_review', note: 'Afventer støjplan.' },
         { slug: 'klima-miljo', status: 'pending', note: null },
+      ],
+      documents: [
+        {
+          ref: 'food-festival-plan',
+          kind: 'plan',
+          fileName: 'street-food-site-plan.pdf',
+          sizeBytes: 241_120,
+        },
+        {
+          ref: 'food-festival-structures',
+          kind: 'construction_certificate',
+          fileName: 'temporary-stage-certificate.pdf',
+          sizeBytes: 185_320,
+        },
+        {
+          ref: 'food-festival-police',
+          kind: 'police_approval',
+          fileName: 'traffic-closure-approval.pdf',
+          sizeBytes: 132_890,
+        },
+      ],
+      safety: {
+        simultaneousPersonsRange: '1001_5000',
+        hasTemporaryConstructions: true,
+        constructionsDescription: 'Sceneplatform og 20 mobile boder kræver sikring.',
+        constructionsCertificateDocumentRef: 'food-festival-structures',
+        hasReadBR18Bilag11: true,
+        otherConsiderations: 'Evakueringsplan dækket af 6 vagter og onsite beredskab.',
+      },
+      sound: {
+        hasSound: true,
+        description: 'DJ- og koncertprogram med højttalere frem til 22:00.',
+        responsibleName: 'Signe Møller',
+        responsiblePhone: '+45 55 66 77 88',
+      },
+      waste: {
+        needsWasteHandling: true,
+        description: 'Containere fra CityWaste afhentes to gange dagligt.',
+      },
+      food: {
+        hasFoodOrBeverage: true,
+        description: '20 stadeholdere med varm mad, kolde drikke og ølzone.',
+      },
+      access: {
+        needsBlockage: true,
+        blockageDescription: 'Lukning af Frederiksberg Runddel kl. 09-23 under festivalen.',
+        policePermissionApplied: true,
+        policeApprovalDocumentRef: 'food-festival-police',
+      },
+      artifacts: [
+        { kind: 'stage', label: 'Main Stage', x: 110, y: 45, width: 24, height: 12 },
+        { kind: 'booth', label: 'Food Court A', x: 60, y: 80, width: 30, height: 20 },
+        { kind: 'facility', label: 'First Aid', x: 150, y: 75, width: 10, height: 8 },
       ],
     },
     {
@@ -188,6 +336,48 @@ export async function seed() {
         { slug: 'byliv-drift', status: 'approved', note: 'Rute godkendt.' },
         { slug: 'klima-miljo', status: 'approved', note: 'Miljøvurdering godkendt.' },
       ],
+      documents: [
+        {
+          ref: 'sunrise-route',
+          kind: 'plan',
+          fileName: 'sunrise-run-route.pdf',
+          sizeBytes: 98_200,
+        },
+        {
+          ref: 'sunrise-permit',
+          kind: 'approval_document',
+          fileName: 'association-approval.pdf',
+          sizeBytes: 76_540,
+        },
+      ],
+      safety: {
+        simultaneousPersonsRange: '201_500',
+        hasTemporaryConstructions: false,
+        hasReadBR18Bilag11: true,
+        otherConsiderations: 'Frivillige vagter posteres for hver 300 meter.',
+      },
+      sound: {
+        hasSound: false,
+        description: 'Kun startpistol og håndholdt megafon til annonceringer.',
+        responsibleName: 'Ida Madsen',
+        responsiblePhone: '+45 22 33 44 55',
+      },
+      waste: {
+        needsWasteHandling: true,
+        description: 'Opsamling ved målstregen med 4 frivillige.',
+      },
+      food: {
+        hasFoodOrBeverage: true,
+        description: 'Kaffe, frugt og vand sponsoreret af lokale butikker.',
+      },
+      access: {
+        needsBlockage: false,
+        policePermissionApplied: false,
+      },
+      artifacts: [
+        { kind: 'facility', label: 'Water Station', x: 85, y: 60, width: 10, height: 6 },
+        { kind: 'other', label: 'Start Gate', x: 60, y: 30, width: 15, height: 4 },
+      ],
     },
     {
       data: {
@@ -213,6 +403,64 @@ export async function seed() {
       departmentStatuses: [
         { slug: 'byliv-drift', status: 'pending', note: null },
         { slug: 'byggeri-arkitektur', status: 'pending', note: null },
+      ],
+      documents: [
+        {
+          ref: 'winter-plan',
+          kind: 'plan',
+          fileName: 'winter-market-site-plan.pdf',
+          sizeBytes: 264_890,
+        },
+        {
+          ref: 'winter-structures',
+          kind: 'construction_certificate',
+          fileName: 'cabin-structural-approval.pdf',
+          sizeBytes: 202_330,
+        },
+        {
+          ref: 'winter-police',
+          kind: 'police_approval',
+          fileName: 'city-hall-access-approval.pdf',
+          sizeBytes: 148_220,
+        },
+        {
+          kind: 'attachment',
+          fileName: 'communications-plan.pdf',
+          sizeBytes: 120_440,
+        },
+      ],
+      safety: {
+        simultaneousPersonsRange: '5001_plus',
+        hasTemporaryConstructions: true,
+        constructionsDescription: '30 salgsboder, lysportaler og ekstra scene.',
+        constructionsCertificateDocumentRef: 'winter-structures',
+        hasReadBR18Bilag11: true,
+        otherConsiderations: 'Natlig vagt ordning og brandgang markeret.',
+      },
+      sound: {
+        hasSound: true,
+        description: 'Koroptrædener og baggrundsmusik frem til kl. 21.',
+        responsibleName: 'Loke Holm',
+        responsiblePhone: '+45 11 22 33 44',
+      },
+      waste: {
+        needsWasteHandling: true,
+        description: 'Tre komprimatorer plus hold til glas/pap genbrug.',
+      },
+      food: {
+        hasFoodOrBeverage: true,
+        description: 'Gløgg, varme retter og åbne grillzoner med godkendte leverandører.',
+      },
+      access: {
+        needsBlockage: true,
+        blockageDescription: 'Delvis lukning af Smørumvej og parkering omkring rådhuset.',
+        policePermissionApplied: true,
+        policeApprovalDocumentRef: 'winter-police',
+      },
+      artifacts: [
+        { kind: 'stage', label: 'Choir Stage', x: 95, y: 35, width: 18, height: 10 },
+        { kind: 'booth', label: 'Market Row A', x: 40, y: 85, width: 50, height: 12 },
+        { kind: 'facility', label: 'Power Generator', x: 140, y: 68, width: 8, height: 8 },
       ],
     },
   ]
@@ -246,7 +494,7 @@ export async function seed() {
           eventId: eventRow.id,
           departmentId,
           status: status.status,
-          note: status.note ?? undefined,
+          note: status.note ?? null,
           updatedAt: new Date(),
         }
       })
@@ -256,6 +504,157 @@ export async function seed() {
   if (statusRows.length) {
     await db.insert(departmentEventStatus).values(statusRows)
     console.log('✓ Department statuses seeded')
+  }
+
+  const documentRowsWithRefs = insertedEvents.flatMap((eventRow, index) => {
+    const documents = sampleEvents[index]?.documents ?? []
+    return documents.map((doc) => ({
+      refKey: doc.ref ? `${eventRow.id}:${doc.ref}` : undefined,
+      values: {
+        eventId: eventRow.id,
+        kind: doc.kind,
+        fileName: doc.fileName,
+        mimeType: doc.mimeType ?? 'application/pdf',
+        sizeBytes: doc.sizeBytes ?? 120_000,
+        content: doc.content ?? SAMPLE_PDF_CONTENT,
+      },
+    }))
+  })
+
+  const insertedDocuments = documentRowsWithRefs.length
+    ? await db.insert(eventDocument).values(documentRowsWithRefs.map((entry) => entry.values)).returning()
+    : []
+
+  const documentIdByRefKey = new Map<string, string>()
+  insertedDocuments.forEach((doc, index) => {
+    const refKey = documentRowsWithRefs[index]?.refKey
+    if (refKey) {
+      documentIdByRefKey.set(refKey, doc.id)
+    }
+  })
+
+  if (insertedDocuments.length) {
+    console.log('✓ Event documents seeded')
+  }
+
+  const getDocumentIdForEvent = (eventId: string, ref?: string | null) => {
+    if (!ref) return null
+    return documentIdByRefKey.get(`${eventId}:${ref}`) ?? null
+  }
+
+  const safetyRows = insertedEvents
+    .map((eventRow, index) => {
+      const info = sampleEvents[index]?.safety
+      if (!info) return null
+      return {
+        eventId: eventRow.id,
+        simultaneousPersonsRange: info.simultaneousPersonsRange,
+        hasTemporaryConstructions: info.hasTemporaryConstructions,
+        constructionsDescription: info.constructionsDescription ?? null,
+        constructionsCertificateDocumentId: getDocumentIdForEvent(
+          eventRow.id,
+          info.constructionsCertificateDocumentRef,
+        ),
+        hasReadBR18Bilag11: info.hasReadBR18Bilag11,
+        otherConsiderations: info.otherConsiderations ?? null,
+      }
+    })
+    .filter(defined)
+
+  if (safetyRows.length) {
+    await db.insert(eventSafetyInfo).values(safetyRows)
+    console.log('✓ Event safety info seeded')
+  }
+
+  const soundRows = insertedEvents
+    .map((eventRow, index) => {
+      const info = sampleEvents[index]?.sound
+      if (!info) return null
+      return {
+        eventId: eventRow.id,
+        hasSound: info.hasSound,
+        description: info.description ?? null,
+        responsibleName: info.responsibleName ?? null,
+        responsiblePhone: info.responsiblePhone ?? null,
+      }
+    })
+    .filter(defined)
+
+  if (soundRows.length) {
+    await db.insert(eventSoundInfo).values(soundRows)
+    console.log('✓ Event sound info seeded')
+  }
+
+  const wasteRows = insertedEvents
+    .map((eventRow, index) => {
+      const info = sampleEvents[index]?.waste
+      if (!info) return null
+      return {
+        eventId: eventRow.id,
+        needsWasteHandling: info.needsWasteHandling,
+        description: info.description ?? null,
+      }
+    })
+    .filter(defined)
+
+  if (wasteRows.length) {
+    await db.insert(eventWasteInfo).values(wasteRows)
+    console.log('✓ Event waste info seeded')
+  }
+
+  const foodRows = insertedEvents
+    .map((eventRow, index) => {
+      const info = sampleEvents[index]?.food
+      if (!info) return null
+      return {
+        eventId: eventRow.id,
+        hasFoodOrBeverage: info.hasFoodOrBeverage,
+        description: info.description ?? null,
+      }
+    })
+    .filter(defined)
+
+  if (foodRows.length) {
+    await db.insert(eventFoodInfo).values(foodRows)
+    console.log('✓ Event food info seeded')
+  }
+
+  const accessRows = insertedEvents
+    .map((eventRow, index) => {
+      const info = sampleEvents[index]?.access
+      if (!info) return null
+      return {
+        eventId: eventRow.id,
+        needsBlockage: info.needsBlockage,
+        blockageDescription: info.blockageDescription ?? null,
+        policePermissionApplied: info.policePermissionApplied,
+        policeApprovalDocumentId: getDocumentIdForEvent(eventRow.id, info.policeApprovalDocumentRef),
+      }
+    })
+    .filter(defined)
+
+  if (accessRows.length) {
+    await db.insert(eventAccessInfo).values(accessRows)
+    console.log('✓ Event access info seeded')
+  }
+
+  const artifactRows = insertedEvents.flatMap((eventRow, index) => {
+    const artifacts = sampleEvents[index]?.artifacts ?? []
+    return artifacts.map((artifact) => ({
+      eventId: eventRow.id,
+      kind: artifact.kind,
+      label: artifact.label,
+      x: artifact.x,
+      y: artifact.y,
+      width: artifact.width,
+      height: artifact.height,
+      rotation: artifact.rotation ?? 0,
+    }))
+  })
+
+  if (artifactRows.length) {
+    await db.insert(eventArtifact).values(artifactRows)
+    console.log('✓ Event artifacts seeded')
   }
 
   console.log('Database seeding completed successfully!')

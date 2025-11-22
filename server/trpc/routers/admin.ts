@@ -25,6 +25,7 @@ import {
   CORE_DEPARTMENT_SLUGS,
   type CoreDepartmentSlug,
   ensureDefaultDepartmentStatus,
+  getDepartmentEmail,
   sortCoreDepartments,
 } from '../../utils/department-defaults'
 import {
@@ -35,16 +36,9 @@ import {
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
 const emailDateFormatter = new Intl.DateTimeFormat('da-DK', { dateStyle: 'medium' })
-const departmentEmailMap: Record<CoreDepartmentSlug, string | undefined> = {
-  'byliv-drift': process.env.NUXT_DEPARTMENT_EMAIL_BYLIV_DRIFT,
-  'klima-miljo': process.env.NUXT_DEPARTMENT_EMAIL_KLIMA_MILJO,
-  'byggeri-arkitektur': process.env.NUXT_DEPARTMENT_EMAIL_BYGGERI_ARKITEKTUR,
-}
 
 const formatDateRangeForEmail = (start: Date, end: Date) =>
   `${emailDateFormatter.format(start)} - ${emailDateFormatter.format(end)}`
-
-const getDepartmentEmail = (slug: CoreDepartmentSlug) => departmentEmailMap[slug]
 
 const getDbQuery = (database: Context['db']) =>
   (database as Context['db'] & { query: Record<string, any> }).query as Record<string, any>

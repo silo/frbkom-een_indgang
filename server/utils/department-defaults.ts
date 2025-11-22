@@ -7,6 +7,14 @@ import {
   type CoreDepartmentSlug,
 } from '../../shared/constants/departments'
 
+const departmentEmailMap: Record<CoreDepartmentSlug, string | undefined> = {
+  'byliv-drift': process.env.NUXT_DEPARTMENT_EMAIL_BYLIV_DRIFT,
+  'klima-miljo': process.env.NUXT_DEPARTMENT_EMAIL_KLIMA_MILJO,
+  'byggeri-arkitektur': process.env.NUXT_DEPARTMENT_EMAIL_BYGGERI_ARKITEKTUR,
+}
+
+export const getDepartmentEmail = (slug: CoreDepartmentSlug) => departmentEmailMap[slug]
+
 const slugOrder = new Map(CORE_DEPARTMENT_SLUGS.map((slug, index) => [slug, index]))
 
 export const sortCoreDepartments = <T extends { slug: string }>(entries: T[]) =>
@@ -42,7 +50,7 @@ export const ensureDefaultDepartmentStatus = async (db: Database, eventId: strin
     .limit(1)
 
   if (existing) {
-    return defaultDepartment
+    return { department: defaultDepartment, created: false }
   }
 
   await db
@@ -56,5 +64,5 @@ export const ensureDefaultDepartmentStatus = async (db: Database, eventId: strin
     })
     .onConflictDoNothing()
 
-  return defaultDepartment
+  return { department: defaultDepartment, created: true }
 }

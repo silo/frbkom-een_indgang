@@ -222,7 +222,7 @@
           </header>
           <ul class="department-summary-list">
             <li
-              v-for="card in departmentCards"
+              v-for="card in assignedDepartmentCards"
               :key="card.id"
               class="status-pill"
               :class="{ 'is-approved': card.status === 'approved' }"
@@ -309,6 +309,7 @@
       <p class="modal-intro">{{ $t('admin.detail.approvalModal.body') }}</p>
       <DropdownButton
         v-model="approvalDepartmentId"
+        class="approval-department-dropdown"
         :options="departmentOptions"
         :button-label="$t('admin.detail.approvalModal.departmentLabel')"
         :disabled="approvalSending"
@@ -714,14 +715,20 @@ const departmentCards = computed(() =>
   }),
 )
 
-const departmentOptions = computed<DropdownOption[]>(() =>
-  departmentCards.value
-    .filter((card) => initialDepartmentSelection.value.has(card.id))
-    .map((card) => ({
-      value: card.id,
-      label: card.name,
-    })),
-)
+const assignedDepartmentCards = computed(() => departmentCards.value.filter((card) => card.status !== null))
+
+const departmentOptions = computed<DropdownOption[]>(() => {
+  const assignedIds = [...initialDepartmentSelection.value]
+  const sourceCards = assignedIds.length
+    ? departmentCards.value.filter((card) => assignedIds.includes(card.id))
+    : departmentCards.value
+
+  // When no departments are assigned yet, fall back to listing all available ones
+  return sourceCards.map((card) => ({
+    value: card.id,
+    label: card.name,
+  }))
+})
 
 const handleDepartmentToggle = (id: string, selected: boolean) => {
   departmentSelection[id] = selected
